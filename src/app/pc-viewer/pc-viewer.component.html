@@ -1,1 +1,17 @@
-<div id="target" #target></div>
+<div>Viewer - Demo</div>
+<button (click)="start()">Load Data</button>
+<button (click)="unload()">Unload</button>
+<br>
+<!-- https://www.npmjs.com/package/ngx-color-picker -->
+Select Color: <input [(colorPicker)]="color" [style.background]="color" (colorPickerChange)="onColorChange()"/>
+<br>
+<div style="width: 25%">
+  <!-- https://www.npmjs.com/package/@angular-slider/ngx-slider -->
+  Point Size: <ngx-slider [(value)]="pointSize" [options]="options" (valueChange)="onPointSizeChange()"></ngx-slider>
+</div>
+<br>
+Point Size: <button (click)="onVisibleToggle()">Show/Hide</button>
+<hr>
+<div id="wrapper">
+  <div id="target" #target></div>
+</div>

@@ -1,5 +1,6 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {Viewer} from "../viewer";
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Viewer } from "../viewer";
+import { Options } from "@angular-slider/ngx-slider";
 
 @Component({
   selector: 'app-pc-viewer',
@@ -12,20 +13,47 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
 
   viewer: Viewer;
 
+  visible = true;
+  color: string;
+
+  // point size slider
+  pointSize: number = 3;
+  options: Options = {
+    floor: 0,
+    ceil: 20
+  };
+
 
   constructor() {
     this.viewer = new Viewer();
+    this.color = "#000000"
   }
 
   ngOnInit(): void {
   }
 
   ngAfterViewInit(): void {
-    this.start()
+  }
+
+  onVisibleToggle(): void {
+    this.visible = !this.visible;
+    this.viewer.changeVisibility(this.visible);
+  }
+
+  onPointSizeChange(): void {
+    this.viewer.pointResize(this.pointSize);
+  }
+
+  onColorChange(): void {
+    this.viewer.recolor(this.color);
+  }
+
+  unload(): void {
+    this.viewer.destroy();
   }
 
   start() {
-    if(this.target != null) {
+    if (this.target != null) {
       this.viewer.initialize(this.target.nativeElement);
       console.log("Initialize Viewer")
     } else {
