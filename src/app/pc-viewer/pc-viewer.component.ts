@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { Viewer } from "../viewer";
+import { Viewer } from "../viewer/viewer";
 import { Options } from "@angular-slider/ngx-slider";
 
 @Component({
@@ -13,13 +13,12 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
 
   viewer: Viewer;
 
-  visible = true;
   color: string;
 
   // point size slider
-  pointSize: number = 3;
+  pointSize: number = 2;
   options: Options = {
-    floor: 0,
+    floor: 1,
     ceil: 20
   };
 
@@ -36,8 +35,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
   }
 
   onVisibleToggle(): void {
-    this.visible = !this.visible;
-    this.viewer.changeVisibility(this.visible);
+    this.viewer.toggleVisibility();
   }
 
   onPointSizeChange(): void {
@@ -50,6 +48,10 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
 
   unload(): void {
     this.viewer.destroy();
+  }
+
+  resetColor(): void {
+    this.viewer.resetColor();
   }
 
   start() {
@@ -66,7 +68,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
         pco.translateX(-1);
         pco.rotateX(-Math.PI / 2);
 
-        pco.material.size = 1.0;
+        pco.material.size = this.pointSize;
       })
       .catch(err => console.error(err));
   }
