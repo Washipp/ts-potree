@@ -1,9 +1,4 @@
-import {
-  Color,
-  PerspectiveCamera,
-  Scene,
-  WebGLRenderer,
-} from "three";
+import { Color, PerspectiveCamera, Scene, WebGLRenderer } from "three";
 import { PointCloudOctree, Potree } from '@pnext/three-loader';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
@@ -23,15 +18,7 @@ export class Viewer {
 
   public pointClouds: PointCloudOctree[] = [];
 
-  private prevTime: number | undefined;
-
   private reqAnimationFrameHandle: number | undefined;
-
-  private gl: any;
-
-  private vertexShader = '';
-
-  private fragmentShader = '';
 
   /**
    * Initializes the viewer into the specified element.
@@ -48,14 +35,13 @@ export class Viewer {
     this.targetEl.appendChild(this.renderer.domElement);
 
     // camera position is at (0,0,0) same as orbit controls, so we need to change it slightly.
-    this.camera.position.z = 10
+    this.camera.position.z = 60
+    this.camera.position.y = -10
 
     this.cameraControls.enableZoom = true;
     this.cameraControls.enableRotate = true;
     this.cameraControls.enableDamping = true;
     this.cameraControls.dampingFactor = 0.25;
-
-    this.gl = this.renderer.getContext();
 
     this.resize();
     window.addEventListener("resize", this.resize);
@@ -72,8 +58,10 @@ export class Viewer {
     this.targetEl = undefined;
     window.removeEventListener("resize", this.resize);
 
+    this.pointClouds.map(p => this.scene.remove(p));
     this.pointClouds = [];
     // TODO: clean point clouds or other objects added to the scene.
+
 
     if (this.reqAnimationFrameHandle !== undefined) {
       cancelAnimationFrame(this.reqAnimationFrameHandle);
@@ -98,9 +86,6 @@ export class Viewer {
 
         this.scene.add(pco);
         this.pointClouds.push(pco);
-
-        this.vertexShader = pco.material.vertexShader;
-        this.fragmentShader = pco.material.fragmentShader;
 
         return pco;
       });
@@ -144,97 +129,15 @@ export class Viewer {
   };
 
   /**
-   * Call to change color of all loaded point clouds
-   *
-   * @param color
-   *        color as hex string '#ff0000'
+   * Change the background to a new color.
    */
-  recolor(color: string): void {
-    this.pointClouds.forEach(pco => {
-
-      let frag = `
-precision highp float;
-precision highp int;
-
-uniform vec3 uColor;
-
-void main() {
-  gl_FragColor = vec4(uColor, 1.0);
-}
-`;
-
-      let vert = `
-precision highp float;
-precision highp int;
-
-attribute vec3 position;
-
-uniform mat4 modelViewMatrix;
-uniform mat4 projectionMatrix;
-
-uniform float size;
-
-void main() {
-    gl_PointSize = size;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-}
-`;
-
-
-      let size = pco.material.size;
-      pco.material.vertexShader = pco.material.applyDefines(vert);
-      pco.material.fragmentShader = pco.material.applyDefines(frag);
-      pco.material.vertexColors = true;
-      pco.material.uniforms.uColor.value.set(new Color(color));
-      pco.material.uniforms.size.value = size;
-      pco.material.needsUpdate = true;
-    })
+  changeBackground(): void {
+    this.scene.background = new Color('#003631');
   }
 
-  resetColor(): void {
+  setBoundingBox(value: boolean): void {
     this.pointClouds.forEach(pco => {
-      pco.material.vertexShader = this.vertexShader;
-      pco.material.fragmentShader = this.fragmentShader;
-      pco.material.needsUpdate = true;
+      pco.showBoundingBox = value;
     });
   }
-
-
-  /**
-   * Call to change size of points in all point clouds.
-   *
-   * @param size
-   *        new size
-   */
-  pointResize(size: number): void {
-    this.pointClouds.forEach(pco => {
-      pco.material.size = size;
-    });
-  }
-
-  /**
-   * Call to toggle all point clouds on/off
-   *
-   */
-  toggleVisibility(): void {
-    this.pointClouds.forEach(pco => {
-      pco.material.visible = !pco.material.visible;
-    });
-  }
-
-  compileShader(shader: WebGLShader, source: string) {
-    let gl = this.gl;
-
-    gl.shaderSource(shader, source);
-
-    gl.compileShader(shader);
-
-    let success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
-    if (!success) {
-      let info = gl.getShaderInfoLog(shader);
-      let numberedSource = source.split("\n").map((a, i) => `${i + 1}`.padEnd(5) + a).join("\n");
-      throw `could not compile shader : ${info}, \n${numberedSource}`;
-    }
-  }
-
 }
