@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Viewer } from "../../../viewer/viewer";
 import { PointCloudOctree } from "@pnext/three-loader";
+import { PcoService } from "../../../services/pco.service";
 
 @Component({
   selector: 'app-pc-viewer',
@@ -14,9 +15,10 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
 
   viewer: Viewer;
   showBoundingBox: boolean;
+  sceneId: number = -1;
 
-  constructor() {
-    this.viewer = new Viewer();
+  constructor(private pcoService: PcoService) {
+    this.viewer = new Viewer(pcoService);
     this.showBoundingBox = false;
   }
 
@@ -24,6 +26,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.start();
   }
 
   unload(): void {
@@ -43,37 +46,16 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
       this.viewer.initialize(this.target.nativeElement);
       console.log("Initialize Viewer")
     } else {
-      console.log("target element not found")
+      console.log("Target element not found")
       return;
     }
 
-    let pcs = [
-      {
-        url: "http://127.0.0.1:5000/data/lion_takanawa/",
-        callback: (pco: PointCloudOctree) => {
-          pco.name = "Lion 1"
-          pco.material.size = 2;
-          pco.position.set(-15, 0, 0);
-          pco.scale.set(10, 10, 10);
-          pco.translateX(-1);
-          pco.rotateX(-Math.PI / 2);
-        },
+    let pcs = this.data.pcos;
+    this.sceneId = this.data.sceneId;
 
-      }, {
-        url: "http://127.0.0.1:5000/data/lion_takanawa/",
-        callback: (pco: PointCloudOctree) => {
-          pco.name = "Lion 2"
-
-          pco.material.size = 2;
-          pco.position.set(15, 0, 0);
-          pco.scale.set(10, 10, 10);
-          pco.translateX(-1);
-          pco.rotateX(-Math.PI / 2);
-        },
-      }
-    ];
-
-    pcs.map(p => this.addPointCloud(this.viewer.load("cloud.js", p.url), p.callback));
+    pcs.map((p: { elementId: number; url: string; callback: any; }) => {
+        this.addPointCloud(this.viewer.load("cloud.js", p.url), p.callback, p.elementId);
+      });
 
     // this.viewer
     //   .load("cloud.js", "http://127.0.0.1:5000/data/lion_takanawa/")
@@ -87,9 +69,10 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
     //   .catch(err => console.error(err));
   }
 
-  private addPointCloud(promise: Promise<PointCloudOctree>, callback: any): void {
+  private addPointCloud(promise: Promise<PointCloudOctree>, callback: any, elementId: number): void {
     promise.then(pco => {
       callback(pco);
+      this.pcoService.addSceneElement(this.sceneId, elementId, pco);
     });
   }
 

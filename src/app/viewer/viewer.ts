@@ -1,6 +1,7 @@
 import { Color, PerspectiveCamera, Scene, WebGLRenderer } from "three";
 import { PointCloudOctree, Potree } from '@pnext/three-loader';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { PcoService } from "../services/pco.service";
 
 export class Viewer {
 
@@ -19,6 +20,9 @@ export class Viewer {
   public pointClouds: PointCloudOctree[] = [];
 
   private reqAnimationFrameHandle: number | undefined;
+
+  constructor(private pcoService: PcoService) {
+  }
 
   /**
    * Initializes the viewer into the specified element.
@@ -135,9 +139,15 @@ export class Viewer {
     this.scene.background = new Color('#003631');
   }
 
+  /**
+   * Set the BoundingBox for all point clouds
+   *
+   * @param value showBoundingBox = value
+   */
   setBoundingBox(value: boolean): void {
     this.pointClouds.forEach(pco => {
       pco.showBoundingBox = value;
+      console.log(pco.name);
     });
   }
 }

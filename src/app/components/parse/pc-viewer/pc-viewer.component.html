@@ -1,26 +1,27 @@
-<div class="row">
-  <h3 class="center-align">Viewer - Demo</h3>
-  <div class="col s3">
-    <h5>Settings</h5>
-    <div>
-      <a class="waves-effect waves-teal btn-small" (click)="start()">Load Data</a>
-      <a class="waves-effect waves-teal btn-small" (click)="unload()">Unload</a>
-      <p></p>
-      <a class="waves-effect waves-teal btn-small" (click)="changeBackground()">Change Background</a>
-      <p></p>
-      <label>
-        <input type="checkbox" [(ngModel)]="showBoundingBox" (click)="viewer.setBoundingBox(this.showBoundingBox)" class="filled-in"/>
-        <span>Show Bounding Box</span>
-      </label>
-    </div>
-    <h5>Point Clouds</h5>
-    <div class="pc-settings" *ngFor="let pco of viewer.pointClouds">
-      <app-pc-settings [pco]="pco"></app-pc-settings>
-    </div>
-  </div>
+<!--<div class="row">-->
+<!--  <h3 class="center-align">Viewer - Demo</h3>-->
+<!--  <div class="col s3">-->
+<!--    <h5>Settings</h5>-->
+<!--    <div>-->
+<!--      <a class="waves-effect waves-teal btn-small" (click)="start()">Load Data</a>-->
+<!--      <a class="waves-effect waves-teal btn-small" (click)="unload()">Unload</a>-->
+<!--      <p></p>-->
+<!--      <a class="waves-effect waves-teal btn-small" (click)="changeBackground()">Change Background</a>-->
+<!--      <p></p>-->
+<!--      <label>-->
+<!--        <input type="checkbox" [(ngModel)]="showBoundingBox" (click)="setBoundingBox()" class="filled-in"/>-->
+<!--        <span>Show Bounding Box</span>-->
+<!--      </label>-->
+<!--    </div>-->
+<!--    <h5>Point Clouds</h5>-->
+<!--    <div class="pc-settings" *ngFor="let pco of viewer.pointClouds">-->
+<!--      <app-pc-settings [pco]="pco"></app-pc-settings>-->
+<!--    </div>-->
+<!--  </div>-->
 
-  <div id="wrapper" class="col s9">
-    <div id="target" #target></div>
-  </div>
-  <app-base></app-base>
-</div>
+<!--  <div id="wrapper" class="col s9">-->
+<!--    -->
+<!--  </div>-->
+<!--</div>-->
+
+<div id="target" #target></div>

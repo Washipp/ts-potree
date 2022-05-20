@@ -5,6 +5,10 @@
 
     <app-pc-viewer *ngSwitchCase="comp.VIEWER" [data]="child.data"></app-pc-viewer>
 
+    <app-pc-settings *ngSwitchCase="comp.ELEMENT_SETTINGS" [data]="child.data"></app-pc-settings>
+
+    <app-general-settings *ngSwitchCase="comp.GENERAL_SETTINGS"></app-general-settings>
+
     <div *ngSwitchCase="comp.BUTTON">
       <button style="{{ child.data.color }}">{{ child.data.id }}</button>
     </div>

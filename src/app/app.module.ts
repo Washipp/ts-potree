@@ -11,6 +11,7 @@ import { FormsModule } from "@angular/forms";
 import { BaseComponent } from './components/parse/base/base.component';
 import { ColComponent } from './components/parse/structure/col/col.component';
 import { RowComponent } from './components/parse/structure/row/row.component';
+import { GeneralSettingsComponent } from './components/parse/general-settings/general-settings.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { RowComponent } from './components/parse/structure/row/row.component';
     PcSettingsComponent,
     BaseComponent,
     ColComponent,
-    RowComponent
+    RowComponent,
+    GeneralSettingsComponent
   ],
   imports: [
     BrowserModule,

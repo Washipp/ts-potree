@@ -6,7 +6,18 @@ import { PointCloudOctree } from "@pnext/three-loader";
 })
 export class PcoService {
 
+  private sceneElements: any[][];
+
   constructor() {
+    this.sceneElements = [[]];
+  }
+
+  getSceneElement(sceneId: number, elementId: number): any {
+    return this.sceneElements[sceneId][elementId];
+  }
+
+  addSceneElement(sceneId: number, elementId: number, pco: PointCloudOctree): any {
+    this.sceneElements[sceneId][elementId] = pco;
   }
 
   getStructure(): any[] {
@@ -14,10 +25,7 @@ export class PcoService {
       {
         "component": "row",
         "data":
-          {
-            "id": 0,
-          }
-        ,
+          {"id": 0,},
         "children": [
           {
             "component": "col",
@@ -25,18 +33,28 @@ export class PcoService {
               {
                 "id": 1,
                 "width": 3,
-              }
-            ,
+              },
             "children": [
               {
-                "component": "button",
+                "component": "general_settings",
+                "data":
+                  {},
+              },
+              {
+                "component": "element_settings",
                 "data":
                   {
-                    "id": 1.1,
-                    "color": "color:red;",
-                    "url": "http://localhost/something",
+                    "sceneId": 0,
+                    "elementId": 0,
                   }
-                ,
+              },
+              {
+                "component": "element_settings",
+                "data":
+                  {
+                    "sceneId": 0,
+                    "elementId": 1,
+                  }
               }
             ]
           },
@@ -46,15 +64,15 @@ export class PcoService {
               {
                 "id": 2,
                 "width": 9,
-              }
-            ,
+              },
             "children": [ // viewer
               {
                 "component": "viewer",
                 "data": {
-                  "id": 3,
+                  "sceneId": 0,
                   "pcos": [
                     {
+                      "elementId": 0,
                       "url": "http://127.0.0.1:5000/data/lion_takanawa/",
                       "callback": (pco: PointCloudOctree) => {
                         pco.name = "Lion 1"
@@ -67,6 +85,7 @@ export class PcoService {
                       },
                     },
                     {
+                      "elementId": 1,
                       "url": "http://127.0.0.1:5000/data/lion_takanawa/",
                       "callback": (pco: PointCloudOctree) => {
                         pco.name = "Lion 2"
@@ -83,7 +102,6 @@ export class PcoService {
             ]
           },
         ]
-
       }
     ];
   }
