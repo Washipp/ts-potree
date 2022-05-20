@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { Viewer } from "../viewer/viewer";
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Viewer } from "../../../viewer/viewer";
 import { PointCloudOctree } from "@pnext/three-loader";
 
 @Component({
@@ -10,6 +10,7 @@ import { PointCloudOctree } from "@pnext/three-loader";
 export class PcViewerComponent implements OnInit, AfterViewInit {
 
   @ViewChild('target') target: any;
+  @Input() data: any;
 
   viewer: Viewer;
   showBoundingBox: boolean;
@@ -34,7 +35,6 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
   }
 
   setBoundingBox(): void{
-    console.log(this.showBoundingBox);
     this.viewer.setBoundingBox(this.showBoundingBox);
   }
 
