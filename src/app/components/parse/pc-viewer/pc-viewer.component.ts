@@ -19,7 +19,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
   sceneId: number = -1;
 
   constructor(private pcoService: PcoService) {
-    this.viewer = new Viewer(pcoService);
+    this.viewer = new Viewer();
     this.showBoundingBox = false;
   }
 
