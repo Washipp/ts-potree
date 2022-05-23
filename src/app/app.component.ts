@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { PcoService } from "./services/pco.service";
+import { ComponentTree, PcoService } from "./services/pco.service";
 
 @Component({
   selector: 'app-root',
@@ -9,9 +9,12 @@ import { PcoService } from "./services/pco.service";
 export class AppComponent {
   title = 'ts-potree';
 
-  data: any[];
+  data: ComponentTree[];
 
   constructor(private service: PcoService) {
-    this.data = service.getStructure();
+    this.data = [];
+    service.getStructure(0).subscribe((data) => {
+      this.data = data;
+    });
   }
 }

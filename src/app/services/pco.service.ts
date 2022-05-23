@@ -1,14 +1,25 @@
 import { Injectable } from '@angular/core';
 import { PointCloudOctree } from "@pnext/three-loader";
+import { PCViewerElements } from "../components/parse/pc-viewer/pc-viewer.interfaces";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { catchError, Observable, retry, throwError } from "rxjs";
+
+export interface ComponentTree {
+  component: string,
+  data: any | PCViewerElements,
+  children: ComponentTree[]
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class PcoService {
 
+  baseUrl: string = 'http://127.0.0.1:5000/';
+
   private sceneElements: any[][];
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.sceneElements = [[]];
   }
 
@@ -20,89 +31,23 @@ export class PcoService {
     this.sceneElements[sceneId][elementId] = pco;
   }
 
-  getStructure(): any[] {
-    return [
-      {
-        "component": "row",
-        "data":
-          {"id": 0,},
-        "children": [
-          {
-            "component": "col",
-            "data":
-              {
-                "id": 1,
-                "width": 3,
-              },
-            "children": [
-              {
-                "component": "general_settings",
-                "data":
-                  {},
-              },
-              {
-                "component": "element_settings",
-                "data":
-                  {
-                    "sceneId": 0,
-                    "elementId": 0,
-                  }
-              },
-              {
-                "component": "element_settings",
-                "data":
-                  {
-                    "sceneId": 0,
-                    "elementId": 1,
-                  }
-              }
-            ]
-          },
-          {
-            "component": "col",
-            "data":
-              {
-                "id": 2,
-                "width": 9,
-              },
-            "children": [ // viewer
-              {
-                "component": "viewer",
-                "data": {
-                  "sceneId": 0,
-                  "pcos": [
-                    {
-                      "elementId": 0,
-                      "url": "http://127.0.0.1:5000/data/lion_takanawa/",
-                      "callback": (pco: PointCloudOctree) => {
-                        pco.name = "Lion 1"
+  getStructure(id: number): Observable<ComponentTree[]> {
+    return this.http.get<ComponentTree[]>(this.baseUrl + 'component-tree/' + id).pipe(
+      retry(3),
+      catchError(this.handleError)
+    );
+  }
 
-                        pco.material.size = 2;
-                        pco.position.set(15, 0, 0);
-                        pco.scale.set(10, 10, 10);
-                        pco.translateX(-1);
-                        pco.rotateX(-Math.PI / 2);
-                      },
-                    },
-                    {
-                      "elementId": 1,
-                      "url": "http://127.0.0.1:5000/data/lion_takanawa/",
-                      "callback": (pco: PointCloudOctree) => {
-                        pco.name = "Lion 2"
-                        pco.material.size = 2;
-                        pco.position.set(-15, 0, 0);
-                        pco.scale.set(10, 10, 10);
-                        pco.translateX(-1);
-                        pco.rotateX(-Math.PI / 2);
-                      },
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-        ]
-      }
-    ];
+  private handleError(error: HttpErrorResponse) {
+    if (error.status === 0) {
+      // A client-side or network error occurred. Handle it accordingly.
+      console.error('An error occurred:', error.error);
+    } else {
+      // The backend returned an unsuccessful response code.
+      // The response body may contain clues as to what went wrong.
+      console.error(
+        `Backend returned code ${error.status}, body was: `, error.error);
+    }
+    return throwError(() => new Error('Something bad happened; please try again later.'));
   }
 }

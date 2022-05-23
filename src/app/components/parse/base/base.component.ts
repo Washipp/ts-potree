@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ComponentTree } from "../../../services/pco.service";
 
 export enum Components {
   ROW = "row",
@@ -16,8 +17,8 @@ export enum Components {
 })
 export class BaseComponent implements OnInit {
 
-  comp = Components;
-  @Input() children: any[];
+  comp = Components; // used in template as ENUM
+  @Input() children: ComponentTree[];
   @Input() data: any;
 
   constructor() {

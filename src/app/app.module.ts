@@ -12,6 +12,7 @@ import { BaseComponent } from './components/parse/base/base.component';
 import { ColComponent } from './components/parse/structure/col/col.component';
 import { RowComponent } from './components/parse/structure/row/row.component';
 import { GeneralSettingsComponent } from './components/parse/general-settings/general-settings.component';
+import { HttpClient, HttpClientModule } from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -27,9 +28,10 @@ import { GeneralSettingsComponent } from './components/parse/general-settings/ge
     BrowserModule,
     ColorPickerModule,
     NgxSliderModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [HttpClient],
   bootstrap: [AppComponent]
 })
 export class AppModule {

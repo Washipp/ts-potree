@@ -23,28 +23,37 @@ export class PcSettingsComponent implements OnInit {
     ceil: 20
   };
 
+  private maxTries: number = 10;
   settings: PcSettings;
 
   private _data: any | undefined;
   @Input() set data(value: any) {
-    // this._data = value;
-    // this.pco = this.pcoService.getSceneElement(this._data.sceneId, this._data.elementId);
-    this.getPco(value.sceneId, value.elementId);
+    this.getPco(value.sceneId, value.elementId, 0);
   }
+
   get data() {
     return this._data
   }
 
-  getPco(sceneId: number, elementId: number) {
+  /**
+   * Check every 250ms if the data/pcos are available.
+   *
+   * @param sceneId Scene which holds elements.
+   * @param elementId The element that is targeted by the settings.
+   * @param numberOfTries Current try number.
+   */
+  getPco(sceneId: number, elementId: number, numberOfTries: number) {
     let promise = new Promise(resolve => setTimeout(resolve, 250));
     promise.then(() => {
         this.pco = this.pcoService.getSceneElement(sceneId, elementId);
-        if (this.pco === undefined) {this.getPco(sceneId, elementId);}
+        if (this.pco === undefined && numberOfTries < this.maxTries) {
+          this.getPco(sceneId, elementId, numberOfTries++);
+        }
       }
     );
   }
 
-  @Input() pco: PointCloudOctree | undefined;
+  pco: PointCloudOctree | undefined;
 
   constructor(private pcoService: PcoService) {
     this.settings = {
@@ -57,7 +66,6 @@ export class PcSettingsComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
 
 
   /**
