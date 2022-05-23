@@ -21,7 +21,7 @@ export class Viewer {
 
   private reqAnimationFrameHandle: number | undefined;
 
-  constructor(private pcoService: PcoService) {
+  constructor() {
   }
 
   /**
@@ -147,7 +147,6 @@ export class Viewer {
   setBoundingBox(value: boolean): void {
     this.pointClouds.forEach(pco => {
       pco.showBoundingBox = value;
-      console.log(pco.name);
     });
   }
 }

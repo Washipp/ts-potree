@@ -3,6 +3,7 @@ import { PointCloudOctree } from "@pnext/three-loader";
 import { PCViewerElements } from "../components/parse/pc-viewer/pc-viewer.interfaces";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { catchError, Observable, retry, throwError } from "rxjs";
+import { Viewer } from "../viewer/viewer";
 
 export interface ComponentTree {
   component: string,
@@ -18,17 +19,27 @@ export class PcoService {
   baseUrl: string = 'http://127.0.0.1:5000/';
 
   private sceneElements: any[][];
+  private pcViewer: Viewer[];
 
   constructor(private http: HttpClient) {
     this.sceneElements = [[]];
+    this.pcViewer = [];
   }
 
   getSceneElement(sceneId: number, elementId: number): any {
     return this.sceneElements[sceneId][elementId];
   }
 
-  addSceneElement(sceneId: number, elementId: number, pco: PointCloudOctree): any {
+  addSceneElement(sceneId: number, elementId: number, pco: PointCloudOctree): void {
     this.sceneElements[sceneId][elementId] = pco;
+  }
+
+  getPcViewer(sceneId: number): Viewer {
+    return this.pcViewer[sceneId];
+  }
+
+  addPcViewer(sceneId: number, viewer: Viewer): void {
+    this.pcViewer[sceneId] = viewer;
   }
 
   getStructure(id: number): Observable<ComponentTree[]> {

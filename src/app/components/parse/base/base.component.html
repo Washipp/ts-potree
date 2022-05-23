@@ -7,7 +7,7 @@
 
     <app-pc-settings *ngSwitchCase="comp.ELEMENT_SETTINGS" [data]="child.data"></app-pc-settings>
 
-    <app-general-settings *ngSwitchCase="comp.GENERAL_SETTINGS"></app-general-settings>
+    <app-general-settings *ngSwitchCase="comp.GENERAL_SETTINGS" [data]="child.data"></app-general-settings>
 
     <div *ngSwitchCase="comp.BUTTON">
       <button style="{{ child.data.color }}">{{ child.data.id }}</button>

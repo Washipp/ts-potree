@@ -27,6 +27,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.pcoService.addPcViewer(this.data.sceneId, this.viewer);
     this.start();
   }
 
