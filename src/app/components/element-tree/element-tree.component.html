@@ -1,0 +1,46 @@
+<h3>Element Tree</h3>
+<div *ngIf="tree">
+  <div class="potree-point-clouds">
+    <h5>Potree Point Clouds</h5>
+    <label>
+      <input type="checkbox" [(ngModel)]="visible" (click)="toggleAllSceneElements(tree.potreePointClouds)"
+             class="filled-in"/>
+      <span>Show PointCloud</span>
+    </label>
+    <div style="margin-left: 15px">
+      <ul *ngFor="let pc of tree.potreePointClouds">
+        <li>
+          <label>
+            <input type="checkbox" (click)="toggleSceneElement(tree.potreePointClouds, pc.elementId)"
+                   class="filled-in"/>
+            <span>{{ pc.attributes.name }}</span>
+          </label>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="default-point-clouds">
+    <h5>Default Point Clouds</h5>
+    <ul *ngFor="let pc of tree.defaultPointClouds">
+      <li> CHECKBOX: {{ pc.attributes.name }}</li>
+    </ul>
+  </div>
+  <div class="line-sets">
+    <h5>Line-Sets</h5>
+    <ul *ngFor="let lineset of tree.lineSets">
+      <li> CHECKBOX: {{ lineset.attributes.name }}</li>
+    </ul>
+  </div>
+  <div class="camera-trajectory">
+    <h5>Camera Trajectories</h5>
+    <ul *ngFor="let ct of tree.cameraTrajectories">
+      <li> CHECKBOX: {{ ct.attributes.name }}</li>
+    </ul>
+  </div>
+  <div class="unknown-element">
+    <h5>Others</h5>
+    <ul *ngFor="let ct of tree.unknown">
+      <li> CHECKBOX: {{ ct.attributes.name }}</li>
+    </ul>
+  </div>
+</div>

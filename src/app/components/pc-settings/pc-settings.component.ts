@@ -1,8 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Options } from "@angular-slider/ngx-slider";
 import { PointCloudOctree, PointColorType } from "@pnext/three-loader";
 import { Color } from "three";
-import { PcoService } from "../../../services/pco.service";
+import { SceneElementsService } from "../../services/scene-elements.service";
 
 export interface PcSettings {
   color: string;
@@ -18,21 +17,31 @@ export interface PcSettings {
 })
 export class PcSettingsComponent implements OnInit {
 
-  options: Options = {
-    floor: 1,
-    ceil: 20
+  options: any = {
+    min: 1,
+    max: 20
   };
 
-  private maxTries: number = 10;
   settings: PcSettings;
+  pco: PointCloudOctree | undefined;
 
   private _data: any | undefined;
   @Input() set data(value: any) {
     this.getPco(value.sceneId, value.elementId, 0);
+    this._data = value;
   }
 
   get data() {
     return this._data
+  }
+
+  constructor(private sceneElementsService: SceneElementsService) {
+    this.settings = {
+      color: "#000000",
+      isVisible: true,
+      colorType: PointColorType.RGB,
+      pointSize: 2,
+    }
   }
 
   /**
@@ -45,24 +54,19 @@ export class PcSettingsComponent implements OnInit {
   getPco(sceneId: number, elementId: number, numberOfTries: number) {
     let promise = new Promise(resolve => setTimeout(resolve, 250));
     promise.then(() => {
-        this.pco = this.pcoService.getSceneElement(sceneId, elementId);
-        if (this.pco === undefined && numberOfTries < this.maxTries) {
-          this.getPco(sceneId, elementId, numberOfTries++);
+        this.pco = this.sceneElementsService.getSceneElement(sceneId, elementId) as PointCloudOctree;
+        if (this.pco === undefined && numberOfTries < this.sceneElementsService.maxTries) {
+          // To copy the value and not the reference
+          // TODO: maybe use a better solution
+          let a: any = { numberOfTries };
+          a.numberOfTries++;
+          this.getPco(sceneId, elementId, a);
         }
       }
     );
   }
 
-  pco: PointCloudOctree | undefined;
 
-  constructor(private pcoService: PcoService) {
-    this.settings = {
-      color: "#000000",
-      isVisible: true,
-      colorType: PointColorType.RGB,
-      pointSize: 2,
-    }
-  }
 
   ngOnInit(): void {
   }

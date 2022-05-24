@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ComponentTree } from "../../../services/pco.service";
+import { ComponentTree } from "../../services/scene-elements.service";
+import { HelperFunctions } from "../utility/helper-functions";
 
 export enum Components {
   ROW = "row",
@@ -8,6 +9,7 @@ export enum Components {
   BUTTON = "button",
   ELEMENT_SETTINGS = "element_settings",
   GENERAL_SETTINGS = "general_settings",
+  ELEMENT_TREE = "element_tree",
 }
 
 @Component({
@@ -28,10 +30,8 @@ export class BaseComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  parseToEnum<T> (value: string): T | undefined {
-    return (Object.values(Components) as unknown as string[]).includes(value)
-      ? value as unknown as T
-      : undefined;
+  parseToEnum(type: string): Components | undefined {
+    return HelperFunctions.enumFromStringValue(Components, type);
   }
 
 }

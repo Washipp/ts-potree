@@ -1,0 +1,12 @@
+<h5>Settings</h5>
+<div>
+  <a class="waves-effect btn-small" (click)="start()">Load Data</a>
+  <a class="waves-effect btn-small" (click)="unload()">Unload</a>
+  <p></p>
+  <a class="waves-effect btn-small" (click)="changeBackground()">Change Background</a>
+  <p></p>
+  <label>
+    <input type="checkbox" [(ngModel)]="showBoundingBox" (click)="setBoundingBox()" class="filled-in"/>
+    <span>Show Bounding Box</span>
+  </label>
+</div>

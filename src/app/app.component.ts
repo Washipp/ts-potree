@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ComponentTree, PcoService } from "./services/pco.service";
+import { ComponentTree, SceneElementsService } from "./services/scene-elements.service";
 
 @Component({
   selector: 'app-root',
@@ -11,9 +11,9 @@ export class AppComponent {
 
   data: ComponentTree[];
 
-  constructor(private service: PcoService) {
+  constructor(private sceneElementsService: SceneElementsService) {
     this.data = [];
-    service.getStructure(0).subscribe((data) => {
+    sceneElementsService.getStructure(0).subscribe((data) => {
       this.data = data;
     });
   }

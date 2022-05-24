@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
-import { Viewer } from "../../../viewer/viewer";
+import { Viewer } from "../../viewer/viewer";
 import { PointCloudOctree } from "@pnext/three-loader";
-import { PcoService } from "../../../services/pco.service";
-import { PCOAttributes, PCOElements } from "./pc-viewer.interfaces";
+import { SceneElementsService } from "../../services/scene-elements.service";
+import { ElementAttributes, SceneElements, ViewerData } from "./pc-viewer.interfaces";
 
 @Component({
   selector: 'app-pc-viewer',
@@ -12,35 +12,23 @@ import { PCOAttributes, PCOElements } from "./pc-viewer.interfaces";
 export class PcViewerComponent implements OnInit, AfterViewInit {
 
   @ViewChild('target') target: any;
-  @Input() data: any;
+  @Input() data: ViewerData;
 
   viewer: Viewer;
   showBoundingBox: boolean;
   sceneId: number = -1;
 
-  constructor(private pcoService: PcoService) {
+  constructor(private sceneElementsService: SceneElementsService) {
     this.viewer = new Viewer();
     this.showBoundingBox = false;
+    this.data = { sceneId: -1, elements: [] };
   }
 
   ngOnInit(): void {
   }
 
   ngAfterViewInit(): void {
-    this.pcoService.addPcViewer(this.data.sceneId, this.viewer);
     this.start();
-  }
-
-  unload(): void {
-    this.viewer.destroy();
-  }
-
-  changeBackground(): void {
-    this.viewer.changeBackground();
-  }
-
-  setBoundingBox(): void {
-    this.viewer.setBoundingBox(this.showBoundingBox);
   }
 
   start() {
@@ -52,27 +40,30 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    let pcs = this.data.pcos;
+    // Add the data reference for other components
+    this.data.viewer = this.viewer;
+    this.sceneElementsService.addViewerData(this.data);
+
+    let pcs = this.data.elements;
     this.sceneId = this.data.sceneId;
 
-    pcs.map((p: PCOElements) => {
+    pcs.map((p: SceneElements) => {
       this.addPointCloud(this.viewer.load("cloud.js", p.url), p.attributes, p.elementId);
     });
 
   }
 
-  private addPointCloud(promise: Promise<PointCloudOctree>, attributes: PCOAttributes, elementId: number): void {
+  private addPointCloud(promise: Promise<PointCloudOctree>, attributes: ElementAttributes, elementId: number): void {
     promise.then(pco => {
       this.applyAttributes(pco, attributes);
       pco.translateX(-1);
       pco.rotateX(-Math.PI / 2);
 
-      // add reference to service for the settings component.
-      this.pcoService.addSceneElement(this.sceneId, elementId, pco);
+      this.sceneElementsService.addSceneElement(this.sceneId, elementId, pco);
     });
   }
 
-  private applyAttributes(pco: PointCloudOctree, attributes: PCOAttributes): void {
+  private applyAttributes(pco: PointCloudOctree, attributes: ElementAttributes): void {
     pco.name = attributes.name;
     pco.material.size = attributes.material.size;
     if (attributes.position) {

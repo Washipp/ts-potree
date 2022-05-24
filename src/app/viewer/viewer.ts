@@ -1,7 +1,6 @@
 import { Color, PerspectiveCamera, Scene, WebGLRenderer } from "three";
 import { PointCloudOctree, Potree } from '@pnext/three-loader';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { PcoService } from "../services/pco.service";
 
 export class Viewer {
 

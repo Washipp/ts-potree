@@ -9,6 +9,8 @@
 
     <app-general-settings *ngSwitchCase="comp.GENERAL_SETTINGS" [data]="child.data"></app-general-settings>
 
+    <app-element-tree *ngSwitchCase="comp.ELEMENT_TREE" [data]="child.data"></app-element-tree>
+
     <div *ngSwitchCase="comp.BUTTON">
       <button style="{{ child.data.color }}">{{ child.data.id }}</button>
     </div>

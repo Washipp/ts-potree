@@ -3,16 +3,18 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 
-import { PcViewerComponent } from './components/parse/pc-viewer/pc-viewer.component';
+import { PcViewerComponent } from './components/pc-viewer/pc-viewer.component';
 import { ColorPickerModule } from "ngx-color-picker";
 import { NgxSliderModule } from "@angular-slider/ngx-slider";
-import { PcSettingsComponent } from './components/parse/pc-settings/pc-settings.component';
+import { PcSettingsComponent } from './components/pc-settings/pc-settings.component';
 import { FormsModule } from "@angular/forms";
-import { BaseComponent } from './components/parse/base/base.component';
-import { ColComponent } from './components/parse/structure/col/col.component';
-import { RowComponent } from './components/parse/structure/row/row.component';
-import { GeneralSettingsComponent } from './components/parse/general-settings/general-settings.component';
+import { BaseComponent } from './components/base/base.component';
+import { ColComponent } from './components/structure/col/col.component';
+import { RowComponent } from './components/structure/row/row.component';
+import { GeneralSettingsComponent } from './components/general-settings/general-settings.component';
 import { HttpClient, HttpClientModule } from "@angular/common/http";
+import { LoadingComponent } from './components/utility/loading/loading.component';
+import { ElementTreeComponent } from './components/element-tree/element-tree.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { HttpClient, HttpClientModule } from "@angular/common/http";
     BaseComponent,
     ColComponent,
     RowComponent,
-    GeneralSettingsComponent
+    GeneralSettingsComponent,
+    LoadingComponent,
+    ElementTreeComponent
   ],
   imports: [
     BrowserModule,

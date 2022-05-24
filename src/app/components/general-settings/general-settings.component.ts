@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { PcoService } from "../../../services/pco.service";
-import { Viewer } from "../../../viewer/viewer";
+import { SceneElementsService } from "../../services/scene-elements.service";
+import { Viewer } from "../../viewer/viewer";
 
 @Component({
   selector: 'app-general-settings',
@@ -17,6 +17,7 @@ export class GeneralSettingsComponent implements OnInit {
   private _data: Viewer | undefined;
   @Input() set data(value: any) {
     this.getViewer(value.sceneId, 0);
+    this._data = value;
   }
 
   get data() {
@@ -32,7 +33,7 @@ export class GeneralSettingsComponent implements OnInit {
   getViewer(sceneId: number, numberOfTries: number) {
     let promise = new Promise(resolve => setTimeout(resolve, 250));
     promise.then(() => {
-        this.viewer = this.pcoService.getPcViewer(sceneId);
+        this.viewer = this.sceneElementsService.getPcViewer(sceneId);
         if (this.viewer === undefined && numberOfTries < this.maxTries) {
           this.getViewer(sceneId, numberOfTries++);
         }
@@ -41,7 +42,7 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
 
-  constructor(private pcoService: PcoService) {
+  constructor(private sceneElementsService: SceneElementsService) {
 
   }
 
