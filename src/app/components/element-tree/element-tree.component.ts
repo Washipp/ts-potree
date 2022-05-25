@@ -2,15 +2,15 @@ import { Component, Input, OnInit } from '@angular/core';
 import { HelperFunctions } from "../utility/helper-functions";
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { SceneElementsService } from "../../services/scene-elements.service";
-import { SceneElements, ViewerData } from "../pc-viewer/pc-viewer.interfaces";
+import { SceneElement, ViewerData } from "../pc-viewer/pc-viewer.interfaces";
 import { PointCloudOctree } from "@pnext/three-loader";
 
 export interface ElementTree {
-  potreePointClouds: SceneElements[];
-  defaultPointClouds: SceneElements[];
-  lineSets: SceneElements[];
-  cameraTrajectories: SceneElements[];
-  unknown: SceneElements[];
+  potreePointClouds: SceneElement[];
+  defaultPointClouds: SceneElement[];
+  lineSets: SceneElement[];
+  cameraTrajectories: SceneElement[];
+  unknown: SceneElement[];
 }
 
 @Component({
@@ -31,10 +31,15 @@ export class ElementTreeComponent implements OnInit {
   }
 
   tree: ElementTree | undefined;
+  enumEntriesMapping: Map<SceneElementsEnum, SceneElement[]>;
   visible: boolean = true; // TODO: set it up for each element separately.
 
 
   constructor(private sceneElementsService: SceneElementsService) {
+    this.enumEntriesMapping = new Map<SceneElementsEnum, SceneElement[]>();
+    for (const value of Object.values(SceneElementsEnum)) {
+      this.enumEntriesMapping.set(value, []);
+    }
   }
 
   private getTree(sceneId: number, numberOfTries: number): void {
@@ -55,13 +60,13 @@ export class ElementTreeComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  toggleAllSceneElements(elements: SceneElements[]): void {
+  toggleAllSceneElements(elements: SceneElement[]): void {
     elements.forEach(elem => {
       this.toggleSceneElement(elements, elem.elementId);
     });
   }
 
-  toggleSceneElement(elements: SceneElements[], elementId: number): void {
+  toggleSceneElement(elements: SceneElement[], elementId: number): void {
     let pco = elements[elementId].element as PointCloudOctree;
     let mat = pco.material;
     mat.visible = !mat.visible;
@@ -76,7 +81,7 @@ export class ElementTreeComponent implements OnInit {
    *
    * @param elements SceneElements of a scene.
    */
-  private parseToElementTree(elements: SceneElements[]): ElementTree | undefined {
+  private parseToElementTree(elements: SceneElement[]): ElementTree | undefined {
     if (elements === undefined) return undefined;
     let t: ElementTree = {
       potreePointClouds: [],
@@ -86,7 +91,11 @@ export class ElementTreeComponent implements OnInit {
       unknown: [],
     };
 
-    elements.forEach((elem: SceneElements) => {
+    elements.forEach((elem: SceneElement) => {
+      if (this.enumEntriesMapping.has(elem.sceneType)) {
+        this.enumEntriesMapping.get(elem.sceneType)?.push(elem);
+      }
+
       switch (this.parseToEnum(elem.sceneType)) {
         case SceneElementsEnum.POTREE_POINT_CLOUD:
           t.potreePointClouds?.push(elem);

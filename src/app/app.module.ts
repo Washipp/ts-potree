@@ -15,6 +15,7 @@ import { GeneralSettingsComponent } from './components/general-settings/general-
 import { HttpClient, HttpClientModule } from "@angular/common/http";
 import { LoadingComponent } from './components/utility/loading/loading.component';
 import { ElementTreeComponent } from './components/element-tree/element-tree.component';
+import { EntryComponent } from './components/element-tree/entry/entry.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { ElementTreeComponent } from './components/element-tree/element-tree.com
     RowComponent,
     GeneralSettingsComponent,
     LoadingComponent,
-    ElementTreeComponent
+    ElementTreeComponent,
+    EntryComponent
   ],
   imports: [
     BrowserModule,

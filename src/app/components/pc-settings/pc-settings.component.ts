@@ -58,15 +58,13 @@ export class PcSettingsComponent implements OnInit {
         if (this.pco === undefined && numberOfTries < this.sceneElementsService.maxTries) {
           // To copy the value and not the reference
           // TODO: maybe use a better solution
-          let a: any = { numberOfTries };
+          let a: any = {numberOfTries};
           a.numberOfTries++;
           this.getPco(sceneId, elementId, a);
         }
       }
     );
   }
-
-
 
   ngOnInit(): void {
   }
@@ -104,10 +102,10 @@ export class PcSettingsComponent implements OnInit {
    * Call to toggle all point clouds on/off
    *
    */
-  setVisibility(): void {
-    // @ts-ignore
-    let mat = this.pco.material;
-    mat.visible = !mat.visible;
+  setBoundingBox(value: any): void {
+    if (this.pco) {
+      this.pco.showBoundingBox = value.checked;
+    }
   }
 
 }

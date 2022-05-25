@@ -1,0 +1,16 @@
+<label>
+  <input type="checkbox" [(ngModel)]="visible" (click)="toggleAllSceneElements()"
+         class="filled-in"/>
+  <span>{{ title }}</span>
+</label>
+<div style="margin-left: 5%">
+  <ul *ngFor="let pc of elements">
+    <li>
+      <label>
+        <input type="checkbox" (click)="toggleSceneElement(pc.elementId)" [checked]="!pc.visible"
+               class="filled-in"/>
+        <span>{{ pc.attributes.name }}</span>
+      </label>
+    </li>
+  </ul>
+</div>

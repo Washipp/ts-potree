@@ -1,6 +1,24 @@
-import { Color, PerspectiveCamera, Scene, WebGLRenderer } from "three";
+import {
+  Color,
+  Euler,
+  PerspectiveCamera,
+  Scene,
+  Vector3,
+  WebGLRenderer
+} from "three";
 import { PointCloudOctree, Potree } from '@pnext/three-loader';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { SceneElementsService } from "../services/scene-elements.service";
+import { LineSet } from "../elements/line-set";
+
+export interface CameraState {
+  position: Vector3,
+  rotation: Euler,
+  fov: number,
+  near: number,
+  far: number,
+  lastUpdate: number,
+}
 
 export class Viewer {
 
@@ -20,7 +38,10 @@ export class Viewer {
 
   private reqAnimationFrameHandle: number | undefined;
 
-  constructor() {
+  private currentCameraState: CameraState;
+
+  constructor(private sceneElementsService: SceneElementsService) {
+    this.currentCameraState = this.getCurrentCameraState(this.camera.clone());
   }
 
   /**
@@ -79,7 +100,7 @@ export class Viewer {
    * @param baseUrl
    *    The url where the point cloud is located and from where we should load the octree nodes.
    */
-  load(fileName: string, baseUrl: string): Promise<PointCloudOctree> {
+  loadPotreePCO(fileName: string, baseUrl: string): Promise<PointCloudOctree> {
     return this.potree
       .loadPointCloud(fileName, url => `${baseUrl}${url}`)
       .then((pco: PointCloudOctree) => {
@@ -94,12 +115,18 @@ export class Viewer {
       });
   }
 
+  loadLineSet(lineSet: LineSet): void {
+    lineSet.lines.forEach(line => {
+      this.scene.add(line);
+    });
+  }
+
   /**
    * Updates the point clouds, cameras or any other objects which are in the scene.
    */
   update(): void {
     this.cameraControls.update();
-
+    this.handleCameraState();
     this.potree.updatePointClouds(this.pointClouds, this.camera, this.renderer);
   }
 
@@ -147,5 +174,50 @@ export class Viewer {
     this.pointClouds.forEach(pco => {
       pco.showBoundingBox = value;
     });
+  }
+
+  getCurrentCameraState(camera: PerspectiveCamera): CameraState {
+    return {
+      position: camera.position,
+      rotation: camera.rotation,
+      fov: camera.fov,
+      near: camera.near,
+      far: camera.far,
+      lastUpdate: Date.now(),
+    };
+  }
+
+  compareCameraState(firstState: CameraState, secondState: CameraState): boolean {
+    return (
+      firstState.position.equals(secondState.position) &&
+      firstState.rotation.equals(secondState.rotation) &&
+      firstState.fov == secondState.fov &&
+      firstState.near == secondState.near &&
+      firstState.far == secondState.far
+    );
+  }
+
+  handleCameraState(): void {
+    let oldState = this.currentCameraState;
+    let newState = this.getCurrentCameraState(this.camera.clone());
+    // 750ms as a threshold. Else to many requests are sent.
+    // TODO: may create extra class?
+    let updatedNeeded = Math.abs(oldState.lastUpdate - newState.lastUpdate) > 750;
+    let same = this.compareCameraState(oldState, newState);
+    if (!same && updatedNeeded) {
+      console.log("UPDATING CAMERA");
+      this.currentCameraState = newState;
+      // this.sceneElementsService.sendCameraUpdate(this.currentCameraState, 0)
+      //   .subscribe((ans) => console.log(ans));
+    }
+  }
+
+  setCameraState(cameraState: CameraState): void {
+    this.currentCameraState = cameraState;
+    this.camera.position.set(cameraState.position.x, cameraState.position.y, cameraState.position.z);
+    this.camera.rotation.set(cameraState.rotation.x, cameraState.rotation.y, cameraState.rotation.z);
+    this.camera.fov = cameraState.fov;
+    this.camera.near = cameraState.near;
+    this.camera.far = cameraState.far;
   }
 }

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { SceneElements, ViewerData } from "../components/pc-viewer/pc-viewer.interfaces";
+import { SceneElement, ViewerData } from "../components/pc-viewer/pc-viewer.interfaces";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { catchError, Observable, retry, throwError } from "rxjs";
-import { Viewer } from "../viewer/viewer";
+import { catchError, map, Observable, retry, throwError } from "rxjs";
+import { CameraState, Viewer } from "../viewer/viewer";
 import { Object3D } from "three";
 
 export interface ComponentTree {
@@ -25,11 +25,13 @@ export class SceneElementsService {
     this.viewerData = [];
   }
 
+  /**  Internal reference handling  **/
+
   addViewerData(data: ViewerData): void {
     this.viewerData[data.sceneId] = data;
   }
 
-  getSceneElements(sceneId: number): SceneElements[] {
+  getSceneElements(sceneId: number): SceneElement[] {
     return this.viewerData[sceneId]?.elements;
   }
 
@@ -47,18 +49,35 @@ export class SceneElementsService {
    *
    * @param sceneId The id of the Scene/Viewer this object belongs to
    * @param elementId Id of the element.
-   * @param pco Object3D reference.
+   * @param element Object3D reference.
    */
-  addSceneElement(sceneId: number, elementId: number, pco: Object3D): void {
+  addSceneElement(sceneId: number, elementId: number, element: Object3D): void {
     let elems = this.getSceneElements(sceneId);
     if (elementId < elems.length && elems[elementId] !== undefined) {
-      elems[elementId].element = pco;
+      elems[elementId].element = element;
     }
   }
 
   getPcViewer(sceneId: number): Viewer | undefined {
     return this.viewerData[sceneId].viewer;
   }
+
+  /**  Calls to the server  **/
+
+  getCameraUpdate(id: number): Observable<CameraState> {
+    return this.http.get<CameraState>(this.baseUrl + 'camera_state/' + id).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  sendCameraUpdate(state: CameraState, id: number): Observable<boolean> {
+    return this.http.post<any>(this.baseUrl + 'camera_state/' + id, {state: JSON.stringify(state)}).pipe(
+      map(ans => {
+        return ans;
+      })
+    );
+  }
+
 
   getStructure(id: number): Observable<ComponentTree[]> {
     return this.http.get<ComponentTree[]>(this.baseUrl + 'component-tree/' + id).pipe(
