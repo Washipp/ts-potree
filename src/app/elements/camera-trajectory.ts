@@ -40,11 +40,10 @@ export class CameraTrajectory extends LineSet {
   }
 
   setSize(size: number): void {
-    let oldSize = 1/this.size;
+    let newSize = size/this.size;
     this.lines.forEach(line => {
       line.geometry.translate(-this.points.x.x, -this.points.x.y, -this.points.x.z);
-      line.geometry.scale(oldSize, oldSize, oldSize);
-      line.geometry.scale(size, size, size);
+      line.geometry.scale(newSize, newSize, newSize);
       line.geometry.translate(this.points.x.x, this.points.x.y, this.points.x.z);
     });
     this.size = size;
