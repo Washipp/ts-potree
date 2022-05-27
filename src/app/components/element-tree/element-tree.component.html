@@ -1,31 +1,26 @@
-<h3>Element Tree</h3>
+<div class="title-divider"><span>Element Tree</span></div>
 <div *ngIf="tree">
-  <div class="potree-point-clouds">
-    <h5>Potree Point Clouds</h5>
+  <div class="potree-point-clouds element-tree-element">
     <div>
       <app-entry [title]="'Potree Point Clouds'" [elements]="tree.potreePointClouds"></app-entry>
     </div>
   </div>
-  <div class="default-point-clouds">
-    <h5>Default Point Clouds</h5>
+  <div class="default-point-clouds element-tree-element">
     <div>
       <app-entry [title]="'Default Point Clouds'" [elements]="tree.defaultPointClouds"></app-entry>
     </div>
   </div>
-  <div class="line-sets">
-    <h5>Line-Sets</h5>
+  <div class="line-sets element-tree-element">
     <div>
       <app-entry [title]="'Line Sets'" [elements]="tree.lineSets"></app-entry>
     </div>
   </div>
-  <div class="camera-trajectory">
-    <h5>Camera Trajectories</h5>
+  <div class="camera-trajectory element-tree-element">
     <div>
       <app-entry [title]="'Camera Trajectories'" [elements]="tree.cameraTrajectories"></app-entry>
     </div>
   </div>
-  <div class="unknown-element">
-    <h5>Others</h5>
+  <div class="unknown-element element-tree-element">
     <div>
       <app-entry [title]="'Others'" [elements]="tree.unknown"></app-entry>
     </div>

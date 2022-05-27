@@ -9,8 +9,13 @@
 
 /* Range slider styling */
 
+.range-field {
+  margin: 2px;
+}
+
 input[type="range"] {
   border: none;
+  margin: 0;
 }
 
 input[type=range]::-webkit-slider-thumb {

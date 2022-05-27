@@ -1,6 +1,7 @@
 import { Matrix4, Object3D, Vector3 } from "three";
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { Viewer } from "../../viewer/viewer";
+import { CameraTrajectoryData } from "../../elements/camera-trajectory";
 
 export interface CustomLine {
   start: Vector3,
@@ -17,7 +18,7 @@ export interface ElementAttributes {
 
 export interface SceneElement {
   elementId: number,
-  source: string | CustomLine[],
+  source: string | CustomLine[] | CameraTrajectoryData,
   sceneType: SceneElementsEnum,
   attributes: ElementAttributes,
   visible?: boolean,

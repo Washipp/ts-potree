@@ -19,6 +19,8 @@
   --color-secondary-2-2: #00D930;
   --color-secondary-2-3: #344C3A;
   --color-secondary-2-4: #304434;
+
+  --color-black: #1c1c1c;
 }
 
 
@@ -45,9 +47,43 @@
 
 html {
   background-color: var(--color-primary-4);
-  color: white !important;
+  color: white !important; /* override materializecss attributes */
 }
 
 .btn-small, .btn-flat {
   background-color: var(--color-secondary-1-0) !important;
+}
+
+.title-divider {
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin: 10px 0;
+  padding: 1px !important;
+}
+
+.title-divider > span {
+  position: relative;
+  display: inline-block;
+}
+
+.title-divider > span::before, .title-divider > span::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 9999px;
+  height: 1px;
+  background: #b2b2b2;
+}
+
+.title-divider > span::before {
+  right: 100%;
+  margin-right: 5px;
+}
+.title-divider > span::after {
+  left: 100%;
+  margin-left: 5px;
 }

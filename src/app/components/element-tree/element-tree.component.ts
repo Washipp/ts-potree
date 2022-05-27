@@ -3,7 +3,6 @@ import { HelperFunctions } from "../utility/helper-functions";
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { SceneElementsService } from "../../services/scene-elements.service";
 import { SceneElement, ViewerData } from "../pc-viewer/pc-viewer.interfaces";
-import { PointCloudOctree } from "@pnext/three-loader";
 
 export interface ElementTree {
   potreePointClouds: SceneElement[];
@@ -32,7 +31,6 @@ export class ElementTreeComponent implements OnInit {
 
   tree: ElementTree | undefined;
   enumEntriesMapping: Map<SceneElementsEnum, SceneElement[]>;
-  visible: boolean = true; // TODO: set it up for each element separately.
 
 
   constructor(private sceneElementsService: SceneElementsService) {
@@ -40,6 +38,9 @@ export class ElementTreeComponent implements OnInit {
     for (const value of Object.values(SceneElementsEnum)) {
       this.enumEntriesMapping.set(value, []);
     }
+  }
+
+  ngOnInit(): void {
   }
 
   private getTree(sceneId: number, numberOfTries: number): void {
@@ -57,20 +58,6 @@ export class ElementTreeComponent implements OnInit {
     );
   }
 
-  ngOnInit(): void {
-  }
-
-  toggleAllSceneElements(elements: SceneElement[]): void {
-    elements.forEach(elem => {
-      this.toggleSceneElement(elements, elem.elementId);
-    });
-  }
-
-  toggleSceneElement(elements: SceneElement[], elementId: number): void {
-    let pco = elements[elementId].element as PointCloudOctree;
-    let mat = pco.material;
-    mat.visible = !mat.visible;
-  }
 
   parseToEnum(type: string): SceneElementsEnum | undefined {
     return HelperFunctions.enumFromStringValue(SceneElementsEnum, type);

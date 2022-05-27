@@ -5,6 +5,8 @@ import { SceneElementsService } from "../../services/scene-elements.service";
 import { CustomLine, ElementAttributes, SceneElement, ViewerData } from "./pc-viewer.interfaces";
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { LineSet } from "../../elements/line-set";
+import { CameraTrajectory, CameraTrajectoryData } from "../../elements/camera-trajectory";
+import { Vector3 } from "three";
 
 @Component({
   selector: 'app-pc-viewer',
@@ -56,6 +58,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
           this.addLineSet(p.source as CustomLine[], p.attributes, p.elementId);
           break;
         case SceneElementsEnum.CAMERA_TRAJECTORY:
+          this.addCameraTrajectory(p.source as CameraTrajectoryData, p.attributes, p.elementId);
           break;
         case SceneElementsEnum.DEFAULT_POINT_CLOUD:
           break;
@@ -65,13 +68,25 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
     });
   }
 
+  private addCameraTrajectory(trajectory: CameraTrajectoryData,
+                              attributes: ElementAttributes, elementId: number): void {
+    let cameraTrajectory = new CameraTrajectory(trajectory);
+    if (attributes.transformation) {
+      cameraTrajectory.applyMatrix4(attributes.transformation);
+    }
+
+    this.viewer.loadLineSet(cameraTrajectory);
+    this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, cameraTrajectory);
+  }
+
   private addLineSet(lines: CustomLine[], attributes: ElementAttributes, elementId: number): void {
-    let lineSet = new LineSet();
+    let set: [Vector3, Vector3][] = [];
     lines.forEach((line: CustomLine) => {
       let start = line.start;
       let end = line.end;
-      lineSet.addLine([start, end]);
+      set.push([start, end]);
     });
+    let lineSet = new LineSet(set, attributes.material?.color);
     if (attributes.transformation) {
       lineSet.applyMatrix4(attributes.transformation);
     }
