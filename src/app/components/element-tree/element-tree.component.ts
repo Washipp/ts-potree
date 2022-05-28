@@ -1,16 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { HelperFunctions } from "../utility/helper-functions";
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { SceneElementsService } from "../../services/scene-elements.service";
 import { SceneElement, ViewerData } from "../pc-viewer/pc-viewer.interfaces";
-
-export interface ElementTree {
-  potreePointClouds: SceneElement[];
-  defaultPointClouds: SceneElement[];
-  lineSets: SceneElement[];
-  cameraTrajectories: SceneElement[];
-  unknown: SceneElement[];
-}
+import { HelperFunctions } from "../utility/helper-functions";
 
 @Component({
   selector: 'app-element-tree',
@@ -19,9 +11,12 @@ export interface ElementTree {
 })
 export class ElementTreeComponent implements OnInit {
 
+  elem = SceneElementsEnum; // used in template as ENUM
   private _data: any;
+  private sceneId: number;
   @Input() set data(value: ViewerData) {
     this.getTree(value.sceneId, 0);
+    this.sceneId = value.sceneId;
     this._data = value;
   }
 
@@ -29,15 +24,32 @@ export class ElementTreeComponent implements OnInit {
     return this._data;
   }
 
-  tree: ElementTree | undefined;
-  enumEntriesMapping: Map<SceneElementsEnum, SceneElement[]>;
+  private selectedElement: [SceneElementsEnum, number];
+  elementData: any | undefined;
+
+  setSelectedElement(value: [SceneElementsEnum, number]) {
+    // Check if the correct settings are already loaded
+    if (this.selectedElement[0] === value[0] && this.selectedElement[1] === value[1]) return;
+
+    // if not load the new ones.
+    this.selectedElement = value;
+    this.elementData = {
+      sceneId: this.sceneId,
+      elementId: this.selectedElement[1],
+      elementType: this.selectedElement[0]
+    };
+  }
+
+
+  /**
+   * Per supported element we create a mapping.
+   */
+  tree: Map<SceneElementsEnum, SceneElement[]> | undefined;
 
 
   constructor(private sceneElementsService: SceneElementsService) {
-    this.enumEntriesMapping = new Map<SceneElementsEnum, SceneElement[]>();
-    for (const value of Object.values(SceneElementsEnum)) {
-      this.enumEntriesMapping.set(value, []);
-    }
+    this.sceneId = -1;
+    this.selectedElement = [SceneElementsEnum.UNKNOWN, -1];
   }
 
   ngOnInit(): void {
@@ -48,8 +60,8 @@ export class ElementTreeComponent implements OnInit {
     promise.then(() => {
         // Try to parse the elements for the scene to a tree.
         // If the data is not yet available, it returns undefined and we try again in 250ms.
-        this.tree = this.parseToElementTree(this.sceneElementsService.getSceneElements(sceneId));
-        if (this.tree === undefined && numberOfTries < this.sceneElementsService.maxTries) {
+        let parsed = this.parseToElementTree(this.sceneElementsService.getSceneElements(sceneId));
+        if (!parsed && numberOfTries < this.sceneElementsService.maxTries) {
           let a: any = {numberOfTries};
           a.numberOfTries++;
           this.getTree(sceneId, a);
@@ -58,50 +70,29 @@ export class ElementTreeComponent implements OnInit {
     );
   }
 
-
-  parseToEnum(type: string): SceneElementsEnum | undefined {
-    return HelperFunctions.enumFromStringValue(SceneElementsEnum, type);
-  }
-
   /**
    * Parse to different interface for easier displaying and handling
    *
    * @param elements SceneElements of a scene.
    */
-  private parseToElementTree(elements: SceneElement[]): ElementTree | undefined {
-    if (elements === undefined) return undefined;
-    let t: ElementTree = {
-      potreePointClouds: [],
-      defaultPointClouds: [],
-      lineSets: [],
-      cameraTrajectories: [],
-      unknown: [],
-    };
+  private parseToElementTree(elements: SceneElement[]): boolean {
+    if (elements === undefined) return false;
+
+    this.tree = new Map<SceneElementsEnum, SceneElement[]>();
+    for (const value of Object.values(SceneElementsEnum)) {
+      this.tree.set(value, []);
+    }
 
     elements.forEach((elem: SceneElement) => {
-      if (this.enumEntriesMapping.has(elem.sceneType)) {
-        this.enumEntriesMapping.get(elem.sceneType)?.push(elem);
-      }
-
-      switch (this.parseToEnum(elem.sceneType)) {
-        case SceneElementsEnum.POTREE_POINT_CLOUD:
-          t.potreePointClouds?.push(elem);
-          break;
-        case SceneElementsEnum.DEFAULT_POINT_CLOUD:
-          t.defaultPointClouds?.push(elem);
-          break;
-        case SceneElementsEnum.LINE_SET:
-          t.lineSets?.push(elem);
-          break;
-        case SceneElementsEnum.CAMERA_TRAJECTORY:
-          t.cameraTrajectories?.push(elem);
-          break;
-        default:
-          t.unknown?.push(elem);
-          break;
+      if (this.tree?.has(elem.sceneType)) {
+        this.tree?.get(elem.sceneType)?.push(elem);
       }
     });
-    return t;
+    return true;
+  }
+
+  parseToEnum(type: string): SceneElementsEnum | undefined {
+    return HelperFunctions.enumFromStringValue(SceneElementsEnum, type);
   }
 
 }

@@ -71,7 +71,7 @@ export class SceneElementsService {
   }
 
   sendCameraUpdate(state: CameraState, id: number): Observable<boolean> {
-    return this.http.post<any>(this.baseUrl + 'camera_state/' + id, {state: JSON.stringify(state)}).pipe(
+    return this.http.post<any>(this.baseUrl + 'camera_state/' + id, {state: (state)}).pipe(
       map(ans => {
         return ans;
       })

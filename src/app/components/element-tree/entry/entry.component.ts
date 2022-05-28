@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { SceneElement } from "../../pc-viewer/pc-viewer.interfaces";
 import { PointCloudOctree } from "@pnext/three-loader";
 import { LineSet } from "../../../elements/line-set";
@@ -13,21 +13,22 @@ import { CameraTrajectory } from "../../../elements/camera-trajectory";
 })
 export class EntryComponent implements OnInit {
 
-  @Input() title: string;
+  @Input() title: SceneElementsEnum;
+  @Output() selectedElementEvent = new EventEmitter<[SceneElementsEnum, number]>();
 
   @Input() elements: SceneElement[];
   visible: boolean = true;
 
   constructor() {
     this.elements = [];
-    this.title = "";
+    this.title = SceneElementsEnum.UNKNOWN;
   }
 
   ngOnInit(): void {
   }
 
-  test(id: number) {
-    console.log("Clicked on element with Id: " + id);
+  loadElementSettings(id: number) {
+    this.selectedElementEvent.emit([this.title, id]);
   }
 
   setAllSceneElementsVisibility(visible: boolean): void {

@@ -6,11 +6,6 @@
   margin: 0;
 }
 
-.checkbox-blue[type="checkbox"].filled-in:checked + span:not(.lever)::after {
-  border: 2px solid var(--color-secondary-1-1);
-  background-color: var(--color-secondary-1-1);
-}
-
 .single-element {
   padding: 5px;
 }

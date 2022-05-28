@@ -3,4 +3,5 @@ export enum SceneElementsEnum {
   DEFAULT_POINT_CLOUD = "default_point_cloud",
   LINE_SET = "line_set",
   CAMERA_TRAJECTORY = "camera_trajectory",
+  UNKNOWN = "unknown",
 }

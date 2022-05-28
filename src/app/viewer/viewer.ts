@@ -60,7 +60,7 @@ export class Viewer {
 
     // camera position is at (0,0,0) same as orbit controls, so we need to change it slightly.
     this.camera.position.z = 60
-    this.camera.position.y = -10
+    this.camera.position.y = 10
 
     this.cameraControls.enableZoom = true;
     this.cameraControls.enableRotate = true;
@@ -161,8 +161,12 @@ export class Viewer {
   /**
    * Change the background to a new color.
    */
-  changeBackground(): void {
-    this.scene.background = new Color('#003631');
+  changeBackground(color: string): void {
+    this.scene.background = new Color(color);
+  }
+
+  setPointBudget(value: number): void {
+    this.potree.pointBudget = value;
   }
 
   /**

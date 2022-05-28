@@ -1,11 +1,11 @@
 <label>
   <input type="checkbox" [(ngModel)]="visible" (change)="setAllSceneElementsVisibility(visible)"
          class="filled-in checkbox-blue"/>
-  <span>{{ title }}</span>
+  <span>{{ title | enumToReadableString }}</span>
 </label>
 <div class="element-list">
   <ul *ngFor="let pc of elements">
-    <li class="single-element" (click)="test(pc.elementId)">
+    <li class="single-element" (click)="loadElementSettings(pc.elementId)">
       <label>
         <input type="checkbox" (click)="setSceneElementVisibility(pc.elementId, !getVisibility(pc.elementId))"
                [checked]="getVisibility(pc.elementId)"

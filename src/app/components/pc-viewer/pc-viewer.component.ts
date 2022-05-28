@@ -74,7 +74,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
     if (attributes.transformation) {
       cameraTrajectory.applyMatrix4(attributes.transformation);
     }
-
+    cameraTrajectory.name = attributes.name;
     this.viewer.loadLineSet(cameraTrajectory);
     this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, cameraTrajectory);
   }

@@ -7,7 +7,6 @@ export enum Components {
   COL = "col",
   VIEWER = "viewer",
   BUTTON = "button",
-  ELEMENT_SETTINGS = "element_settings",
   GENERAL_SETTINGS = "general_settings",
   ELEMENT_TREE = "element_tree",
 }

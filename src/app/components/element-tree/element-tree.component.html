@@ -1,31 +1,18 @@
 <div class="title-divider"><span>Element Tree</span></div>
 <div *ngIf="tree">
-  <div class="potree-point-clouds element-tree-element">
-    <div>
-      <app-entry [title]="'Potree Point Clouds'" [elements]="tree.potreePointClouds"></app-entry>
+  <div *ngFor="let item of tree | keyvalue">
+    <div class="potree-point-clouds element-tree-element">
+      <div>
+        <app-entry [title]="item.key" [elements]="item.value"
+                   (selectedElementEvent)="setSelectedElement($event)"></app-entry>
+      </div>
     </div>
   </div>
-  <div class="default-point-clouds element-tree-element">
-    <div>
-      <app-entry [title]="'Default Point Clouds'" [elements]="tree.defaultPointClouds"></app-entry>
-    </div>
+  <!-- Settings per element -->
+  <div *ngIf="elementData" [ngSwitch]="parseToEnum(elementData.elementType)">
+    <app-pco-settings *ngSwitchCase="elem.POTREE_POINT_CLOUD" [data]="elementData"></app-pco-settings>
+    <app-camera-trajectory-settings *ngSwitchCase="elem.CAMERA_TRAJECTORY" [data]="elementData"></app-camera-trajectory-settings>
+    <div *ngSwitchDefault>No settings found for {{ parseToEnum(elementData.elementType) }}</div>
   </div>
-  <div class="line-sets element-tree-element">
-    <div>
-      <app-entry [title]="'Line Sets'" [elements]="tree.lineSets"></app-entry>
-    </div>
-  </div>
-  <div class="camera-trajectory element-tree-element">
-    <div>
-      <app-entry [title]="'Camera Trajectories'" [elements]="tree.cameraTrajectories"></app-entry>
-    </div>
-  </div>
-  <div class="unknown-element element-tree-element">
-    <div>
-      <app-entry [title]="'Others'" [elements]="tree.unknown"></app-entry>
-    </div>
-  </div>
-  <hr>
-
 
 </div>

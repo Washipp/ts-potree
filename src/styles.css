@@ -87,3 +87,8 @@ html {
   left: 100%;
   margin-left: 5px;
 }
+
+.checkbox-blue[type="checkbox"].filled-in:checked + span:not(.lever)::after {
+  border: 2px solid var(--color-secondary-1-1);
+  background-color: var(--color-secondary-1-1);
+}
