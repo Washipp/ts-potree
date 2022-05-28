@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PcSettingsComponent } from './pc-settings.component';
+import { PcoSettingsComponent } from './pco-settings.component';
 
 describe('PcSettingsComponent', () => {
-  let component: PcSettingsComponent;
-  let fixture: ComponentFixture<PcSettingsComponent>;
+  let component: PcoSettingsComponent;
+  let fixture: ComponentFixture<PcoSettingsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PcSettingsComponent ]
+      declarations: [ PcoSettingsComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PcSettingsComponent);
+    fixture = TestBed.createComponent(PcoSettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

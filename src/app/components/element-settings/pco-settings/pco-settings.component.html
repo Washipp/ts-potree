@@ -1,11 +1,17 @@
 <div *ngIf="pco">
-  <h5>{{ pco.name }}</h5>
+  <div class="title-divider"><span>Element Settings</span></div>
+  <div class="row">
+    <div class="col s4 description"><label>Name:</label></div>
+    <div class="col s8">
+      {{ pco.name }}
+    </div>
+  </div>
   <!-- https://www.npmjs.com/package/ngx-color-picker -->
   <div class="row pc-color-picker">
     <div class="col s4 description"><label for="pc-color-picker-{{ pco.name }}"> Select Color:</label></div>
     <div class="col s8"><input id="pc-color-picker-{{ pco.name }}" [(colorPicker)]="settings.color"
-                               [style.background]="settings.color"
-                               (colorPickerChange)="setColor()"/></div>
+                               [style.background]="settings.color" (colorPickerChange)="setColor()"/>
+    </div>
   </div>
   <div class="row">
     <div class="col s4 description"><label>Reset Color:</label></div>
@@ -28,13 +34,12 @@
     <div class="col s8">
       <label>
         <input type="checkbox" (change)="setBoundingBox($event)"
-               class="filled-in"/>
+               class="checkbox-blue filled-in"/>
         <span>Show/Hide</span>
       </label>
     </div>
   </div>
-  <hr>
 </div>
 <div>
-  <app-loading [active]="pco===undefined"></app-loading>
+  <app-loading [active]="!pco"></app-loading>
 </div>

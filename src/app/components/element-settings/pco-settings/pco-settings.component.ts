@@ -1,21 +1,20 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { PointCloudOctree, PointColorType } from "@pnext/three-loader";
 import { Color } from "three";
-import { SceneElementsService } from "../../services/scene-elements.service";
+import { SceneElementsService } from "../../../services/scene-elements.service";
 
 export interface PcSettings {
   color: string;
-  isVisible: boolean;
   colorType: PointColorType;
   pointSize: number;
 }
 
 @Component({
-  selector: 'app-pc-settings',
-  templateUrl: './pc-settings.component.html',
-  styleUrls: ['./pc-settings.component.css']
+  selector: 'app-pco-settings',
+  templateUrl: './pco-settings.component.html',
+  styleUrls: ['./pco-settings.component.css', '../element-settings.css']
 })
-export class PcSettingsComponent implements OnInit {
+export class PcoSettingsComponent implements OnInit {
 
   options: any = {
     min: 1,
@@ -27,7 +26,8 @@ export class PcSettingsComponent implements OnInit {
 
   private _data: any | undefined;
   @Input() set data(value: any) {
-    this.getPco(value.sceneId, value.elementId, 0);
+    this.pco = undefined;
+    this.loadPCO(value.sceneId, value.elementId, 0);
     this._data = value;
   }
 
@@ -38,7 +38,6 @@ export class PcSettingsComponent implements OnInit {
   constructor(private sceneElementsService: SceneElementsService) {
     this.settings = {
       color: "#000000",
-      isVisible: true,
       colorType: PointColorType.RGB,
       pointSize: 2,
     }
@@ -51,7 +50,7 @@ export class PcSettingsComponent implements OnInit {
    * @param elementId The element that is targeted by the settings.
    * @param numberOfTries Current try number.
    */
-  getPco(sceneId: number, elementId: number, numberOfTries: number) {
+  private loadPCO(sceneId: number, elementId: number, numberOfTries: number) {
     let promise = new Promise(resolve => setTimeout(resolve, 250));
     promise.then(() => {
         this.pco = this.sceneElementsService.getSceneElement(sceneId, elementId) as PointCloudOctree;
@@ -60,7 +59,7 @@ export class PcSettingsComponent implements OnInit {
           // TODO: maybe use a better solution
           let a: any = {numberOfTries};
           a.numberOfTries++;
-          this.getPco(sceneId, elementId, a);
+          this.loadPCO(sceneId, elementId, a);
         }
       }
     );
