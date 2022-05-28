@@ -5,18 +5,25 @@ import { Viewer } from "../../viewer/viewer";
 @Component({
   selector: 'app-general-settings',
   templateUrl: './general-settings.component.html',
-  styleUrls: ['./general-settings.component.css']
+  styleUrls: ['./general-settings.component.css', '../element-settings/element-settings.css']
 })
 export class GeneralSettingsComponent implements OnInit {
 
+  options: any = {
+    min: 100_000,
+    max: 20_000_000
+  };
+
+  pointBudget: number = 1000_000;
   sceneId: number = -1;
   showBoundingBox: boolean = false;
-  private maxTries: number = 10;
   viewer: Viewer | undefined;
+  backgroundColor: string = '#000000';
 
   private _data: Viewer | undefined;
   @Input() set data(value: any) {
-    this.getViewer(value.sceneId, 0);
+    this.sceneId = value.sceneId;
+    this.loadViewer(value.sceneId, 0);
     this._data = value;
   }
 
@@ -25,37 +32,43 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   /**
-   * Check every 250ms if the data/pcos are available.
+   * Check every 250ms if the viewer is available.
    *
    * @param sceneId Scene which holds elements.
    * @param numberOfTries Current try number.
    */
-  getViewer(sceneId: number, numberOfTries: number) {
+  loadViewer(sceneId: number, numberOfTries: number) {
     let promise = new Promise(resolve => setTimeout(resolve, 250));
     promise.then(() => {
         this.viewer = this.sceneElementsService.getPcViewer(sceneId);
-        if (this.viewer === undefined && numberOfTries < this.maxTries) {
-          this.getViewer(sceneId, numberOfTries++);
+        if (this.viewer === undefined && numberOfTries < this.sceneElementsService.maxTries) {
+          this.loadViewer(sceneId, numberOfTries++);
         }
-      }
-    );
+    });
   }
 
 
   constructor(private sceneElementsService: SceneElementsService) {
-
   }
 
   ngOnInit(): void {
   }
 
-  unload(): void {
+  start() {
+  }
 
+  unload(): void {
+  }
+
+  onPointBudgetChange(): void {
+    if (this.viewer) {
+      this.viewer.setPointBudget(this.pointBudget);
+    }
   }
 
   changeBackground(): void {
     if (this.viewer) {
-      this.viewer?.changeBackground()
+      this.viewer.changeBackground(this.backgroundColor);
     }
   }
 
@@ -66,8 +79,5 @@ export class GeneralSettingsComponent implements OnInit {
     }
   }
 
-  start() {
-
-  }
 
 }

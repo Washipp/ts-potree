@@ -1,12 +1,27 @@
 <div class="title-divider"><span>Scene Settings</span></div>
+<div *ngIf="viewer">
+  <div class="row">
+    <div class="col s4 description"><label for="background-color">Scene Id:</label></div>
+    <div class="col s8">
+      {{ sceneId }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s4 description"><label for="background-color"> Select Color:</label></div>
+    <div class="col s8"><input id="background-color" [(colorPicker)]="backgroundColor"
+                               [style.background]="backgroundColor" (colorPickerChange)="changeBackground()"/>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s4 description"><label>Point Budget ({{pointBudget }}):</label></div>
+    <div class="col s8">
+      <p class="range-field">
+        <input type="range" min="{{options.min}}" max="{{options.max}}" [value]="pointBudget"
+               [(ngModel)]="pointBudget" (ngModelChange)="onPointBudgetChange()"/>
+      </p>
+    </div>
+  </div>
+</div>
 <div>
-  <a class="waves-effect btn-small" (click)="start()">Load Data</a>
-  <a class="waves-effect btn-small" (click)="unload()">Unload</a>
-  <p></p>
-  <a class="waves-effect btn-small" (click)="changeBackground()">Change Background</a>
-  <p></p>
-  <label>
-    <input type="checkbox" [(ngModel)]="showBoundingBox" (click)="setBoundingBox()" class="filled-in"/>
-    <span>Show Bounding Box</span>
-  </label>
+  <app-loading [active]="!viewer"></app-loading>
 </div>
