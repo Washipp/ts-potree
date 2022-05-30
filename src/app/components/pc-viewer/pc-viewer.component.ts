@@ -52,7 +52,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
     pcs.map((p: SceneElement) => {
       switch (p.sceneType) {
         case SceneElementsEnum.POTREE_POINT_CLOUD:
-          this.addPointCloud(this.viewer.loadPotreePCO("cloud.js", p.source as string), p.attributes, p.elementId);
+          this.addPointCloud(p.source as string, p.attributes, p.elementId);
           break;
         case SceneElementsEnum.LINE_SET:
           this.addLineSet(p.source as CustomLine[], p.attributes, p.elementId);
@@ -61,15 +61,34 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
           this.addCameraTrajectory(p.source as CameraTrajectoryData, p.attributes, p.elementId);
           break;
         case SceneElementsEnum.DEFAULT_POINT_CLOUD:
+          this.addDefaultPointCloud(p.source as string, p.attributes, p.elementId);
           break;
         default:
+          // TODO: Parse to object3D? Or create error?
           break;
       }
     });
   }
 
+  private addDefaultPointCloud(url: string, attributes: ElementAttributes, elementId: number): void {
+    this.viewer.loadDefaultPC(url).then(pc => {
+      if (attributes.transformation) {
+        pc.applyMatrix4(attributes.transformation);
+      }
+      pc.name = attributes.name;
+      pc.scale.set(10,10,10);
+      pc.rotateX(-Math.PI);
+      pc.translateX(10);
+
+
+      this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, pc);
+    });
+
+  }
+
   private addCameraTrajectory(trajectory: CameraTrajectoryData,
-                              attributes: ElementAttributes, elementId: number): void {
+                              attributes: ElementAttributes,
+                              elementId: number): void {
     let cameraTrajectory = new CameraTrajectory(trajectory);
     if (attributes.transformation) {
       cameraTrajectory.applyMatrix4(attributes.transformation);
@@ -94,8 +113,8 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
     this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, lineSet);
   }
 
-  private addPointCloud(promise: Promise<PointCloudOctree>, attributes: ElementAttributes, elementId: number): void {
-    promise.then(pco => {
+  private addPointCloud(url: string, attributes: ElementAttributes, elementId: number): void {
+    this.viewer.loadPotreePCO("cloud.js", url).then(pco => {
       this.applyAttributes(pco, attributes);
       if (attributes.transformation) {
         pco.applyMatrix4(attributes.transformation);

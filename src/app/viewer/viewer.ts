@@ -1,7 +1,7 @@
 import {
   Color,
   Euler,
-  PerspectiveCamera,
+  PerspectiveCamera, Points, PointsMaterial, Ray,
   Scene,
   Vector3,
   WebGLRenderer
@@ -10,6 +10,7 @@ import { PointCloudOctree, Potree } from '@pnext/three-loader';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { SceneElementsService } from "../services/scene-elements.service";
 import { LineSet } from "../elements/line-set";
+import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader";
 
 export interface CameraState {
   position: Vector3,
@@ -61,6 +62,7 @@ export class Viewer {
     // camera position is at (0,0,0) same as orbit controls, so we need to change it slightly.
     this.camera.position.z = 60
     this.camera.position.y = 10
+    //TODO: set camera.far to some value?
 
     this.cameraControls.enableZoom = true;
     this.cameraControls.enableRotate = true;
@@ -115,6 +117,10 @@ export class Viewer {
       });
   }
 
+  /**
+   * Add a line-set to the scene by adding each line separately.
+   * @param lineSet Line-set to add
+   */
   loadLineSet(lineSet: LineSet): void {
     lineSet.lines.forEach(line => {
       this.scene.add(line);
@@ -122,11 +128,25 @@ export class Viewer {
   }
 
   /**
+   * Loads a default point cloud recursively (.ply) and returns it.
+   * @param url Url to download it from.
+   */
+  loadDefaultPC(url: string): Promise<Points> {
+    let loader = new PLYLoader();
+    // TODO: add onProgress function.
+    return loader.loadAsync(url).then(pc => {
+      let points = new Points(pc, new PointsMaterial({ vertexColors: true }));
+      this.scene.add(points);
+      return points;
+    });
+
+  }
+
+  /**
    * Updates the point clouds, cameras or any other objects which are in the scene.
    */
   update(): void {
     this.cameraControls.update();
-    this.handleCameraState();
     this.potree.updatePointClouds(this.pointClouds, this.camera, this.renderer);
   }
 
@@ -145,6 +165,8 @@ export class Viewer {
     this.reqAnimationFrameHandle = requestAnimationFrame(this.loop);
     this.update();
     this.render();
+    // this.handleCameraState();
+    // this.pollUpdate(time);
   };
 
   /**
@@ -165,6 +187,10 @@ export class Viewer {
     this.scene.background = new Color(color);
   }
 
+  /**
+   * Sets the point budget of the selected scene.
+   * @param value New point budget value.
+   */
   setPointBudget(value: number): void {
     this.potree.pointBudget = value;
   }
@@ -177,6 +203,56 @@ export class Viewer {
   setBoundingBox(value: boolean): void {
     this.pointClouds.forEach(pco => {
       pco.showBoundingBox = value;
+    });
+  }
+
+  /**
+   * Set camera fov to the given value.
+   * @param fov new FOV value
+   */
+  setCameraFOV(fov: number): void {
+    this.camera.fov = fov;
+  }
+
+  pickPointTest(): void {
+    let pc: PointCloudOctree;
+    if  (this.pointClouds.length > 0) {
+      pc = this.pointClouds[0];
+    } else {
+      return;
+    }
+    let ray = new Ray();
+
+    let a = pc.pick(this.renderer, this.camera, ray);
+    console.log(a);
+    // if (a) {
+      // let b = a.pointCloud;
+      // if (b) {
+      //   b.position.set(-15, -15, -15);
+      //   b.scale.set(10, 10, 10);
+      //   this.scene.add(b);
+      // }
+    // }
+
+  }
+
+  pollUpdate(time: number): void {
+    if (time % 1000 > 20) return;
+    this.sceneElementsService.getCameraUpdate(0, Date.now()).subscribe((data) => {
+      if (data as unknown  === 'No new update') {
+        return;
+      } else {
+        data = ((data as any).state) as CameraState;
+        let newState: CameraState = {
+          position: new Vector3(data.position.x, data.position.y, data.position.z),
+          rotation: new Euler(data.rotation.x, data.rotation.y, data.rotation.z),
+          fov: data.fov,
+          far: data.far,
+          near: data.near,
+          lastUpdate: data.lastUpdate
+        }
+        this.setCameraState(newState);
+      }
     });
   }
 
@@ -211,8 +287,10 @@ export class Viewer {
     if (!same && updatedNeeded) {
       console.log("UPDATING CAMERA");
       this.currentCameraState = newState;
-      // this.sceneElementsService.sendCameraUpdate(this.currentCameraState, 0)
-      //   .subscribe((ans) => console.log(ans));
+      this.sceneElementsService.sendCameraUpdate(this.currentCameraState, 0)
+        .subscribe((ans) => {
+          console.log(ans);
+        });
     }
   }
 

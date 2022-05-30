@@ -64,17 +64,18 @@ export class SceneElementsService {
 
   /**  Calls to the server  **/
 
-  getCameraUpdate(id: number): Observable<CameraState> {
-    return this.http.get<CameraState>(this.baseUrl + 'camera_state/' + id).pipe(
+  getCameraUpdate(id: number, timeStamp: number): Observable<CameraState> {
+    return this.http.get<CameraState>(this.baseUrl + 'camera_state/' + id + '/' + timeStamp).pipe(
       catchError(this.handleError)
     );
   }
 
-  sendCameraUpdate(state: CameraState, id: number): Observable<boolean> {
+  sendCameraUpdate(state: CameraState, id: number): Observable<any> {
     return this.http.post<any>(this.baseUrl + 'camera_state/' + id, {state: (state)}).pipe(
       map(ans => {
         return ans;
-      })
+      }),
+      catchError(this.handleError)
     );
   }
 
@@ -93,8 +94,8 @@ export class SceneElementsService {
     } else {
       // The backend returned an unsuccessful response code.
       // The response body may contain clues as to what went wrong.
-      console.error(
-        `Backend returned code ${error.status}, body was: `, error.error);
+      console.error(`Backend returned code ${error.status}, body was: `, error.error);
+      console.error(error);
     }
     return throwError(() => new Error('Something bad happened; please try again later.'));
   }

@@ -9,12 +9,19 @@ import { Viewer } from "../../viewer/viewer";
 })
 export class GeneralSettingsComponent implements OnInit {
 
-  options: any = {
+  pointBudgetOptions: any = {
     min: 100_000,
-    max: 20_000_000
+    max: 20_000_000,
+    step: 10_000
   };
+  fovOptions: any = {
+    min: 45,
+    max: 120,
+    step: 5
+  }
 
   pointBudget: number = 1000_000;
+  fov: number = 60;
   sceneId: number = -1;
   showBoundingBox: boolean = false;
   viewer: Viewer | undefined;
@@ -72,12 +79,16 @@ export class GeneralSettingsComponent implements OnInit {
     }
   }
 
-  setBoundingBox(): void {
-    this.showBoundingBox = !this.showBoundingBox;
+  onFovChange(): void {
     if (this.viewer) {
-      this.viewer.setBoundingBox(this.showBoundingBox);
+      this.viewer.setCameraFOV(this.fov);
     }
   }
 
+  pickerTest(): void {
+    if (this.viewer) {
+      this.viewer.pickPointTest();
+    }
+  }
 
 }

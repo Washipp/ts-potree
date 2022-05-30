@@ -5,6 +5,7 @@ import { LineSet } from "../../../elements/line-set";
 import { SceneElementsEnum } from "../../../viewer/scene-elements.enum";
 import { HelperFunctions } from "../../utility/helper-functions";
 import { CameraTrajectory } from "../../../elements/camera-trajectory";
+import { Points } from "three";
 
 @Component({
   selector: 'app-entry',
@@ -46,6 +47,8 @@ export class EntryComponent implements OnInit {
         pco.visible = visible;
         break;
       case SceneElementsEnum.DEFAULT_POINT_CLOUD:
+        let pc = elem.element as Points;
+        pc.visible = visible;
         break;
       case SceneElementsEnum.LINE_SET:
         let lineSet = elem.element as LineSet

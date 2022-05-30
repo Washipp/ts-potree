@@ -18,6 +18,7 @@ import { ElementTreeComponent } from './components/element-tree/element-tree.com
 import { EntryComponent } from './components/element-tree/entry/entry.component';
 import { EnumToReadableString } from "./components/utility/pipes/enum-to-readable-string";
 import { CameraTrajectorySettingsComponent } from './components/element-settings/camera-trajectory-settings/camera-trajectory-settings.component';
+import { DefaultPcSettingsComponent } from './components/element-settings/default-pc-settings/default-pc-settings.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { CameraTrajectorySettingsComponent } from './components/element-settings
     ElementTreeComponent,
     EntryComponent,
     EnumToReadableString,
-    CameraTrajectorySettingsComponent
+    CameraTrajectorySettingsComponent,
+    DefaultPcSettingsComponent
   ],
   imports: [
     BrowserModule,
