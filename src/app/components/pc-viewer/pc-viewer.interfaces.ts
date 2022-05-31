@@ -1,6 +1,6 @@
 import { Matrix4, Object3D, Vector3 } from "three";
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
-import { Viewer } from "../../viewer/viewer";
+import { CameraState, Viewer } from "../../viewer/viewer";
 import { CameraTrajectoryData } from "../../elements/camera-trajectory";
 
 export interface CustomLine {
@@ -11,6 +11,7 @@ export interface CustomLine {
 export interface ElementAttributes {
   name: string,
   material?: any,
+  imageUrl?: string,
   position?: Vector3, // TODO: remove position and scale.
   scale?: Vector3,
   transformation?: Matrix4,
@@ -28,5 +29,6 @@ export interface SceneElement {
 export interface ViewerData {
   sceneId: number,
   elements: SceneElement[],
+  camera?: CameraState,
   viewer?: Viewer;
 }

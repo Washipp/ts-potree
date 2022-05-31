@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
-import { Viewer } from "../../viewer/viewer";
+import { CameraState, Viewer } from "../../viewer/viewer";
 import { PointCloudOctree } from "@pnext/three-loader";
 import { SceneElementsService } from "../../services/scene-elements.service";
 import { CustomLine, ElementAttributes, SceneElement, ViewerData } from "./pc-viewer.interfaces";
@@ -39,13 +39,17 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
       this.viewer.initialize(this.target.nativeElement);
       console.log("Initialize Viewer");
     } else {
-      console.log("Target element not found");
+      console.error("Target element not found");
       return;
     }
 
     // Add the data reference for other components
     this.data.viewer = this.viewer;
     this.sceneElementsService.addViewerData(this.data);
+
+    if (this.data.camera) {
+      this.viewer.setCameraState(this.data.camera as CameraState);
+    }
 
     let pcs = this.data.elements;
 
@@ -89,12 +93,12 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
   private addCameraTrajectory(trajectory: CameraTrajectoryData,
                               attributes: ElementAttributes,
                               elementId: number): void {
-    let cameraTrajectory = new CameraTrajectory(trajectory);
+    let cameraTrajectory = new CameraTrajectory(trajectory, attributes.imageUrl);
     if (attributes.transformation) {
       cameraTrajectory.applyMatrix4(attributes.transformation);
     }
     cameraTrajectory.name = attributes.name;
-    this.viewer.loadLineSet(cameraTrajectory);
+    this.viewer.loadCameraTrajectory(cameraTrajectory);
     this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, cameraTrajectory);
   }
 
@@ -105,7 +109,10 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
       let end = line.end;
       set.push([start, end]);
     });
-    let lineSet = new LineSet(set, attributes.material?.color);
+    let lineSet = new LineSet(set);
+    if (attributes.material?.color) {
+      lineSet.setColor(attributes.material.color);
+    }
     if (attributes.transformation) {
       lineSet.applyMatrix4(attributes.transformation);
     }
