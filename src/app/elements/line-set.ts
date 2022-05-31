@@ -1,20 +1,14 @@
-import { BufferGeometry, Color, ColorRepresentation, Line, LineBasicMaterial, Matrix4, Object3D, Vector3 } from "three";
+import { BufferGeometry, Line, LineBasicMaterial, Matrix4, Object3D, Vector3 } from "three";
+import { ElementSetting } from "../components/element-settings/element-setting";
 
-export class LineSet extends Object3D {
+export class LineSet extends Object3D implements ElementSetting {
 
   lines: Line[];
-  color: Color;
   material = new LineBasicMaterial();
 
-  constructor(points?: [Vector3, Vector3][], color?: string) {
+  constructor(points?: [Vector3, Vector3][]) {
     super();
     this.lines = [];
-    if (color) {
-      this.color = new Color(color as ColorRepresentation);
-    } else {
-      this.color = new Color(0xff0000); // default color is red
-    }
-    this.material.color = this.color;
     if (points) {
       points.forEach(p => {
         this.addLine(p);
@@ -38,5 +32,9 @@ export class LineSet extends Object3D {
     this.lines.forEach(line => {
       line.visible = visible;
     });
+  }
+
+  setColor(color: string): void {
+    this.material.color.set(color);
   }
 }

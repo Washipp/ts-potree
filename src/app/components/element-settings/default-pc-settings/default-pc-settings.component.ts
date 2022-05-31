@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { PointColorType } from "@pnext/three-loader";
-import { Points, PointsMaterial } from "three";
 import { SceneElementsService } from "../../../services/scene-elements.service";
 import { PcSettings } from "../pco-settings/pco-settings.component";
+import { DefaultPointCloud } from "../../../elements/default-point-cloud";
 
 @Component({
   selector: 'app-default-pc-settings',
@@ -17,9 +17,7 @@ export class DefaultPcSettingsComponent implements OnInit {
   };
 
   settings: PcSettings;
-  pc: Points | undefined;
-  colorMaterial: PointsMaterial = new PointsMaterial();
-  defaultMaterial: PointsMaterial = new PointsMaterial({ vertexColors: true });
+  pc: DefaultPointCloud | undefined;
 
   private _data: any | undefined;
   @Input() set data(value: any) {
@@ -50,17 +48,13 @@ export class DefaultPcSettingsComponent implements OnInit {
   private loadPC(sceneId: number, elementId: number, numberOfTries: number) {
     let promise = new Promise(resolve => setTimeout(resolve, 250));
     promise.then(() => {
-        this.pc = this.sceneElementsService.getSceneElement(sceneId, elementId) as Points;
+        this.pc = this.sceneElementsService.getSceneElement(sceneId, elementId) as DefaultPointCloud;
         if (this.pc === undefined && numberOfTries < this.sceneElementsService.maxTries) {
           // To copy the value and not the reference
           // TODO: maybe use a better solution
           let a: any = {numberOfTries};
           a.numberOfTries++;
           this.loadPC(sceneId, elementId, a);
-        } else {
-          let mat = this.pc.material as PointsMaterial;
-          this.settings.color = '#' + mat.color.getHexString();
-          this.settings.pointSize = mat.size;
         }
       }
     );
@@ -70,25 +64,15 @@ export class DefaultPcSettingsComponent implements OnInit {
   }
 
   setPointSize(): void {
-    if (this.pc) {
-      let mat = this.pc.material as PointsMaterial;
-      mat.size = this.settings.pointSize;
-    }
+    this.pc?.setPointSize(this.settings.pointSize);
   }
 
   setColor(): void {
-    if (this.pc) {
-      this.colorMaterial.color.set(this.settings.color);
-      this.pc.material = this.colorMaterial;
-      // (this.pc.material as PointsMaterial).color.set(this.settings.color);
-    }
+    this.pc?.setColor(this.settings.color);
   }
 
   resetColor(): void {
-    if (this.pc) {
-      this.pc.material = this.defaultMaterial
-      // this.pc.material = new PointsMaterial( {vertexColors: true });
-    }
+    this.pc?.resetColor();
   }
 
 }

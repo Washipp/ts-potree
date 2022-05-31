@@ -50,6 +50,8 @@ export class GeneralSettingsComponent implements OnInit {
         this.viewer = this.sceneElementsService.getPcViewer(sceneId);
         if (this.viewer === undefined && numberOfTries < this.sceneElementsService.maxTries) {
           this.loadViewer(sceneId, numberOfTries++);
+        } else {
+          this.fov = this.viewer ? this.viewer.camera.fov : this.fov;
         }
     });
   }

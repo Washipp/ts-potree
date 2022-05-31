@@ -1,5 +1,14 @@
 import { LineSet } from "./line-set";
-import { Vector3 } from "three";
+import {
+  DoubleSide,
+  Mesh,
+  MeshBasicMaterial,
+  Object3D,
+  PlaneGeometry,
+  TextureLoader,
+  Vector3
+} from "three";
+import { ElementSetting } from "../components/element-settings/element-setting";
 
 
 /**
@@ -19,43 +28,66 @@ export interface CameraTrajectoryData {
   y4: Vector3;
 }
 
-export class CameraTrajectory extends LineSet {
+export class CameraTrajectory extends Object3D implements ElementSetting {
+
+  lineSet: LineSet;
 
   points: CameraTrajectoryData;
   private size: number = 1;
+  mesh: Mesh;
+  private imageUrl: string;
 
-  constructor(data: CameraTrajectoryData) {
+  constructor(data: CameraTrajectoryData, imageUrl: string | undefined) {
     super();
     // Vectors need to be explicitly instantiated to make use of built-in functions.
     // https://stackoverflow.com/questions/51763745/angular-6-error-typeerror-is-not-a-function-but-it-is
     this.points =
-    {
-      x: new Vector3(data.x.x, data.x.y, data.x.z),
-      y1: new Vector3(data.y1.x, data.y1.y, data.y1.z),
-      y2: new Vector3(data.y2.x, data.y2.y, data.y2.z),
-      y3: new Vector3(data.y3.x, data.y3.y, data.y3.z),
-      y4: new Vector3(data.y4.x, data.y4.y, data.y4.z),
-    };
-    this.lines = this.pointsToLineSet().lines;
+      {
+        x: new Vector3(data.x.x, data.x.y, data.x.z),
+        y1: new Vector3(data.y1.x, data.y1.y, data.y1.z),
+        y2: new Vector3(data.y2.x, data.y2.y, data.y2.z),
+        y3: new Vector3(data.y3.x, data.y3.y, data.y3.z),
+        y4: new Vector3(data.y4.x, data.y4.y, data.y4.z),
+      };
+    this.lineSet = this.pointsToLineSet();
+    this.imageUrl = imageUrl ? imageUrl : '';
+    this.mesh = this.createMesh();
+  }
+
+  setColor(color: string): void {
+    this.lineSet.setColor(color);
+  }
+
+  setVisibility(visible: boolean): void {
+    this.lineSet.setVisibility(visible);
+    this.mesh.visible = visible;
   }
 
   setSize(size: number): void {
-    let newSize = size/this.size;
-    this.lines.forEach(line => {
+    let newSize = size / this.size;
+    this.lineSet.lines.forEach(line => {
+      //TODO combine these three operations into one.
       line.geometry.translate(-this.points.x.x, -this.points.x.y, -this.points.x.z);
       line.geometry.scale(newSize, newSize, newSize);
       line.geometry.translate(this.points.x.x, this.points.x.y, this.points.x.z);
     });
     this.size = size;
+    this.mesh.geometry.translate(-this.points.x.x, -this.points.x.y, -this.points.x.z);
+    this.mesh.geometry.scale(newSize, newSize, newSize);
+    this.mesh.geometry.translate(this.points.x.x, this.points.x.y, this.points.x.z);
   }
 
-
-  getMaxPoint(): Vector3 {
-    let max = this.points.x.length() < this.points.y1.length() ? this.points.y1 : this.points.x;
-    max = max.length() < this.points.y2.length() ? this.points.y2 : max;
-    max = max.length() < this.points.y3.length() ? this.points.y3 : max;
-    max = max.length() < this.points.y4.length() ? this.points.y4 : max;
-    return max;
+  private createMesh(): Mesh {
+    let len = this.points.y1.distanceTo(this.points.y2);
+    let width = this.points.y1.distanceTo(this.points.y4);
+    let geometry = new PlaneGeometry(len, width);
+    geometry.setFromPoints([this.points.y2, this.points.y1, this.points.y3, this.points.y4,])
+    // geometry.translate(this.points.y2.x, this.points.y2.y, this.points.y2.z);
+    let loader = new TextureLoader();
+    let material = new MeshBasicMaterial({map: loader.load(this.imageUrl), side: DoubleSide});
+    let mesh = new Mesh(geometry, material);
+    mesh.visible = false;
+    return mesh;
   }
 
   pointsToLineSet(): LineSet {

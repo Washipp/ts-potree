@@ -16,15 +16,15 @@
   <div class="row">
     <div class="col s4 description"><label>Reset Color:</label></div>
     <div class="col s8">
-      <button (click)="resetColor()" class="waves-effect btn-flat btn-small"><i class="material-icons">add</i></button>
+      <button (click)="resetColor()" class="waves-effect btn-small">Reset</button>
     </div>
   </div>
   <div class="row">
     <div class="col s4 description"><label>Point Size:</label></div>
     <div class="col s8">
       <p class="range-field">
-        <input type="range" min="{{options.min}}" max="{{options.max}}" [value]="settings.pointSize"
-               [(ngModel)]="settings.pointSize" (ngModelChange)="setPointSize()"/>
+        <input type="range" min="{{options.min}}" max="{{options.max}}" [value]="pco.material.size"
+               [(ngModel)]="pco.material.size"/>
       </p>
     </div>
   </div>

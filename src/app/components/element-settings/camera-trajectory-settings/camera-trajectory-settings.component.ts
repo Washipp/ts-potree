@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CameraTrajectory } from "../../../elements/camera-trajectory";
 import { SceneElementsService } from "../../../services/scene-elements.service";
-import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
 
 export interface CTSettings {
   size: number;
@@ -60,14 +59,17 @@ export class CameraTrajectorySettingsComponent implements OnInit {
   }
 
   setColor() {
-    this.cameraTrajectory?.lines.forEach(line => {
-      let mat = line.material as LineMaterial;
-      mat.color.set(this.settings.color);
-    });
+    this.cameraTrajectory?.setColor(this.settings.color);
   }
 
   setFrustumSize() {
     this.cameraTrajectory?.setSize(this.settings.size);
+  }
+
+  toggleMeshVisibility(): void {
+    if (this.cameraTrajectory) {
+      this.cameraTrajectory.mesh.visible = !this.cameraTrajectory.mesh.visible;
+    }
   }
 
 }

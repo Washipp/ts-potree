@@ -12,3 +12,7 @@
 .single-element:hover {
   background-color: var(--color-black);
 }
+
+.highlight {
+  background-color: var(--color-black);
+}

@@ -29,6 +29,8 @@ export class PcoSettingsComponent implements OnInit {
     this.pco = undefined;
     this.loadPCO(value.sceneId, value.elementId, 0);
     this._data = value;
+
+    // TODO: create a  PotreePointCloud Wrapper object --> doesnt really work because of references?
   }
 
   get data() {

@@ -1,9 +1,7 @@
 import {
-  Color,
-  Euler,
-  PerspectiveCamera, Points, PointsMaterial, Ray,
-  Scene,
-  Vector3,
+  Color, Euler,
+  PerspectiveCamera, PointsMaterial, Ray,
+  Scene, Vector3,
   WebGLRenderer
 } from "three";
 import { PointCloudOctree, Potree } from '@pnext/three-loader';
@@ -11,6 +9,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { SceneElementsService } from "../services/scene-elements.service";
 import { LineSet } from "../elements/line-set";
 import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader";
+import { CameraTrajectory } from "../elements/camera-trajectory";
+import { DefaultPointCloud } from "../elements/default-point-cloud";
 
 export interface CameraState {
   position: Vector3,
@@ -60,8 +60,8 @@ export class Viewer {
     this.targetEl.appendChild(this.renderer.domElement);
 
     // camera position is at (0,0,0) same as orbit controls, so we need to change it slightly.
-    this.camera.position.z = 60
-    this.camera.position.y = 10
+    // this.camera.position.z = 60
+    // this.camera.position.y = 10
     //TODO: set camera.far to some value?
 
     this.cameraControls.enableZoom = true;
@@ -118,6 +118,16 @@ export class Viewer {
   }
 
   /**
+   * Add camera-trajectory/camera-frustum to the scene by adding each line one-by-one.
+   * Additionally add the mesh that contains the image.
+   * @param ct trajectory to add.
+   */
+  loadCameraTrajectory(ct: CameraTrajectory): void {
+    this.loadLineSet(ct.lineSet);
+    this.scene.add(ct.mesh);
+  }
+
+  /**
    * Add a line-set to the scene by adding each line separately.
    * @param lineSet Line-set to add
    */
@@ -131,13 +141,13 @@ export class Viewer {
    * Loads a default point cloud recursively (.ply) and returns it.
    * @param url Url to download it from.
    */
-  loadDefaultPC(url: string): Promise<Points> {
+  loadDefaultPC(url: string): Promise<DefaultPointCloud> {
     let loader = new PLYLoader();
     // TODO: add onProgress function.
     return loader.loadAsync(url).then(pc => {
-      let points = new Points(pc, new PointsMaterial({ vertexColors: true }));
-      this.scene.add(points);
-      return points;
+      let pointCloud = new DefaultPointCloud(pc, new PointsMaterial({ vertexColors: true }));
+      this.scene.add(pointCloud);
+      return pointCloud;
     });
 
   }
@@ -215,6 +225,27 @@ export class Viewer {
   }
 
   pickPointTest(): void {
+    // let abc: CameraState = {
+    //   "position": new Vector3(38.25590670544343, 34.8853869591281, 31.929537717547742),
+    //   "rotation": new Euler(-0.8296086926953281, 0.6801674658568955,0.6020464180012758,"XYZ"),
+    //   "fov": 60,
+    //   "near": 0.1,
+    //   "far": 10000,
+    //   "lastUpdate": 1653997644465
+    // }
+    //
+    //
+    // if (this.sceneElementsService.viewerData[0].camera) {
+    //   this.sceneElementsService.viewerData[0].camera.position.x = 0;
+    //   this.sceneElementsService.viewerData[0].camera.far = 10000000;
+    //   console.log(this.getCurrentCameraState(this.camera));
+    // }
+
+
+    // this.sceneElementsService.viewerData[0].camera = abc;
+
+    // this.setCameraState(abc);
+
     let pc: PointCloudOctree;
     if  (this.pointClouds.length > 0) {
       pc = this.pointClouds[0];

@@ -2,10 +2,8 @@
 <div *ngIf="tree">
   <div *ngFor="let item of tree | keyvalue">
     <div class="potree-point-clouds element-tree-element">
-      <div>
-        <app-entry [title]="item.key" [elements]="item.value"
-                   (selectedElementEvent)="setSelectedElement($event)"></app-entry>
-      </div>
+      <app-entry [title]="item.key" [elements]="item.value"
+                 (selectedElementEvent)="setSelectedElement($event)"></app-entry>
     </div>
   </div>
   <!-- Settings per element -->
