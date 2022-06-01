@@ -62,7 +62,6 @@ export class Viewer {
     // camera position is at (0,0,0) same as orbit controls, so we need to change it slightly.
     // this.camera.position.z = 60
     // this.camera.position.y = 10
-    //TODO: set camera.far to some value?
 
     this.cameraControls.enableZoom = true;
     this.cameraControls.enableRotate = true;
