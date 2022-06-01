@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { SceneElement, ViewerData } from "../components/pc-viewer/pc-viewer.interfaces";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { catchError, map, Observable, retry, throwError } from "rxjs";
+import { HttpClient } from "@angular/common/http";
+import { catchError, map, Observable, retry } from "rxjs";
 import { CameraState, Viewer } from "../viewer/viewer";
 import { Object3D } from "three";
+import { BaseServiceService } from "./base-service.service";
 
 export interface ComponentTree {
   component: string,
@@ -14,14 +15,14 @@ export interface ComponentTree {
 @Injectable({
   providedIn: 'root'
 })
-export class SceneElementsService {
+export class SceneElementsService extends BaseServiceService {
 
-  baseUrl: string = 'http://127.0.0.1:5000/';
   readonly maxTries: number = 10;
 
   private viewerData: ViewerData[];
 
   constructor(private http: HttpClient) {
+    super();
     this.viewerData = [];
   }
 
@@ -80,23 +81,11 @@ export class SceneElementsService {
   }
 
 
-  getStructure(id: number): Observable<ComponentTree[]> {
+  getComponentTree(id: number): Observable<ComponentTree[]> {
     return this.http.get<ComponentTree[]>(this.baseUrl + 'component-tree/' + id).pipe(
       retry(3),
       catchError(this.handleError)
     );
   }
 
-  private handleError(error: HttpErrorResponse) {
-    if (error.status === 0) {
-      // A client-side or network error occurred. Handle it accordingly.
-      console.error('An error occurred:', error.error);
-    } else {
-      // The backend returned an unsuccessful response code.
-      // The response body may contain clues as to what went wrong.
-      console.error(`Backend returned code ${error.status}, body was: `, error.error);
-      console.error(error);
-    }
-    return throwError(() => new Error('Something bad happened; please try again later.'));
-  }
 }
