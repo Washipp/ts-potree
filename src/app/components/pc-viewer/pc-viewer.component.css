@@ -1,9 +1,6 @@
-#target {
+.scene-target {
   position: absolute;
-  width: 74%;
+  /* TODO: width has to be computed depending on the width given in the component tree. */
+  width: calc(75% - 12px); /* we have 0.75rem margin in an outer div so we decrease the width a bit.*/
   height: 100%;
-}
-
-#wrapper {
-  padding-left: 15px;
 }

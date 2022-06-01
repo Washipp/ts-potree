@@ -47,6 +47,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
     this.data.viewer = this.viewer;
     this.sceneElementsService.addViewerData(this.data);
 
+    // set the camera position.
     if (this.data.camera) {
       this.viewer.setCameraState(this.data.camera as CameraState);
     }
@@ -97,6 +98,9 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
     if (attributes.transformation) {
       cameraTrajectory.applyMatrix4(attributes.transformation);
     }
+    if (attributes.material?.color) {
+      cameraTrajectory.setColor(attributes.material.color);
+    }
     cameraTrajectory.name = attributes.name;
     this.viewer.loadCameraTrajectory(cameraTrajectory);
     this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, cameraTrajectory);
@@ -128,6 +132,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
       }
       pco.translateX(-1);
       pco.rotateX(-Math.PI / 2);
+      pco.scale.set(10,10,10);
 
       this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, pco);
     });
@@ -138,9 +143,6 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
     pco.material.size = attributes.material.size;
     if (attributes.position) {
       pco.position.set(attributes.position.x, attributes.position.y, attributes.position.z);
-    }
-    if (attributes.scale) {
-      pco.scale.set(attributes.scale.x, attributes.scale.y, attributes.scale.z);
     }
   }
 

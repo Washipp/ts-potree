@@ -13,7 +13,6 @@ export interface ElementAttributes {
   material?: any,
   imageUrl?: string,
   position?: Vector3, // TODO: remove position and scale.
-  scale?: Vector3,
   transformation?: Matrix4,
 }
 
