@@ -25,7 +25,7 @@ export class CameraTrajectorySettingsComponent implements OnInit {
   private _data: any | undefined;
   @Input() set data(value: any) {
     this.cameraTrajectory = undefined;
-    this.getCameraTrajectory(value.sceneId, value.elementId, 0);
+    this.loadCameraTrajectory(value.sceneId, value.elementId, 0);
     this._data = value;
   }
 
@@ -40,7 +40,7 @@ export class CameraTrajectorySettingsComponent implements OnInit {
     }
   }
 
-  private getCameraTrajectory(sceneId: number, elementId: number, numberOfTries: number) {
+  private loadCameraTrajectory(sceneId: number, elementId: number, numberOfTries: number) {
     let promise = new Promise(resolve => setTimeout(resolve, 250));
     promise.then(() => {
         this.cameraTrajectory = this.sceneElementsService.getSceneElement(sceneId, elementId) as CameraTrajectory;
@@ -49,7 +49,7 @@ export class CameraTrajectorySettingsComponent implements OnInit {
           // TODO: maybe use a better solution
           let a: any = {numberOfTries};
           a.numberOfTries++;
-          this.getCameraTrajectory(sceneId, elementId, a);
+          this.loadCameraTrajectory(sceneId, elementId, a);
         }
       }
     );
