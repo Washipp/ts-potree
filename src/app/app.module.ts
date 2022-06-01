@@ -19,6 +19,7 @@ import { EntryComponent } from './components/element-tree/entry/entry.component'
 import { EnumToReadableString } from "./components/utility/pipes/enum-to-readable-string";
 import { CameraTrajectorySettingsComponent } from './components/element-settings/camera-trajectory-settings/camera-trajectory-settings.component';
 import { DefaultPcSettingsComponent } from './components/element-settings/default-pc-settings/default-pc-settings.component';
+import { SynchronizeService } from "./services/synchronize.service";
 
 @NgModule({
   declarations: [
@@ -43,7 +44,7 @@ import { DefaultPcSettingsComponent } from './components/element-settings/defaul
     FormsModule,
     HttpClientModule
   ],
-  providers: [HttpClient],
+  providers: [HttpClient, SynchronizeService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
