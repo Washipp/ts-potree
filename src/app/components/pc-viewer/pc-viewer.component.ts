@@ -7,6 +7,7 @@ import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { LineSet } from "../../elements/line-set";
 import { CameraTrajectory, CameraTrajectoryData } from "../../elements/camera-trajectory";
 import { Vector3 } from "three";
+import { SynchronizeService } from "../../services/synchronize.service";
 
 @Component({
   selector: 'app-pc-viewer',
@@ -19,11 +20,9 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
   @Input() data: ViewerData;
 
   viewer: Viewer;
-  showBoundingBox: boolean;
 
-  constructor(private sceneElementsService: SceneElementsService) {
-    this.viewer = new Viewer(sceneElementsService);
-    this.showBoundingBox = false;
+  constructor(private sceneElementsService: SceneElementsService, private socket: SynchronizeService) {
+    this.viewer = new Viewer(sceneElementsService, socket);
     this.data = { sceneId: -1, elements: [] };
   }
 
@@ -57,7 +56,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
     pcs.map((p: SceneElement) => {
       switch (p.sceneType) {
         case SceneElementsEnum.POTREE_POINT_CLOUD:
-          this.addPointCloud(p.source as string, p.attributes, p.elementId);
+          this.addPotreePointCloud(p.source as string, p.attributes, p.elementId);
           break;
         case SceneElementsEnum.LINE_SET:
           this.addLineSet(p.source as CustomLine[], p.attributes, p.elementId);
@@ -124,7 +123,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
     this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, lineSet);
   }
 
-  private addPointCloud(url: string, attributes: ElementAttributes, elementId: number): void {
+  private addPotreePointCloud(url: string, attributes: ElementAttributes, elementId: number): void {
     this.viewer.loadPotreePCO("cloud.js", url).then(pco => {
       this.applyAttributes(pco, attributes);
       if (attributes.transformation) {

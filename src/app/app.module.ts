@@ -5,7 +5,6 @@ import { AppComponent } from './app.component';
 
 import { PcViewerComponent } from './components/pc-viewer/pc-viewer.component';
 import { ColorPickerModule } from "ngx-color-picker";
-import { NgxSliderModule } from "@angular-slider/ngx-slider";
 import { PcoSettingsComponent } from './components/element-settings/pco-settings/pco-settings.component';
 import { FormsModule } from "@angular/forms";
 import { BaseComponent } from './components/base/base.component';
@@ -40,9 +39,8 @@ import { SynchronizeService } from "./services/synchronize.service";
   imports: [
     BrowserModule,
     ColorPickerModule,
-    NgxSliderModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
   ],
   providers: [HttpClient, SynchronizeService],
   bootstrap: [AppComponent]

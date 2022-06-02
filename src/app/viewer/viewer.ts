@@ -11,6 +11,7 @@ import { LineSet } from "../elements/line-set";
 import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader";
 import { CameraTrajectory } from "../elements/camera-trajectory";
 import { DefaultPointCloud } from "../elements/default-point-cloud";
+import { SynchronizeService } from "../services/synchronize.service";
 
 export interface CameraState {
   position: Vector3,
@@ -29,7 +30,7 @@ export class Viewer {
 
   private scene = new Scene();
 
-  public camera = new PerspectiveCamera(45, NaN, 0.1, 1000);
+  public camera = new PerspectiveCamera(45, 1, 0.1, 1000);
 
   private cameraControls = new OrbitControls(this.camera, this.renderer.domElement);
 
@@ -41,8 +42,12 @@ export class Viewer {
 
   private currentCameraState: CameraState;
 
-  constructor(private sceneElementsService: SceneElementsService) {
+  constructor(private sceneElementsService: SceneElementsService, private socket: SynchronizeService) {
     this.currentCameraState = this.getCurrentCameraState(this.camera.clone());
+    this.socket.ws.onmessage = (event) => {
+      let newState: CameraState = JSON.parse(event.data);
+      this.setCameraState(newState);
+    };
   }
 
   /**
@@ -67,6 +72,17 @@ export class Viewer {
     this.cameraControls.enableRotate = true;
     this.cameraControls.enableDamping = true;
     this.cameraControls.dampingFactor = 0.25;
+
+    this.cameraControls.addEventListener('change', () => {
+      let oldState = this.currentCameraState;
+      let newState = this.getCurrentCameraState(this.camera.clone());
+      // TODO: may create extra class for the camera state
+
+      if (!this.compareCameraState(oldState, newState)) {
+        this.currentCameraState = newState;
+        this.socket.onSend(0, this.currentCameraState);
+      }
+    });
 
     this.resize();
     window.addEventListener("resize", this.resize);
@@ -174,8 +190,6 @@ export class Viewer {
     this.reqAnimationFrameHandle = requestAnimationFrame(this.loop);
     this.update();
     this.render();
-    // this.handleCameraState();
-    // this.pollUpdate(time);
   };
 
   /**
@@ -224,27 +238,6 @@ export class Viewer {
   }
 
   pickPointTest(): void {
-    // let abc: CameraState = {
-    //   "position": new Vector3(38.25590670544343, 34.8853869591281, 31.929537717547742),
-    //   "rotation": new Euler(-0.8296086926953281, 0.6801674658568955,0.6020464180012758,"XYZ"),
-    //   "fov": 60,
-    //   "near": 0.1,
-    //   "far": 10000,
-    //   "lastUpdate": 1653997644465
-    // }
-    //
-    //
-    // if (this.sceneElementsService.viewerData[0].camera) {
-    //   this.sceneElementsService.viewerData[0].camera.position.x = 0;
-    //   this.sceneElementsService.viewerData[0].camera.far = 10000000;
-    //   console.log(this.getCurrentCameraState(this.camera));
-    // }
-
-
-    // this.sceneElementsService.viewerData[0].camera = abc;
-
-    // this.setCameraState(abc);
-
     let pc: PointCloudOctree;
     if  (this.pointClouds.length > 0) {
       pc = this.pointClouds[0];
@@ -266,30 +259,18 @@ export class Viewer {
 
   }
 
-  pollUpdate(time: number): void {
-    if (time % 1000 > 20) return;
-    this.sceneElementsService.getCameraUpdate(0, Date.now()).subscribe((data) => {
-      if (data as unknown  === 'No new update') {
-        return;
-      } else {
-        data = ((data as any).state) as CameraState;
-        let newState: CameraState = {
-          position: new Vector3(data.position.x, data.position.y, data.position.z),
-          rotation: new Euler(data.rotation.x, data.rotation.y, data.rotation.z),
-          fov: data.fov,
-          far: data.far,
-          near: data.near,
-          lastUpdate: data.lastUpdate
-        }
-        this.setCameraState(newState);
-      }
-    });
+  /*  Camera Handling  */
+
+  setCameraSync(value: boolean): void {
+    if (value) {
+
+    }
   }
 
   getCurrentCameraState(camera: PerspectiveCamera): CameraState {
     return {
-      position: camera.position,
-      rotation: camera.rotation,
+      position: camera.position as Vector3,
+      rotation: camera.rotation as Euler,
       fov: camera.fov,
       near: camera.near,
       far: camera.far,
@@ -299,29 +280,20 @@ export class Viewer {
 
   compareCameraState(firstState: CameraState, secondState: CameraState): boolean {
     return (
-      firstState.position.equals(secondState.position) &&
-      firstState.rotation.equals(secondState.rotation) &&
+      this.compare(firstState.position, secondState.position) &&
+      this.compare(firstState.rotation, secondState.rotation) &&
       firstState.fov == secondState.fov &&
       firstState.near == secondState.near &&
       firstState.far == secondState.far
     );
   }
 
-  handleCameraState(): void {
-    let oldState = this.currentCameraState;
-    let newState = this.getCurrentCameraState(this.camera.clone());
-    // 750ms as a threshold. Else to many requests are sent.
-    // TODO: may create extra class?
-    let updatedNeeded = Math.abs(oldState.lastUpdate - newState.lastUpdate) > 750;
-    let same = this.compareCameraState(oldState, newState);
-    if (!same && updatedNeeded) {
-      console.log("UPDATING CAMERA");
-      this.currentCameraState = newState;
-      this.sceneElementsService.sendCameraUpdate(this.currentCameraState, 0)
-        .subscribe((ans) => {
-          console.log(ans);
-        });
-    }
+  private compare(v: Vector3 | Euler, e: Vector3 |  Euler): boolean {
+    return (
+      Math.round(v.x) == Math.round(e.x) &&
+      Math.round(v.y) == Math.round(e.y) &&
+      Math.round(v.z) == Math.round(e.z)
+    );
   }
 
   setCameraState(cameraState: CameraState): void {
