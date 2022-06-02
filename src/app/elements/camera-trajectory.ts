@@ -60,7 +60,7 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
 
   setVisibility(visible: boolean): void {
     this.lineSet.setVisibility(visible);
-    this.mesh.visible = visible;
+    this.mesh.visible = visible && this.mesh.visible;
   }
 
   setSize(size: number): void {
@@ -82,7 +82,6 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
     let width = this.points.y1.distanceTo(this.points.y4);
     let geometry = new PlaneGeometry(len, width);
     geometry.setFromPoints([this.points.y2, this.points.y1, this.points.y3, this.points.y4,])
-    // geometry.translate(this.points.y2.x, this.points.y2.y, this.points.y2.z);
     let loader = new TextureLoader();
     let material = new MeshBasicMaterial({map: loader.load(this.imageUrl), side: DoubleSide});
     let mesh = new Mesh(geometry, material);

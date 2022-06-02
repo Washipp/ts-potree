@@ -44,10 +44,6 @@ export class Viewer {
 
   constructor(private sceneElementsService: SceneElementsService, private socket: SynchronizeService) {
     this.currentCameraState = this.getCurrentCameraState(this.camera.clone());
-    this.socket.ws.onmessage = (event) => {
-      let newState: CameraState = JSON.parse(event.data);
-      this.setCameraState(newState);
-    };
   }
 
   /**
@@ -73,16 +69,6 @@ export class Viewer {
     this.cameraControls.enableDamping = true;
     this.cameraControls.dampingFactor = 0.25;
 
-    this.cameraControls.addEventListener('change', () => {
-      let oldState = this.currentCameraState;
-      let newState = this.getCurrentCameraState(this.camera.clone());
-      // TODO: may create extra class for the camera state
-
-      if (!this.compareCameraState(oldState, newState)) {
-        this.currentCameraState = newState;
-        this.socket.onSend(0, this.currentCameraState);
-      }
-    });
 
     this.resize();
     window.addEventListener("resize", this.resize);
@@ -263,7 +249,25 @@ export class Viewer {
 
   setCameraSync(value: boolean): void {
     if (value) {
+      // Send update to server.
+      this.cameraControls.addEventListener('change', () => {
+        let oldState = this.currentCameraState;
+        let newState = this.getCurrentCameraState(this.camera.clone());
+        // TODO: may create extra class for the camera state
 
+        if (!this.compareCameraState(oldState, newState) && value) {
+          this.currentCameraState = newState;
+          this.socket.onSend(0, this.currentCameraState);
+        }
+      } );
+      // get updates from server
+      this.socket.ws.onmessage = (event) => {
+        let newState: CameraState = JSON.parse(event.data);
+        this.setCameraState(newState);
+      };
+    } else {
+      this.cameraControls.removeEventListener('change',  (() => {}) ); // TODO: does not actually remove it?
+      this.socket.ws.onmessage = (() => {});
     }
   }
 

@@ -23,9 +23,9 @@ export class GeneralSettingsComponent implements OnInit {
   pointBudget: number = 1000_000;
   fov: number = 60;
   sceneId: number = -1;
-  showBoundingBox: boolean = false;
   viewer: Viewer | undefined;
   backgroundColor: string = '#000000';
+  cameraSync: boolean = false;
 
   private _data: Viewer | undefined;
   @Input() set data(value: any) {
@@ -56,17 +56,10 @@ export class GeneralSettingsComponent implements OnInit {
     });
   }
 
-
   constructor(private sceneElementsService: SceneElementsService) {
   }
 
   ngOnInit(): void {
-  }
-
-  start() {
-  }
-
-  unload(): void {
   }
 
   onPointBudgetChange(): void {
@@ -84,6 +77,14 @@ export class GeneralSettingsComponent implements OnInit {
   onFovChange(): void {
     if (this.viewer) {
       this.viewer.setCameraFOV(this.fov);
+    }
+  }
+
+  onCameraSync(): void {
+    console.log("clicekd")
+    if (this.viewer) {
+      this.cameraSync = !this.cameraSync;
+      this.viewer.setCameraSync(this.cameraSync);
     }
   }
 

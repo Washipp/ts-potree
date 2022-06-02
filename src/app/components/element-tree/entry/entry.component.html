@@ -8,9 +8,7 @@
     <li class="single-element" (click)="loadElementSettings(pc.elementId)">
       <label>
         <input type="checkbox" (click)="setSceneElementVisibility(pc.elementId, !getVisibility(pc.elementId))"
-               [checked]="getVisibility(pc.elementId)"
-
-               class="filled-in checkbox-blue"/>
+               [checked]="getVisibility(pc.elementId)" class="filled-in checkbox-blue"/>
         <span>{{ pc.attributes.name }}</span>
       </label>
     </li>
