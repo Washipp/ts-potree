@@ -81,7 +81,6 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   onCameraSync(): void {
-    console.log("clicekd")
     if (this.viewer) {
       this.cameraSync = !this.cameraSync;
       this.viewer.setCameraSync(this.cameraSync);

@@ -21,6 +21,7 @@
       </p>
     </div>
   </div>
+
   <div class="row">
     <div class="col s4 description"><label>Camera FOV ({{ fov }}):</label></div>
     <div class="col s8">
@@ -32,10 +33,10 @@
   </div>
 
   <div class="row">
-    <div class="col s4 description" (click)="onCameraSync()"><label>Activate Camera Sync:</label></div>
+    <div class="col s4 description"><label>Activate Camera Sync:</label></div>
     <div class="col s8">
-      <input type="checkbox" (click)="onCameraSync()" [checked]="cameraSync" class="filled-in checkbox-blue"/>
-      <span>Toggle</span>
+      <input type="checkbox" [checked]="cameraSync" class="filled-in checkbox-blue"/>
+      <span (click)="onCameraSync()">Toggle</span>
     </div>
   </div>
 
