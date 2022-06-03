@@ -19,6 +19,15 @@ import { EnumToReadableString } from "./components/utility/pipes/enum-to-readabl
 import { CameraTrajectorySettingsComponent } from './components/element-settings/camera-trajectory-settings/camera-trajectory-settings.component';
 import { DefaultPcSettingsComponent } from './components/element-settings/default-pc-settings/default-pc-settings.component';
 import { SynchronizeService } from "./services/synchronize.service";
+import { SocketIoConfig, SocketIoModule } from "ngx-socket-io";
+
+const config: SocketIoConfig = {
+  url: 'http://127.0.0.1:5000',
+  options: {
+    transports: ["websocket", "polling", ]
+  }
+};
+
 
 @NgModule({
   declarations: [
@@ -41,6 +50,7 @@ import { SynchronizeService } from "./services/synchronize.service";
     ColorPickerModule,
     FormsModule,
     HttpClientModule,
+    SocketIoModule.forRoot(config)
   ],
   providers: [HttpClient, SynchronizeService],
   bootstrap: [AppComponent]

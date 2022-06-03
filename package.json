@@ -21,6 +21,7 @@
     "@pnext/three-loader": "^0.2.7",
     "materialize-css": "^1.0.0",
     "ngx-color-picker": "^12.0.1",
+    "ngx-socket-io": "^4.2.0",
     "rxjs": "~7.5.0",
     "three": "^0.139.2",
     "tslib": "^2.3.0",

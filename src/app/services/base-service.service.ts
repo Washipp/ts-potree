@@ -7,6 +7,7 @@ import { throwError } from "rxjs";
 })
 export abstract class BaseServiceService {
 
+  readonly maxTries: number = 10;
 
   baseUrl: string = 'http://127.0.0.1:5000/';
 

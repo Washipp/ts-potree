@@ -11,7 +11,7 @@ import { LineSet } from "../elements/line-set";
 import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader";
 import { CameraTrajectory } from "../elements/camera-trajectory";
 import { DefaultPointCloud } from "../elements/default-point-cloud";
-import { SynchronizeService } from "../services/synchronize.service";
+import { WebSocketService } from "../services/web-socket.service";
 
 export interface CameraState {
   position: Vector3,
@@ -42,7 +42,7 @@ export class Viewer {
 
   private currentCameraState: CameraState;
 
-  constructor(private sceneElementsService: SceneElementsService, private socket: SynchronizeService) {
+  constructor(private sceneElementsService: SceneElementsService, private socket: WebSocketService) {
     this.currentCameraState = this.getCurrentCameraState(this.camera.clone());
   }
 
@@ -94,6 +94,8 @@ export class Viewer {
       cancelAnimationFrame(this.reqAnimationFrameHandle);
     }
   }
+
+  /** Load SceneElements and add them to the scene. **/
 
   /**
    * Loads a point cloud into the viewer and returns it.
@@ -245,29 +247,27 @@ export class Viewer {
 
   }
 
-  /*  Camera Handling  */
+  /**  Camera Handling  **/
 
   setCameraSync(value: boolean): void {
     if (value) {
+      this.socket.connect()
       // Send update to server.
       this.cameraControls.addEventListener('change', () => {
-        let oldState = this.currentCameraState;
-        let newState = this.getCurrentCameraState(this.camera.clone());
         // TODO: may create extra class for the camera state
 
-        if (!this.compareCameraState(oldState, newState) && value) {
-          this.currentCameraState = newState;
-          this.socket.onSend(0, this.currentCameraState);
-        }
+        this.currentCameraState = this.getCurrentCameraState(this.camera);
+        this.socket.sendCameraState(0, this.currentCameraState);
+
       } );
-      // get updates from server
-      this.socket.ws.onmessage = (event) => {
-        let newState: CameraState = JSON.parse(event.data);
+      // subscribe to the updates.
+      this.socket.getMessage().subscribe((message: any) => {
+        let newState: CameraState = message;
         this.setCameraState(newState);
-      };
+      });
     } else {
+      this.socket.disconnect()
       this.cameraControls.removeEventListener('change',  (() => {}) ); // TODO: does not actually remove it?
-      this.socket.ws.onmessage = (() => {});
     }
   }
 
@@ -280,24 +280,6 @@ export class Viewer {
       far: camera.far,
       lastUpdate: Date.now(),
     };
-  }
-
-  compareCameraState(firstState: CameraState, secondState: CameraState): boolean {
-    return (
-      this.compare(firstState.position, secondState.position) &&
-      this.compare(firstState.rotation, secondState.rotation) &&
-      firstState.fov == secondState.fov &&
-      firstState.near == secondState.near &&
-      firstState.far == secondState.far
-    );
-  }
-
-  private compare(v: Vector3 | Euler, e: Vector3 |  Euler): boolean {
-    return (
-      Math.round(v.x) == Math.round(e.x) &&
-      Math.round(v.y) == Math.round(e.y) &&
-      Math.round(v.z) == Math.round(e.z)
-    );
   }
 
   setCameraState(cameraState: CameraState): void {

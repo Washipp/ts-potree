@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { SceneElement, ViewerData } from "../components/pc-viewer/pc-viewer.interfaces";
 import { HttpClient } from "@angular/common/http";
-import { catchError, map, Observable, retry } from "rxjs";
-import { CameraState, Viewer } from "../viewer/viewer";
+import { catchError, Observable, retry } from "rxjs";
+import { Viewer } from "../viewer/viewer";
 import { Object3D } from "three";
 import { BaseServiceService } from "./base-service.service";
 
 export interface ComponentTree {
   component: string,
+  componentId: number,
   data: any | ViewerData,
   children: ComponentTree[]
 }
@@ -17,13 +18,13 @@ export interface ComponentTree {
 })
 export class SceneElementsService extends BaseServiceService {
 
-  readonly maxTries: number = 10;
-
   private viewerData: ViewerData[];
+  componentTree: ComponentTree[];
 
   constructor(private http: HttpClient) {
     super();
     this.viewerData = [];
+    this.componentTree = [];
   }
 
   /**  Internal reference handling  **/
@@ -65,27 +66,15 @@ export class SceneElementsService extends BaseServiceService {
 
   /**  Calls to the server  **/
 
-  getCameraUpdate(id: number, timeStamp: number): Observable<CameraState> {
-    return this.http.get<CameraState>(this.baseUrl + 'camera_state/' + id + '/' + timeStamp).pipe(
-      catchError(this.handleError)
-    );
-  }
-
-  sendCameraUpdate(state: CameraState, id: number): Observable<any> {
-    return this.http.post<any>(this.baseUrl + 'camera_state/' + id, {state: (state)}).pipe(
-      map(ans => {
-        return ans;
-      }),
-      catchError(this.handleError)
-    );
-  }
-
-
   getComponentTree(id: number): Observable<ComponentTree[]> {
-    return this.http.get<ComponentTree[]>(this.baseUrl + 'component-tree/' + id).pipe(
+    let observable =  this.http.get<ComponentTree[]>(this.baseUrl + 'component_tree/' + id).pipe(
       retry(3),
       catchError(this.handleError)
     );
+    observable.subscribe((tree) => {
+      this.componentTree = tree;
+    });
+    return observable;
   }
 
 }

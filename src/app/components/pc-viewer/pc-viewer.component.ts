@@ -7,7 +7,7 @@ import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { LineSet } from "../../elements/line-set";
 import { CameraTrajectory, CameraTrajectoryData } from "../../elements/camera-trajectory";
 import { Vector3 } from "three";
-import { SynchronizeService } from "../../services/synchronize.service";
+import { WebSocketService } from "../../services/web-socket.service";
 
 @Component({
   selector: 'app-pc-viewer',
@@ -21,7 +21,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
 
   viewer: Viewer;
 
-  constructor(private sceneElementsService: SceneElementsService, private socket: SynchronizeService) {
+  constructor(private sceneElementsService: SceneElementsService, private socket: WebSocketService) {
     this.viewer = new Viewer(sceneElementsService, socket);
     this.data = { sceneId: -1, elements: [] };
   }
