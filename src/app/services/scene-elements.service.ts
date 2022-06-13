@@ -77,4 +77,9 @@ export class SceneElementsService extends BaseServiceService {
     return observable;
   }
 
+  parseJsonToComponentTree(tree: ComponentTree[]): ComponentTree[] {
+
+    return [];
+  }
+
 }

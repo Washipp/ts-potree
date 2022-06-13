@@ -20,6 +20,7 @@ import { CameraTrajectorySettingsComponent } from './components/element-settings
 import { DefaultPcSettingsComponent } from './components/element-settings/default-pc-settings/default-pc-settings.component';
 import { SynchronizeService } from "./services/synchronize.service";
 import { SocketIoConfig, SocketIoModule } from "ngx-socket-io";
+import { LineSetSettingsComponent } from './components/element-settings/line-set-settings/line-set-settings.component';
 
 const config: SocketIoConfig = {
   url: 'http://127.0.0.1:5000',
@@ -43,7 +44,8 @@ const config: SocketIoConfig = {
     EntryComponent,
     EnumToReadableString,
     CameraTrajectorySettingsComponent,
-    DefaultPcSettingsComponent
+    DefaultPcSettingsComponent,
+    LineSetSettingsComponent
   ],
   imports: [
     BrowserModule,

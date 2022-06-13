@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { SceneElementsService } from "../../services/scene-elements.service";
 import { Viewer } from "../../viewer/viewer";
+import { SynchronizeService } from "../../services/synchronize.service";
 
 @Component({
   selector: 'app-general-settings',
@@ -11,8 +12,8 @@ export class GeneralSettingsComponent implements OnInit {
 
   pointBudgetOptions: any = {
     min: 100_000,
-    max: 20_000_000,
-    step: 10_000
+    max: 200_000_000,
+    step: 25_000
   };
   fovOptions: any = {
     min: 45,
@@ -56,7 +57,7 @@ export class GeneralSettingsComponent implements OnInit {
     });
   }
 
-  constructor(private sceneElementsService: SceneElementsService) {
+  constructor(private sceneElementsService: SceneElementsService, private service: SynchronizeService) {
   }
 
   ngOnInit(): void {
@@ -88,6 +89,7 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   pickerTest(): void {
+    this.service.applyUpdate();
     if (this.viewer) {
       this.viewer.pickPointTest();
     }

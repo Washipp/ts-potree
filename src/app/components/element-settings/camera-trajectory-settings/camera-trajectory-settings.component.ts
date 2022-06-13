@@ -50,9 +50,10 @@ export class CameraTrajectorySettingsComponent implements OnInit {
           let a: any = {numberOfTries};
           a.numberOfTries++;
           this.loadCameraTrajectory(sceneId, elementId, a);
+        } else {
+          this.settings.color = '#' + this.cameraTrajectory.lineSet.material.color.getHexString();
         }
-      }
-    );
+    });
   }
 
   ngOnInit(): void {
