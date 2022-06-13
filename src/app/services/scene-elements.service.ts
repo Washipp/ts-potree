@@ -5,9 +5,10 @@ import { catchError, Observable, retry } from "rxjs";
 import { Viewer } from "../viewer/viewer";
 import { Object3D } from "three";
 import { BaseServiceService } from "./base-service.service";
+import { TreeComponentEnum } from "./tree-component.enum";
 
 export interface ComponentTree {
-  component: string,
+  component: TreeComponentEnum,
   componentId: number,
   data: any | ViewerData,
   children: ComponentTree[]
@@ -18,7 +19,7 @@ export interface ComponentTree {
 })
 export class SceneElementsService extends BaseServiceService {
 
-  private viewerData: ViewerData[];
+  viewerData: ViewerData[]; //set private/readonly?
   componentTree: ComponentTree[];
 
   constructor(private http: HttpClient) {

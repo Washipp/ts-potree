@@ -184,8 +184,9 @@ export class Viewer {
    * Triggered anytime the window gets resized.
    */
   resize = () => {
-    // @ts-ignore
+    if (!this.targetEl) return;
     const {width, height} = this.targetEl.getBoundingClientRect();
+    //TODO: do not use width/height for the aspect.
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);

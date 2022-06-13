@@ -29,5 +29,5 @@ export interface ViewerData {
   sceneId: number,
   elements: SceneElement[],
   camera?: CameraState,
-  viewer?: Viewer;
+  viewer?: Viewer; // is never provided in the state json but is used for reference
 }

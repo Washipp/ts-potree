@@ -23,20 +23,19 @@ export class GeneralSettingsComponent implements OnInit {
 
   pointBudget: number = 1000_000;
   fov: number = 60;
-  sceneId: number = -1;
   viewer: Viewer | undefined;
   backgroundColor: string = '#000000';
   cameraSync: boolean = false;
 
-  private _data: Viewer | undefined;
+  sceneId: number = -1;
   @Input() set data(value: any) {
     this.sceneId = value.sceneId;
     this.loadViewer(value.sceneId, 0);
-    this._data = value;
+    this.sceneId = value;
   }
 
   get data() {
-    return this._data
+    return this.sceneId
   }
 
   /**

@@ -51,9 +51,9 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
       this.viewer.setCameraState(this.data.camera as CameraState);
     }
 
-    let pcs = this.data.elements;
+    let elements = this.data.elements;
 
-    pcs.map((p: SceneElement) => {
+    elements.map((p: SceneElement) => {
       switch (p.sceneType) {
         case SceneElementsEnum.POTREE_POINT_CLOUD:
           this.addPotreePointCloud(p.source as string, p.attributes, p.elementId);
@@ -94,13 +94,13 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
                               attributes: ElementAttributes,
                               elementId: number): void {
     let cameraTrajectory = new CameraTrajectory(trajectory, attributes.imageUrl);
-    if (attributes.transformation) {
-      cameraTrajectory.applyMatrix4(attributes.transformation);
-    }
+    cameraTrajectory.name = attributes.name;
     if (attributes.material?.color) {
       cameraTrajectory.setColor(attributes.material.color);
     }
-    cameraTrajectory.name = attributes.name;
+    if (attributes.transformation) {
+      cameraTrajectory.applyMatrix4(attributes.transformation);
+    }
     this.viewer.loadCameraTrajectory(cameraTrajectory);
     this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, cameraTrajectory);
   }
