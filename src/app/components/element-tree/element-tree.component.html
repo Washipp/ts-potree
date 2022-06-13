@@ -11,6 +11,7 @@
     <app-pco-settings *ngSwitchCase="elem.POTREE_POINT_CLOUD" [data]="elementData"></app-pco-settings>
     <app-camera-trajectory-settings *ngSwitchCase="elem.CAMERA_TRAJECTORY" [data]="elementData"></app-camera-trajectory-settings>
     <app-default-pc-settings *ngSwitchCase="elem.DEFAULT_POINT_CLOUD" [data]="elementData"></app-default-pc-settings>
+    <app-line-set-settings *ngSwitchCase="elem.LINE_SET" [data]="elementData"></app-line-set-settings>
     <div *ngSwitchDefault style="color:red;">No settings found for {{ parseToEnum(elementData.elementType) }}</div>
   </div>
 

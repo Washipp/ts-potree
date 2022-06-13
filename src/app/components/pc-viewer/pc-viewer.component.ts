@@ -113,6 +113,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
       set.push([start, end]);
     });
     let lineSet = new LineSet(set);
+    lineSet.name = attributes.name;
     if (attributes.material?.color) {
       lineSet.setColor(attributes.material.color);
     }
@@ -131,7 +132,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
       }
       pco.translateX(-1);
       pco.rotateX(-Math.PI / 2);
-      pco.scale.set(10,10,10);
+      pco.scale.set(1,1,1);
 
       this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, pco);
     });
