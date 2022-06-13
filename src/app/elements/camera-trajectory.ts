@@ -32,26 +32,32 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
 
   lineSet: LineSet;
 
+  originTrajectory =
+    {
+      x: new Vector3(0,0,0),
+      y1: new Vector3(-3,2,5),
+      y2: new Vector3(3,2,5),
+      y3: new Vector3(3,-2,5),
+      y4: new Vector3(-3,-2,5),
+    };
+
   points: CameraTrajectoryData;
   private size: number = 1;
   mesh: Mesh;
   private imageUrl: string;
 
-  constructor(data: CameraTrajectoryData, imageUrl: string | undefined) {
+  constructor(translation: number[], rotation: number[], imageUrl: string | undefined) {
     super();
-    // Vectors need to be explicitly instantiated to make use of built-in functions.
-    // https://stackoverflow.com/questions/51763745/angular-6-error-typeerror-is-not-a-function-but-it-is
-    this.points =
-      {
-        x: new Vector3(data.x.x, data.x.y, data.x.z),
-        y1: new Vector3(data.y1.x, data.y1.y, data.y1.z),
-        y2: new Vector3(data.y2.x, data.y2.y, data.y2.z),
-        y3: new Vector3(data.y3.x, data.y3.y, data.y3.z),
-        y4: new Vector3(data.y4.x, data.y4.y, data.y4.z),
-      };
+    this.points = this.originTrajectory;
     this.lineSet = this.pointsToLineSet();
+    this.applyTranslation(this.lineSet, translation);
+    this.applyRotation(this.lineSet, rotation);
+
+    // TODO: check why the mesh is broken. Maybe the array is read differently.
     this.imageUrl = imageUrl ? imageUrl : '';
     this.mesh = this.createMesh();
+    this.applyTranslation(this.mesh, translation);
+    this.applyRotation(this.mesh, rotation);
   }
 
   setColor(color: string): void {
@@ -65,16 +71,31 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
 
   setSize(size: number): void {
     let newSize = size / this.size;
+    let x = this.points.x.x;
+    let y = this.points.x.y;
+    let z = this.points.x.z;
     this.lineSet.lines.forEach(line => {
       //TODO combine these three operations into one.
-      line.geometry.translate(-this.points.x.x, -this.points.x.y, -this.points.x.z);
+      line.geometry.translate(-x, -y, -z);
       line.geometry.scale(newSize, newSize, newSize);
-      line.geometry.translate(this.points.x.x, this.points.x.y, this.points.x.z);
+      line.geometry.translate(x, y, z);
     });
     this.size = size;
-    this.mesh.geometry.translate(-this.points.x.x, -this.points.x.y, -this.points.x.z);
+    this.mesh.geometry.translate(-x, -y, -z);
     this.mesh.geometry.scale(newSize, newSize, newSize);
-    this.mesh.geometry.translate(this.points.x.x, this.points.x.y, this.points.x.z);
+    this.mesh.geometry.translate(x, y, z);
+  }
+
+  private applyTranslation(object: Object3D, translation: number[]) {
+    object.translateX(translation[0]);
+    object.translateY(translation[1]);
+    object.translateZ(translation[2]);
+  }
+
+  private applyRotation(object: Object3D, rotation: number[]) {
+    object.rotateX(rotation[0]);
+    object.rotateY(rotation[1]);
+    object.rotateZ(rotation[2]);
   }
 
   private createMesh(): Mesh {

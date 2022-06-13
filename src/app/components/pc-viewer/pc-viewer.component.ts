@@ -62,7 +62,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
           this.addLineSet(p.source as CustomLine[], p.attributes, p.elementId);
           break;
         case SceneElementsEnum.CAMERA_TRAJECTORY:
-          this.addCameraTrajectory(p.source as CameraTrajectoryData, p.attributes, p.elementId);
+          this.addCameraTrajectory(p.source, p.attributes, p.elementId);
           break;
         case SceneElementsEnum.DEFAULT_POINT_CLOUD:
           this.addDefaultPointCloud(p.source as string, p.attributes, p.elementId);
@@ -90,10 +90,10 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
 
   }
 
-  private addCameraTrajectory(trajectory: CameraTrajectoryData,
+  private addCameraTrajectory(source: any,
                               attributes: ElementAttributes,
                               elementId: number): void {
-    let cameraTrajectory = new CameraTrajectory(trajectory, attributes.imageUrl);
+    let cameraTrajectory = new CameraTrajectory(source.t, source.r, attributes.imageUrl);
     cameraTrajectory.name = attributes.name;
     if (attributes.material?.color) {
       cameraTrajectory.setColor(attributes.material.color);
