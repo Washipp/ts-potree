@@ -11,7 +11,7 @@ import { HelperFunctions } from "../utility/helper-functions";
 })
 export class ElementTreeComponent implements OnInit {
 
-  elem = SceneElementsEnum; // used in template as ENUM
+  elem = SceneElementsEnum; // used in template to access ENUM
   private _data: any;
   private sceneId: number;
   @Input() set data(value: ViewerData) {
@@ -41,9 +41,7 @@ export class ElementTreeComponent implements OnInit {
   }
 
 
-  /**
-   * Per supported element we create a mapping.
-   */
+  // Per supported scene element we create a mapping.
   tree: Map<SceneElementsEnum, SceneElement[]> | undefined;
 
 

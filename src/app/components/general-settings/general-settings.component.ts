@@ -31,7 +31,7 @@ export class GeneralSettingsComponent implements OnInit {
   @Input() set data(value: any) {
     this.sceneId = value.sceneId;
     this.loadViewer(value.sceneId, 0);
-    this.sceneId = value;
+    this.sceneId = value.sceneId;
   }
 
   get data() {
@@ -63,35 +63,25 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   onPointBudgetChange(): void {
-    if (this.viewer) {
-      this.viewer.setPointBudget(this.pointBudget);
-    }
+    this.viewer?.setPointBudget(this.pointBudget);
   }
 
   changeBackground(): void {
-    if (this.viewer) {
-      this.viewer.changeBackground(this.backgroundColor);
-    }
+    this.viewer?.changeBackground(this.backgroundColor);
   }
 
   onFovChange(): void {
-    if (this.viewer) {
-      this.viewer.setCameraFOV(this.fov);
-    }
+    this.viewer?.setCameraFOV(this.fov);
   }
 
   onCameraSync(): void {
-    if (this.viewer) {
-      this.cameraSync = !this.cameraSync;
-      this.viewer.setCameraSync(this.cameraSync);
-    }
+    this.cameraSync = !this.cameraSync;
+    this.viewer?.setCameraSync(this.cameraSync);
   }
 
   pickerTest(): void {
     this.service.applyUpdate();
-    if (this.viewer) {
-      this.viewer.pickPointTest();
-    }
+    this.viewer?.pickPointTest();
   }
 
 }

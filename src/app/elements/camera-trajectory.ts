@@ -32,7 +32,7 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
 
   lineSet: LineSet;
 
-  originTrajectory =
+  readonly originTrajectory =
     {
       x: new Vector3(0,0,0),
       y1: new Vector3(-1,2/3,1),
