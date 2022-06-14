@@ -5,7 +5,7 @@ import { SceneElementsService } from "../../services/scene-elements.service";
 import { CustomLine, ElementAttributes, SceneElement, ViewerData } from "./pc-viewer.interfaces";
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { LineSet } from "../../elements/line-set";
-import { CameraTrajectory, CameraTrajectoryData } from "../../elements/camera-trajectory";
+import { CameraTrajectory } from "../../elements/camera-trajectory";
 import { Vector3 } from "three";
 import { WebSocketService } from "../../services/web-socket.service";
 

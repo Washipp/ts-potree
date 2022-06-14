@@ -1,10 +1,10 @@
 import { LineSet } from "./line-set";
 import {
-  DoubleSide,
+  DoubleSide, Matrix4,
   Mesh,
   MeshBasicMaterial,
   Object3D,
-  PlaneGeometry,
+  PlaneGeometry, Quaternion,
   TextureLoader,
   Vector3
 } from "three";
@@ -35,10 +35,10 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
   originTrajectory =
     {
       x: new Vector3(0,0,0),
-      y1: new Vector3(-3,2,5),
-      y2: new Vector3(3,2,5),
-      y3: new Vector3(3,-2,5),
-      y4: new Vector3(-3,-2,5),
+      y1: new Vector3(-1,2/3,1),
+      y2: new Vector3(1,2/3,1),
+      y3: new Vector3(1,-2/3,1),
+      y4: new Vector3(-1,-2/3,1),
     };
 
   points: CameraTrajectoryData;
@@ -46,18 +46,20 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
   mesh: Mesh;
   private imageUrl: string;
 
-  constructor(translation: number[], rotation: number[], imageUrl: string | undefined) {
+  constructor(translation: number[], rotation: number[], imageUrl?: string) {
     super();
     this.points = this.originTrajectory;
-    this.lineSet = this.pointsToLineSet();
-    this.applyTranslation(this.lineSet, translation);
-    this.applyRotation(this.lineSet, rotation);
 
-    // TODO: check why the mesh is broken. Maybe the array is read differently.
+    let m = new Matrix4();
+    m.makeRotationFromQuaternion(new Quaternion(rotation[1], rotation[2], rotation[3], rotation[0]));
+    m.setPosition(translation[0], translation[1], translation[2]);
+
+    this.lineSet = this.pointsToLineSet();
+
     this.imageUrl = imageUrl ? imageUrl : '';
     this.mesh = this.createMesh();
-    this.applyTranslation(this.mesh, translation);
-    this.applyRotation(this.mesh, rotation);
+
+    this.applyMatrix4(m)
   }
 
   setColor(color: string): void {
@@ -71,11 +73,12 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
 
   setSize(size: number): void {
     let newSize = size / this.size;
-    let x = this.points.x.x;
-    let y = this.points.x.y;
-    let z = this.points.x.z;
+    let oldPosition = this.lineSet.position.clone();
+    let x = oldPosition.x;
+    let y = oldPosition.y;
+    let z = oldPosition.z;
     this.lineSet.lines.forEach(line => {
-      //TODO combine these three operations into one.
+      //TODO combine these three operations into one?
       line.geometry.translate(-x, -y, -z);
       line.geometry.scale(newSize, newSize, newSize);
       line.geometry.translate(x, y, z);
@@ -86,16 +89,9 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
     this.mesh.geometry.translate(x, y, z);
   }
 
-  private applyTranslation(object: Object3D, translation: number[]) {
-    object.translateX(translation[0]);
-    object.translateY(translation[1]);
-    object.translateZ(translation[2]);
-  }
-
-  private applyRotation(object: Object3D, rotation: number[]) {
-    object.rotateX(rotation[0]);
-    object.rotateY(rotation[1]);
-    object.rotateZ(rotation[2]);
+  override applyMatrix4(matrix: Matrix4) {
+    this.lineSet.applyMatrix4(matrix);
+    this.mesh.applyMatrix4(matrix);
   }
 
   private createMesh(): Mesh {
@@ -110,7 +106,7 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
     return mesh;
   }
 
-  pointsToLineSet(): LineSet {
+  private pointsToLineSet(): LineSet {
     let set: [Vector3, Vector3][] = [];
     set.push([this.points.x, this.points.y1]);
     set.push([this.points.x, this.points.y2]);
