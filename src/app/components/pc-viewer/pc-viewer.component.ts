@@ -108,8 +108,10 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
   private addLineSet(lines: CustomLine[], attributes: ElementAttributes, elementId: number): void {
     let set: [Vector3, Vector3][] = [];
     lines.forEach((line: CustomLine) => {
-      let start = line.start;
-      let end = line.end;
+      let start = new Vector3();
+      start.fromArray(line[0]);
+      let end = new Vector3();
+      end.fromArray(line[1]);
       set.push([start, end]);
     });
     let lineSet = new LineSet(set);

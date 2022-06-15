@@ -3,10 +3,8 @@ import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { CameraState, Viewer } from "../../viewer/viewer";
 import { CameraTrajectoryData } from "../../elements/camera-trajectory";
 
-export interface CustomLine {
-  start: Vector3,
-  end: Vector3,
-}
+// Tuple with start/end point accordingly with the points in an array.
+export type CustomLine = [number[], number[]];
 
 export interface ElementAttributes {
   name: string,
