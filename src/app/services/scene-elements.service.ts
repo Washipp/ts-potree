@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { SceneElement, ViewerData } from "../components/pc-viewer/pc-viewer.interfaces";
+import { ViewerData } from "../components/pc-viewer/pc-viewer.interfaces";
 import { HttpClient } from "@angular/common/http";
-import { catchError, Observable, retry } from "rxjs";
+import { catchError, Observable, retry, Subject } from "rxjs";
 import { Viewer } from "../viewer/viewer";
 import { Object3D } from "three";
 import { BaseServiceService } from "./base-service.service";
-import { TreeComponentEnum } from "./tree-component.enum";
+import { TreeComponentsEnum } from "../components/base/base.component";
 
 export interface ComponentTree {
-  component: TreeComponentEnum,
+  component: TreeComponentsEnum,
   componentId: number,
   data: any | ViewerData,
   children: ComponentTree[]
@@ -19,27 +19,32 @@ export interface ComponentTree {
 })
 export class SceneElementsService extends BaseServiceService {
 
-  viewerData: ViewerData[]; //set private/readonly?
+  viewerData: Map<number, ViewerData>; //set private/readonly?
   componentTree: ComponentTree[];
+
+  sceneElementsSubject: Subject<Map<number, ViewerData>>;
 
   constructor(private http: HttpClient) {
     super();
-    this.viewerData = [];
+    this.viewerData = new Map<number, ViewerData>();
     this.componentTree = [];
+    this.sceneElementsSubject = new Subject<Map<number, ViewerData>>();
   }
 
   /**  Internal reference handling  **/
 
   addViewerData(data: ViewerData): void {
-    this.viewerData[data.sceneId] = data;
+    this.viewerData.set(data.sceneId, data);
+    this.sceneElementsSubject.next(this.viewerData);
   }
 
-  getSceneElements(sceneId: number): SceneElement[] {
-    return this.viewerData[sceneId]?.elements;
+  getViewerData(): Observable<Map<number, ViewerData>> {
+    return this.sceneElementsSubject;
   }
 
   getSceneElement(sceneId: number, elementId: number): Object3D | undefined {
-    let elems = this.getSceneElements(sceneId);
+    let elems = this.viewerData.get(sceneId)?.elements;
+    if (!elems) return;
     if (elementId < elems.length && elems[elementId] !== undefined) {
       return elems[elementId].element;
     }
@@ -55,14 +60,15 @@ export class SceneElementsService extends BaseServiceService {
    * @param element Object3D reference.
    */
   addSceneElement(sceneId: number, elementId: number, element: Object3D): void {
-    let elems = this.getSceneElements(sceneId);
+    let elems = this.viewerData.get(sceneId)?.elements;
+    if (!elems) return;
     if (elementId < elems.length && elems[elementId] !== undefined) {
       elems[elementId].element = element;
     }
   }
 
   getPcViewer(sceneId: number): Viewer | undefined {
-    return this.viewerData[sceneId].viewer;
+    return this.viewerData.get(sceneId)?.viewer;
   }
 
   /**  Calls to the server  **/
@@ -76,11 +82,6 @@ export class SceneElementsService extends BaseServiceService {
       this.componentTree = tree;
     });
     return observable;
-  }
-
-  parseJsonToComponentTree(tree: ComponentTree[]): ComponentTree[] {
-
-    return [];
   }
 
 }

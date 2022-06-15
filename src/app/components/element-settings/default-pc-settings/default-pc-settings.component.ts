@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { PointColorType } from "@pnext/three-loader";
-import { SceneElementsService } from "../../../services/scene-elements.service";
 import { PcSettings } from "../pco-settings/pco-settings.component";
 import { DefaultPointCloud } from "../../../elements/default-point-cloud";
+import { SceneElementsEnum } from "../../../viewer/scene-elements.enum";
+import { SceneElement } from "../../pc-viewer/pc-viewer.interfaces";
 
 @Component({
   selector: 'app-default-pc-settings',
@@ -16,63 +16,51 @@ export class DefaultPcSettingsComponent implements OnInit {
     max: 20
   };
 
-  settings: PcSettings;
-  pc: DefaultPointCloud | undefined;
+  settings: PcSettings = {
+    color: "#000000",
+    pointSize: 2,
+  }
 
-  private _data: any | undefined;
-  @Input() set data(value: any) {
-    this.pc = undefined;
-    this.loadPC(value.sceneId, value.elementId, 0);
-    this._data = value;
+  type: SceneElementsEnum = SceneElementsEnum.UNKNOWN;
+
+  pcos: DefaultPointCloud[] | undefined;
+
+  private _data: SceneElement[] | undefined;
+  @Input() set data(sceneElements: SceneElement[]) {
+    this._data = sceneElements;
+
+    this.pcos = [];
+    this._data?.forEach((sceneElement) => {
+      this.pcos?.push(sceneElement.element as DefaultPointCloud);
+      this.type = sceneElement.sceneType;
+    });
   }
 
   get data() {
-    return this._data
+    return this._data ? this._data : [];
   }
 
-  constructor(private sceneElementsService: SceneElementsService) {
-    this.settings = {
-      color: "#000000",
-      colorType: PointColorType.RGB,
-      pointSize: 2,
-    }
-  }
-
-  /**
-   * Check every 250ms if the data/pcos are available.
-   *
-   * @param sceneId Scene which holds elements.
-   * @param elementId The element that is targeted by the settings.
-   * @param numberOfTries Current try number.
-   */
-  private loadPC(sceneId: number, elementId: number, numberOfTries: number) {
-    let promise = new Promise(resolve => setTimeout(resolve, 250));
-    promise.then(() => {
-        this.pc = this.sceneElementsService.getSceneElement(sceneId, elementId) as DefaultPointCloud;
-        if (this.pc === undefined && numberOfTries < this.sceneElementsService.maxTries) {
-          // To copy the value and not the reference
-          // TODO: maybe use a better solution
-          let a: any = {numberOfTries};
-          a.numberOfTries++;
-          this.loadPC(sceneId, elementId, a);
-        }
-      }
-    );
-  }
+  constructor() {}
 
   ngOnInit(): void {
   }
 
   setPointSize(): void {
-    this.pc?.setPointSize(this.settings.pointSize);
+    this.pcos?.forEach((pc) => {
+      pc.setPointSize(this.settings.pointSize);
+    });
   }
 
   setColor(): void {
-    this.pc?.setColor(this.settings.color);
+    this.pcos?.forEach((pc) => {
+      pc.setColor(this.settings.color);
+    });
   }
 
   resetColor(): void {
-    this.pc?.resetColor();
+    this.pcos?.forEach((pc) => {
+      pc.resetColor();
+    });
   }
 
 }

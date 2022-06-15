@@ -1,22 +1,24 @@
-<div class="title-divider"><span>Element Tree</span></div>
-<div *ngIf="tree">
-  <div *ngFor="let item of tree | keyvalue">
-    <div class="potree-point-clouds element-tree-element">
-      <app-entry [title]="item.key" [elements]="item.value"
-                 (selectedElementEvent)="setSelectedElement($event)"></app-entry>
-    </div>
+<div class="title-divider"><span>Scene Elements</span></div>
+<div *ngIf="branches">
+  <div *ngFor="let b of branches">
+    <app-branch [sceneId]="sceneId" [data]="b" (selectedElementEvent)="setSelectedElement($event)"></app-branch>
   </div>
-  <!-- Settings per scene element -->
-  <div *ngIf="elementData" [ngSwitch]="parseToEnum(elementData.elementType)">
-    <app-pco-settings *ngSwitchCase="elem.POTREE_POINT_CLOUD" [data]="elementData"></app-pco-settings>
+</div>
+<div>
+  <app-loading [active]="!branches"></app-loading>
+</div>
 
-    <app-camera-trajectory-settings *ngSwitchCase="elem.CAMERA_TRAJECTORY"
-                                    [data]="elementData"></app-camera-trajectory-settings>
+<div [ngSwitch]="parseToEnum(selectedElement[0])">
+  <app-pco-settings *ngSwitchCase="elem.POTREE_POINT_CLOUD" [data]="selectedElement[1]"></app-pco-settings>
 
-    <app-default-pc-settings *ngSwitchCase="elem.DEFAULT_POINT_CLOUD" [data]="elementData"></app-default-pc-settings>
+  <app-camera-trajectory-settings *ngSwitchCase="elem.CAMERA_TRAJECTORY"
+                                  [data]="selectedElement[1]"></app-camera-trajectory-settings>
 
-    <app-line-set-settings *ngSwitchCase="elem.LINE_SET" [data]="elementData"></app-line-set-settings>
+  <app-default-pc-settings *ngSwitchCase="elem.DEFAULT_POINT_CLOUD" [data]="selectedElement[1]"></app-default-pc-settings>
 
-    <div *ngSwitchDefault style="color:red;">No settings found for '{{ parseToEnum(elementData.elementType) }}'</div>
-  </div>
+  <app-line-set-settings *ngSwitchCase="elem.LINE_SET" [data]="selectedElement[1]"></app-line-set-settings>
+
+  <div *ngSwitchCase="elem.UNKNOWN"></div>
+
+  <div *ngSwitchDefault style="color:red;">No settings found for '{{ parseToEnum(selectedElement[0]) }}'</div>
 </div>

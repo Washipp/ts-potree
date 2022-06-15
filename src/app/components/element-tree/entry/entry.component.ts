@@ -14,22 +14,22 @@ import { Points } from "three";
 })
 export class EntryComponent implements OnInit {
 
-  @Input() title: SceneElementsEnum;
-  @Output() selectedElementEvent = new EventEmitter<[SceneElementsEnum, number]>();
+  @Input() elementType: SceneElementsEnum;
+  @Output() selectedElementEvent = new EventEmitter<[SceneElementsEnum, SceneElement[]]>();
 
   @Input() elements: SceneElement[];
   visible: boolean = true;
 
   constructor() {
     this.elements = [];
-    this.title = SceneElementsEnum.UNKNOWN;
+    this.elementType = SceneElementsEnum.UNKNOWN;
   }
 
   ngOnInit(): void {
   }
 
-  loadElementSettings(id: number) {
-    this.selectedElementEvent.emit([this.title, id]);
+  loadElementSettings() {
+    this.selectedElementEvent.emit([this.elementType, this.elements]);
   }
 
   setAllSceneElementsVisibility(visible: boolean): void {
@@ -65,13 +65,16 @@ export class EntryComponent implements OnInit {
     }
   }
 
-  getVisibility(elementId: number): boolean {
-    let vis = this.getElement(this.elements, elementId)?.element?.visible;
-    if (vis === undefined) {
-      return false;
-    } else {
-      return vis;
-    }
+  getVisibility(): boolean {
+    this.elements.forEach(elem => {
+      let vis = elem.element?.visible;
+      if (vis === undefined) {
+        return false;
+      } else {
+        return vis;
+      }
+    });
+    return false;
   }
 
   getElement(elements: SceneElement[], elementId: number): SceneElement | undefined {

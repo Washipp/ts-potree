@@ -7,8 +7,9 @@
 }
 
 .single-element {
-  padding: 5px;
+  padding: 3px;
 }
+
 .single-element:hover {
   background-color: var(--color-black);
 }

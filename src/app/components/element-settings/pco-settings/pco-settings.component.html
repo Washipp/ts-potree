@@ -1,15 +1,15 @@
-<div *ngIf="pco">
+<div *ngIf="pcos">
   <div class="title-divider"><span>Element Settings</span></div>
   <div class="row">
     <div class="col s4 description"><label>Name:</label></div>
     <div class="col s8">
-      {{ pco.name }}
+      Potree Point Cloud
     </div>
   </div>
   <!-- https://www.npmjs.com/package/ngx-color-picker -->
   <div class="row pc-color-picker">
-    <div class="col s4 description"><label for="pc-color-picker-{{ pco.name }}"> Select Color:</label></div>
-    <div class="col s8"><input id="pc-color-picker-{{ pco.name }}" [(colorPicker)]="settings.color"
+    <div class="col s4 description"><label for="pc-color-picker"> Select Color:</label></div>
+    <div class="col s8"><input id="pc-color-picker" [(colorPicker)]="settings.color"
                                [style.background]="settings.color" (colorPickerChange)="setColor()"/>
     </div>
   </div>
@@ -20,11 +20,11 @@
     </div>
   </div>
   <div class="row">
-    <div class="col s4 description"><label>Point Size ({{pco.material.size}}):</label></div>
+    <div class="col s4 description"><label>Point Size ({{settings.pointSize}}):</label></div>
     <div class="col s8">
       <p class="range-field">
-        <input type="range" min="{{options.min}}" max="{{options.max}}" [value]="pco.material.size"
-               [(ngModel)]="pco.material.size"/>
+        <input type="range" min="{{options.min}}" max="{{options.max}}" [value]="settings.pointSize"
+               [(ngModel)]="settings.pointSize" (ngModelChange)="setPointSize()"/>
       </p>
     </div>
   </div>
@@ -41,5 +41,5 @@
   </div>
 </div>
 <div>
-  <app-loading [active]="!pco"></app-loading>
+  <app-loading [active]="!pcos"></app-loading>
 </div>

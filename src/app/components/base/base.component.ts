@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ComponentTree } from "../../services/scene-elements.service";
 import { HelperFunctions } from "../utility/helper-functions";
 
-export enum Components {
+export enum TreeComponentsEnum {
   ROW = "row",
   COL = "col",
   VIEWER = "viewer",
@@ -18,7 +18,7 @@ export enum Components {
 })
 export class BaseComponent implements OnInit {
 
-  comp = Components; // used in template as ENUM
+  comp = TreeComponentsEnum; // used in template as ENUM
   @Input() children: ComponentTree[];
   @Input() data: any;
 
@@ -29,8 +29,8 @@ export class BaseComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  parseToEnum(type: string): Components | undefined {
-    return HelperFunctions.enumFromStringValue(Components, type);
+  parseToEnum(type: string): TreeComponentsEnum | undefined {
+    return HelperFunctions.enumFromStringValue(TreeComponentsEnum, type);
   }
 
 }

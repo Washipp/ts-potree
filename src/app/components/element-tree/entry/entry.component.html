@@ -1,16 +1,8 @@
-<label>
-  <input type="checkbox" [(ngModel)]="visible" (change)="setAllSceneElementsVisibility(visible)"
-         class="filled-in checkbox-blue"/>
-  <span>{{ title | enumToReadableString }}</span>
-</label>
-<div class="element-list">
-  <ul *ngFor="let pc of elements">
-    <li class="single-element" (click)="loadElementSettings(pc.elementId)">
-      <label>
-        <input type="checkbox" (click)="setSceneElementVisibility(pc.elementId, !getVisibility(pc.elementId))"
-               [checked]="getVisibility(pc.elementId)" class="filled-in checkbox-blue"/>
-        <span>{{ pc.attributes.name }}</span>
-      </label>
-    </li>
-  </ul>
+<div class="element-branch single-element" (click)="loadElementSettings()">
+  <label>
+    <input type="checkbox" [(ngModel)]="visible" (change)="setAllSceneElementsVisibility(visible)"
+           [checked]="getVisibility()"
+           class="filled-in checkbox-blue"/>
+    <span>{{ elementType | enumToReadableString }}</span>
+  </label>
 </div>
