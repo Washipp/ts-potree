@@ -67,6 +67,7 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
   }
 
   setVisibility(visible: boolean): void {
+    this.visible = visible;
     this.lineSet.setVisibility(visible);
     this.mesh.visible = visible && this.mesh.visible;
   }

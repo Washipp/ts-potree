@@ -6,7 +6,7 @@ import { CustomLine, ElementAttributes, SceneElement, ViewerData } from "./pc-vi
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { LineSet } from "../../elements/line-set";
 import { CameraTrajectory } from "../../elements/camera-trajectory";
-import { Vector3 } from "three";
+import { Euler, Vector3 } from "three";
 import { WebSocketService } from "../../services/web-socket.service";
 
 @Component({
@@ -48,7 +48,18 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
 
     // set the camera position.
     if (this.data.camera) {
-      this.viewer.setCameraState(this.data.camera as CameraState);
+      // convert from array to the corresponding objects.
+      let pos = new Vector3(this.data.camera.position[0], this.data.camera.position[1], this.data.camera.position[2])
+      let rot = new Euler(this.data.camera.rotation[0], this.data.camera.rotation[1], this.data.camera.rotation[2])
+      let state: CameraState =  {
+        position: pos,
+        rotation: rot,
+        fov: this.data.camera.fov,
+        near: this.data.camera.near,
+        far: this.data.camera.far,
+        lastUpdate: 0,
+      }
+      this.viewer.setCameraState(state);
     }
 
     let elements = this.data.elements;
@@ -83,7 +94,6 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
       pc.scale.set(10,10,10);
       pc.rotateX(-Math.PI);
       pc.translateX(10);
-
 
       this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, pc);
     });

@@ -1,12 +1,14 @@
 <div class="title-divider"><span>Scene Elements</span></div>
-<div *ngIf="branches">
-  <div *ngFor="let b of branches">
-    <app-branch [sceneId]="sceneId" [data]="b" (selectedElementEvent)="setSelectedElement($event)"></app-branch>
+<div *ngIf="groups">
+  <div *ngFor="let b of groups">
+    <app-group [sceneId]="sceneId" [data]="b" (selectedElementEvent)="setSelectedElement($event)"></app-group>
   </div>
 </div>
 <div>
-  <app-loading [active]="!branches"></app-loading>
+  <app-loading [active]="!groups"></app-loading>
 </div>
+
+<button (click)="setVisibilityByGroupId(0, false)">Set visible</button>
 
 <div [ngSwitch]="parseToEnum(selectedElement[0])">
   <app-pco-settings *ngSwitchCase="elem.POTREE_POINT_CLOUD" [data]="selectedElement[1]"></app-pco-settings>

@@ -18,7 +18,7 @@ export class EntryComponent implements OnInit {
   @Output() selectedElementEvent = new EventEmitter<[SceneElementsEnum, SceneElement[]]>();
 
   @Input() elements: SceneElement[];
-  visible: boolean = true;
+  @Input() visible: boolean = true;
 
   constructor() {
     this.elements = [];
@@ -52,12 +52,10 @@ export class EntryComponent implements OnInit {
         break;
       case SceneElementsEnum.LINE_SET:
         let lineSet = elem.element as LineSet
-        lineSet.visible = visible;
         lineSet.setVisibility(visible);
         break;
       case SceneElementsEnum.CAMERA_TRAJECTORY:
         let cameraTrajectory = elem.element as CameraTrajectory
-        cameraTrajectory.visible = visible;
         cameraTrajectory.setVisibility(visible);
         break;
       default:

@@ -22,6 +22,14 @@ export interface CameraState {
   lastUpdate: number,
 }
 
+export interface MinifiedCameraState {
+  position: number[],
+  rotation: number[],
+  fov: number,
+  near: number,
+  far: number,
+}
+
 export class Viewer {
 
   private targetEl: HTMLElement | undefined;

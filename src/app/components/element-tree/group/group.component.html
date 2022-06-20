@@ -1,0 +1,23 @@
+<div *ngIf="data">
+  <label>
+    <input type="checkbox" [(ngModel)]="data.visible" (change)="setAllSceneElementsVisibility(data.visible)"
+           class="filled-in checkbox-blue"/>
+    <span>{{ data.name }}</span>
+  </label>
+
+  <!-- Groups -->
+  <div *ngFor="let b of data.groups" class="element-group">
+    <app-group [sceneId]="sceneId" [data]="b" (selectedElementEvent)="setSelectedElement($event)"></app-group>
+  </div>
+
+  <!-- Components -->
+  <div *ngIf="groupedTypes.size > 0">
+    <div class="element-group" *ngFor="let item of groupedTypes | keyvalue">
+      <app-entry [elementType]="item.key" [elements]="item.value" [visible]="data.visible"
+                 (selectedElementEvent)="setSelectedElement($event)"></app-entry>
+    </div>
+  </div>
+
+
+</div>
+

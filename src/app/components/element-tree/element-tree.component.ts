@@ -3,18 +3,18 @@ import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { SceneElement } from "../pc-viewer/pc-viewer.interfaces";
 import { HelperFunctions } from "../utility/helper-functions";
 
-export interface ElementTreeBranch {
-  branchId: number,
+export interface ElementTreeGroup {
+  groupId: number,
   name: string,
   ids: number[],
-  branches: ElementTreeBranch[],
+  groups: ElementTreeGroup[],
   visible: boolean,
   sceneElements?: SceneElement[],
 }
 
 export interface ElementTreeData {
   sceneId: number,
-  branches: ElementTreeBranch[]
+  groups: ElementTreeGroup[]
 }
 
 
@@ -30,15 +30,26 @@ export class ElementTreeComponent implements OnInit {
   private _data: ElementTreeData;
 
   sceneId: number;
-  branches: ElementTreeBranch[];
+  groups: ElementTreeGroup[];
   @Input() set data(value: ElementTreeData) {
     this.sceneId = value.sceneId;
-    this.branches = value.branches;
+    this.groups = value.groups;
     this._data = value;
   }
 
   get data() {
     return this._data;
+  }
+
+  setVisibilityByGroupId(groupId: number, visible: boolean): void {
+    this.groups.forEach(group => {
+      if (group.groupId == groupId) {
+        group.visible = false
+        group.groups.forEach(groups => {
+          groups.visible = visible
+        })
+      }
+    })
   }
 
   selectedElement: [SceneElementsEnum, SceneElement[]];
@@ -54,10 +65,10 @@ export class ElementTreeComponent implements OnInit {
   constructor() {
     this.sceneId = -1;
     this.selectedElement = [SceneElementsEnum.UNKNOWN, []];
-    this.branches = [];
+    this.groups = [];
     this._data = {
       sceneId: -1,
-      branches: [],
+      groups: [],
     }
   }
 

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ElementTreeBranch } from "../element-tree.component";
+import { ElementTreeGroup } from "../element-tree.component";
 import { SceneElementsService } from "../../../services/scene-elements.service";
 import { SceneElement } from "../../pc-viewer/pc-viewer.interfaces";
 import { SceneElementsEnum } from "../../../viewer/scene-elements.enum";
@@ -10,20 +10,20 @@ import { LineSet } from "../../../elements/line-set";
 import { CameraTrajectory } from "../../../elements/camera-trajectory";
 
 @Component({
-  selector: 'app-branch',
-  templateUrl: './branch.component.html',
-  styleUrls: ['./branch.component.css']
+  selector: 'app-group',
+  templateUrl: './group.component.html',
+  styleUrls: ['./group.component.css']
 })
-export class BranchComponent implements OnInit {
+export class GroupComponent implements OnInit {
 
-  private _data: ElementTreeBranch;
+  private _data: ElementTreeGroup;
 
   groupedTypes: Map<SceneElementsEnum, SceneElement[]> = new Map<SceneElementsEnum, SceneElement[]>();
 
   @Output() selectedElementEvent = new EventEmitter<[SceneElementsEnum, SceneElement[]]>();
   @Input() sceneId: number;
 
-  @Input() set data(value: ElementTreeBranch) {
+  @Input() set data(value: ElementTreeGroup) {
     this._data = value;
   }
 
@@ -35,28 +35,30 @@ export class BranchComponent implements OnInit {
     // set default data
     this.sceneId = -1;
     this._data = {
-      branchId: -1,
+      groupId: -1,
       name: "Unknown",
       ids: [],
-      branches: [],
+      groups: [],
       visible: false
     }
   }
 
   ngOnInit(): void {
-    this.loadComponents(Array.from(this._data.ids));
+    if (this._data.ids.length != 0) {
+      this.loadComponents(this._data.ids);
+    }
   }
 
   setAllSceneElementsVisibility(visible: boolean): void {
-    // Set visibility recursively in all branches
-    this.data.branches.map(branch => {
-      branch.visible = visible;
-      branch.sceneElements?.map(elem => {
+    // Set visibility recursively in all groups
+    this.data.groups.map(group => {
+      group.visible = visible;
+      group.sceneElements?.map(elem => {
         this.setSceneElementVisibility(elem, visible);
       })
     });
 
-    // Set visibility of all components in this branch
+    // Set visibility of all components in this group
     this.data.sceneElements?.map(elem => {
       this.setSceneElementVisibility(elem, visible);
     });
@@ -75,12 +77,10 @@ export class BranchComponent implements OnInit {
         break;
       case SceneElementsEnum.LINE_SET:
         let lineSet = element.element as LineSet
-        lineSet.visible = visible;
         lineSet.setVisibility(visible);
         break;
       case SceneElementsEnum.CAMERA_TRAJECTORY:
         let cameraTrajectory = element.element as CameraTrajectory
-        cameraTrajectory.visible = visible;
         cameraTrajectory.setVisibility(visible);
         break;
       default:
@@ -89,6 +89,7 @@ export class BranchComponent implements OnInit {
   }
 
   setSelectedElement(event: [SceneElementsEnum, SceneElement[]]): void {
+    // pass the event up to the parents until we reach the element-tree component.
     this.selectedElementEvent.emit(event);
   }
 
@@ -124,7 +125,7 @@ export class BranchComponent implements OnInit {
             this._data.sceneElements?.push(elem);
           }
         });
-        // We need to set  the element tree after all the change detections have been triggered
+        // We need to set the element tree after all the change detections have been triggered
         // and throws ExpressionChangedAfterItHasBeenCheckedError. More info https://angular.io/errors/NG0100
         // It could lead to an infinite loop or some inconsistent view state.
         // here we create a macro task that gets executed after the synchronous parts.

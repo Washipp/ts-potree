@@ -29,6 +29,7 @@ export class LineSet extends Object3D implements ElementSetting {
   }
 
   setVisibility(visible: boolean): void {
+    this.visible = visible;
     this.lines.forEach(line => {
       line.visible = visible;
     });

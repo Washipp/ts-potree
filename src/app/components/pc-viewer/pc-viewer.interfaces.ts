@@ -1,6 +1,6 @@
 import { Matrix4, Object3D, Vector3 } from "three";
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
-import { CameraState, Viewer } from "../../viewer/viewer";
+import { MinifiedCameraState, Viewer } from "../../viewer/viewer";
 import { CameraTrajectoryData } from "../../elements/camera-trajectory";
 
 // Tuple with start/end point accordingly with the points in an array.
@@ -26,6 +26,6 @@ export interface SceneElement {
 export interface ViewerData {
   sceneId: number,
   elements: SceneElement[],
-  camera?: CameraState,
+  camera?: MinifiedCameraState,
   viewer?: Viewer; // is never provided in the state json but is used for reference
 }
