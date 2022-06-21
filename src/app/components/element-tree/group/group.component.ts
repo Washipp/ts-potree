@@ -50,17 +50,17 @@ export class GroupComponent implements OnInit {
   }
 
   setAllSceneElementsVisibility(visible: boolean): void {
-    // Set visibility recursively in all groups
-    this.data.groups.map(group => {
-      group.visible = visible;
+    this.setGroupVisibility([this.data], visible)
+  }
+
+  setGroupVisibility(groups: ElementTreeGroup[], visible: boolean) {
+    groups.map(group => {
+      group.visible = visible
       group.sceneElements?.map(elem => {
         this.setSceneElementVisibility(elem, visible);
-      })
-    });
+      });
 
-    // Set visibility of all components in this group
-    this.data.sceneElements?.map(elem => {
-      this.setSceneElementVisibility(elem, visible);
+      this.setGroupVisibility(group.groups, visible);
     });
   }
 
