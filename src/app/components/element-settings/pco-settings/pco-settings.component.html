@@ -33,7 +33,8 @@
     <div class="col s4 description"><label>Bounding Box:</label></div>
     <div class="col s8">
       <label>
-        <input type="checkbox" (change)="setBoundingBox($event)"
+        <input type="checkbox" (change)="setBoundingBox()"
+               [(ngModel)]="settings.boundingBox"
                class="checkbox-blue filled-in"/>
         <span>Show/Hide</span>
       </label>

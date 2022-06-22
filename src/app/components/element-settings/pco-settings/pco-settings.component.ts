@@ -7,6 +7,7 @@ import { SceneElement } from "../../pc-viewer/pc-viewer.interfaces";
 export interface PcSettings {
   color: string;
   pointSize: number;
+  boundingBox: boolean;
 }
 
 @Component({
@@ -24,6 +25,7 @@ export class PcoSettingsComponent implements OnInit {
   settings: PcSettings = {
     color: "#000000",
     pointSize: 2,
+    boundingBox: false
   }
 
   type: SceneElementsEnum = SceneElementsEnum.UNKNOWN;
@@ -73,9 +75,9 @@ export class PcoSettingsComponent implements OnInit {
     });
   }
 
-  setBoundingBox(value: any): void {
+  setBoundingBox(): void {
     this.pcos?.forEach((pco) => {
-      pco.showBoundingBox = value.checked;
+      pco.showBoundingBox = this.settings.boundingBox
     });
   }
 

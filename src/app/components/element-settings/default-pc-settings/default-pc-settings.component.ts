@@ -19,6 +19,7 @@ export class DefaultPcSettingsComponent implements OnInit {
   settings: PcSettings = {
     color: "#000000",
     pointSize: 2,
+    boundingBox: false,
   }
 
   type: SceneElementsEnum = SceneElementsEnum.UNKNOWN;

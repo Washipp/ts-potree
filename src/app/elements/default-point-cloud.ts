@@ -8,7 +8,7 @@ export class DefaultPointCloud extends Points implements PointCloudSetting {
 
   constructor(geometry?: BufferGeometry, material?: PointsMaterial) {
     super(geometry, material);
-    this.defaultMaterial = material ? material : new PointsMaterial({ vertexColors: true }) ;
+    this.defaultMaterial = material ? material : new PointsMaterial({ vertexColors: true });
   }
 
   setColor(color: string): void {
