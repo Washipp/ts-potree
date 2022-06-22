@@ -37,12 +37,12 @@ export class WebSocketService {
     this.socket.emit(eventName, data);
   }
 
-  getMessage(eventName: string, ): Observable<CameraState> {
+  getMessage(eventName: string): Observable<CameraState> {
     return this.socket.fromEvent(eventName).pipe(map((data: any) => data));
   }
 
   connect(): void {
-    if (!this.socket.ioSocket.connected) {
+    if (!this.isConnected()) {
       this.socket.connect();
       console.info("[WS]: Connected the socket.")
     } else {
@@ -51,11 +51,15 @@ export class WebSocketService {
   }
 
   disconnect(): void {
-    if (this.socket.ioSocket.connected) {
+    if (this.isConnected()) {
       this.socket.disconnect();
       console.info("[WS]: Disconnected the socket.")
     } else {
       console.info("[WS]: Socket already disconnected.")
     }
+  }
+
+  isConnected(): boolean {
+    return this.socket.ioSocket.connected;
   }
 }

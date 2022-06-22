@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { CameraState, Viewer } from "../../viewer/viewer";
-import { PointCloudOctree } from "@pnext/three-loader";
 import { SceneElementsService } from "../../services/scene-elements.service";
 import { CustomLine, ElementAttributes, SceneElement, ViewerData } from "./pc-viewer.interfaces";
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
@@ -27,6 +26,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+
   }
 
   ngAfterViewInit(): void {
@@ -36,7 +36,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
   start() {
     if (this.target != null) {
       this.viewer.initialize(this.target.nativeElement);
-      console.log("Initialize Viewer");
+      console.info("Initialize Viewer with SceneId: " + this.data.sceneId);
     } else {
       console.error("Target element not found");
       return;
@@ -85,7 +85,9 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private addDefaultPointCloud(url: string, attributes: ElementAttributes, elementId: number): void {
+  private addDefaultPointCloud(url: string,
+                               attributes: ElementAttributes,
+                               elementId: number): void {
     this.viewer.loadDefaultPC(url).then(pc => {
       if (attributes.transformation) {
         pc.applyMatrix4(attributes.transformation);
@@ -115,7 +117,9 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
     this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, cameraTrajectory);
   }
 
-  private addLineSet(lines: CustomLine[], attributes: ElementAttributes, elementId: number): void {
+  private addLineSet(lines: CustomLine[],
+                     attributes: ElementAttributes,
+                     elementId: number): void {
     let set: [Vector3, Vector3][] = [];
     lines.forEach((line: CustomLine) => {
       let start = new Vector3();
@@ -125,6 +129,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
       set.push([start, end]);
     });
     let lineSet = new LineSet(set);
+
     lineSet.name = attributes.name;
     if (attributes.material?.color) {
       lineSet.setColor(attributes.material.color);
@@ -136,9 +141,15 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
     this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, lineSet);
   }
 
-  private addPotreePointCloud(url: string, attributes: ElementAttributes, elementId: number): void {
+  private addPotreePointCloud(url: string,
+                              attributes: ElementAttributes,
+                              elementId: number): void {
     this.viewer.loadPotreePCO("cloud.js", url).then(pco => {
-      this.applyAttributes(pco, attributes);
+      pco.name = attributes.name;
+      pco.material.size = attributes.material.size;
+      if (attributes.position) {
+        pco.position.set(attributes.position.x, attributes.position.y, attributes.position.z);
+      }
       if (attributes.transformation) {
         pco.applyMatrix4(attributes.transformation);
       }
@@ -149,13 +160,4 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
       this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, pco);
     });
   }
-
-  private applyAttributes(pco: PointCloudOctree, attributes: ElementAttributes): void {
-    pco.name = attributes.name;
-    pco.material.size = attributes.material.size;
-    if (attributes.position) {
-      pco.position.set(attributes.position.x, attributes.position.y, attributes.position.z);
-    }
-  }
-
 }

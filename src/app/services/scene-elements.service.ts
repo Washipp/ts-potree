@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { ViewerData } from "../components/pc-viewer/pc-viewer.interfaces";
 import { HttpClient } from "@angular/common/http";
 import { catchError, Observable, retry, Subject } from "rxjs";
-import { Viewer } from "../viewer/viewer";
 import { Object3D } from "three";
 import { BaseServiceService } from "./base-service.service";
 import { TreeComponentsEnum } from "../components/base/base.component";
@@ -21,39 +20,29 @@ export class SceneElementsService extends BaseServiceService {
 
   viewerData: Map<number, ViewerData>; //set private/readonly?
   componentTree: ComponentTree[];
-
-  sceneElementsSubject: Subject<Map<number, ViewerData>>;
+  viewerDataSubject: Subject<Map<number, ViewerData>>;
 
   constructor(private http: HttpClient) {
     super();
     this.viewerData = new Map<number, ViewerData>();
     this.componentTree = [];
-    this.sceneElementsSubject = new Subject<Map<number, ViewerData>>();
+    this.viewerDataSubject = new Subject<Map<number, ViewerData>>();
   }
 
   /**  Internal reference handling  **/
 
   addViewerData(data: ViewerData): void {
     this.viewerData.set(data.sceneId, data);
-    this.sceneElementsSubject.next(this.viewerData);
+    this.viewerDataSubject.next(this.viewerData);
   }
 
   getViewerData(): Observable<Map<number, ViewerData>> {
-    return this.sceneElementsSubject;
-  }
-
-  getSceneElement(sceneId: number, elementId: number): Object3D | undefined {
-    let elems = this.viewerData.get(sceneId)?.elements;
-    if (!elems) return;
-    if (elementId < elems.length && elems[elementId] !== undefined) {
-      return elems[elementId].element;
-    }
-    return undefined;
+    return this.viewerDataSubject;
   }
 
   /**
-   * This function is necessary as we do not yet have a reference at parsing time.
-   * Once the 3DObject is available, it gets added.
+   * This function is necessary as we do not yet have a reference when we parse the component tree.
+   * Once the 3DObject is available, it gets added here and the observable gets triggered.
    *
    * @param sceneId The id of the Scene/Viewer this object belongs to
    * @param elementId Id of the element.
@@ -65,10 +54,6 @@ export class SceneElementsService extends BaseServiceService {
     if (elementId < elems.length && elems[elementId] !== undefined) {
       elems[elementId].element = element;
     }
-  }
-
-  getPcViewer(sceneId: number): Viewer | undefined {
-    return this.viewerData.get(sceneId)?.viewer;
   }
 
   /**  Calls to the server  **/

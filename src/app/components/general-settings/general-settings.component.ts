@@ -2,6 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { SceneElementsService } from "../../services/scene-elements.service";
 import { Viewer } from "../../viewer/viewer";
 import { SynchronizeService } from "../../services/synchronize.service";
+import { Socket } from "ngx-socket-io";
+import { WebSocketService } from "../../services/web-socket.service";
 
 @Component({
   selector: 'app-general-settings',
@@ -30,33 +32,16 @@ export class GeneralSettingsComponent implements OnInit {
   sceneId: number = -1;
   @Input() set data(value: any) {
     this.sceneId = value.sceneId;
-    this.loadViewer(value.sceneId, 0);
-    this.sceneId = value.sceneId;
+    this.loadViewer();
   }
 
   get data() {
     return this.sceneId
   }
 
-  /**
-   * Check every 250ms if the viewer is available.
-   *
-   * @param sceneId Scene which holds elements.
-   * @param numberOfTries Current try number.
-   */
-  loadViewer(sceneId: number, numberOfTries: number) {
-    let promise = new Promise(resolve => setTimeout(resolve, 250));
-    promise.then(() => {
-        this.viewer = this.sceneElementsService.getPcViewer(sceneId);
-        if (this.viewer === undefined && numberOfTries < this.sceneElementsService.maxTries) {
-          this.loadViewer(sceneId, numberOfTries++);
-        } else {
-          this.fov = this.viewer ? this.viewer.camera.fov : this.fov;
-        }
-    });
-  }
-
-  constructor(private sceneElementsService: SceneElementsService, private service: SynchronizeService) {
+  constructor(private socket: Socket,
+              private ws: WebSocketService,
+              private sceneElementsService: SceneElementsService, private service: SynchronizeService) {
   }
 
   ngOnInit(): void {
@@ -79,9 +64,26 @@ export class GeneralSettingsComponent implements OnInit {
     this.viewer?.setCameraSync(this.cameraSync);
   }
 
+  onStartAnimation(): void {
+    if (!this.cameraSync) {
+      this.onCameraSync();
+    }
+    this.ws.sendMessage('start_animation', '0');
+  }
+
   pickerTest(): void {
     this.service.applyUpdate();
     this.viewer?.pickPointTest();
+  }
+
+  private loadViewer() {
+    this.sceneElementsService.getViewerData().subscribe(data => {
+      if (data.has(this.sceneId)) {
+        setTimeout(() => {
+          this.viewer = data.get(this.sceneId)?.viewer;
+        });
+      }
+    });
   }
 
 }

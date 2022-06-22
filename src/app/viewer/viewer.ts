@@ -68,9 +68,12 @@ export class Viewer {
     this.targetEl = targetEl;
     this.targetEl.appendChild(this.renderer.domElement);
 
-    // camera position is at (0,0,0) same as orbit controls, so we need to change it slightly.
-    // this.camera.position.z = 60
-    // this.camera.position.y = 10
+    if (this.camera.position.equals(new Vector3(0,0,0))) {
+      // camera position is at (0,0,0) same as orbit controls, so we need to change it slightly.
+      // Else the camera cannot be controlled by mouse input.
+      this.camera.position.z = 60
+      this.camera.position.y = 10
+    }
 
     this.cameraControls.enableZoom = true;
     this.cameraControls.enableRotate = true;
