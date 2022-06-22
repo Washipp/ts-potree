@@ -8,8 +8,6 @@
   <app-loading [active]="!groups"></app-loading>
 </div>
 
-<button (click)="setVisibilityByGroupId(0, false)">Set visible</button>
-
 <div [ngSwitch]="parseToEnum(selectedElement[0])">
   <app-pco-settings *ngSwitchCase="elem.POTREE_POINT_CLOUD" [data]="selectedElement[1]"></app-pco-settings>
 

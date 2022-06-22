@@ -41,17 +41,6 @@ export class ElementTreeComponent implements OnInit {
     return this._data;
   }
 
-  setVisibilityByGroupId(groupId: number, visible: boolean): void {
-    this.groups.forEach(group => {
-      if (group.groupId == groupId) {
-        group.visible = false
-        group.groups.forEach(groups => {
-          groups.visible = visible
-        })
-      }
-    })
-  }
-
   selectedElement: [SceneElementsEnum, SceneElement[]];
 
   setSelectedElement(value: [SceneElementsEnum, SceneElement[]]) {

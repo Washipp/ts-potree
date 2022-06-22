@@ -9,6 +9,8 @@ import { Observable } from "rxjs";
 })
 export class WebSocketService {
 
+  static cameraSyncEvent = 'camera_sync'
+
   constructor(private socket: Socket) { }
 
   /**
@@ -22,29 +24,38 @@ export class WebSocketService {
       "sceneId": sceneId,
       "state": cameraState
     }
-    this.sendMessage(JSON.stringify(data));
+    this.sendMessage(WebSocketService.cameraSyncEvent, JSON.stringify(data));
   }
 
   /**
    * Send any data to the server via websocket
    *
+   * @param eventName event name that is used in the request
    * @param data data to send.
    */
-  sendMessage(data: string): void {
-    this.socket.emit('json', data);
+  sendMessage(eventName: string, data: string): void {
+    this.socket.emit(eventName, data);
   }
 
-  getMessage(): Observable<CameraState> {
-    return this.socket.fromEvent('json').pipe(map((data: any) => data));
+  getMessage(eventName: string, ): Observable<CameraState> {
+    return this.socket.fromEvent(eventName).pipe(map((data: any) => data));
   }
 
   connect(): void {
-    this.socket.connect();
-    console.log("Connected the socket.")
+    if (!this.socket.ioSocket.connected) {
+      this.socket.connect();
+      console.info("[WS]: Connected the socket.")
+    } else {
+      console.info("[WS]: Socket already connected")
+    }
   }
 
   disconnect(): void {
-    this.socket.disconnect();
-    console.log("Disconnected the socket.")
+    if (this.socket.ioSocket.connected) {
+      this.socket.disconnect();
+      console.info("[WS]: Disconnected the socket.")
+    } else {
+      console.info("[WS]: Socket already disconnected.")
+    }
   }
 }

@@ -270,7 +270,7 @@ export class Viewer {
 
       } );
       // subscribe to the updates.
-      this.socket.getMessage().subscribe((message: any) => {
+      this.socket.getMessage(WebSocketService.cameraSyncEvent).subscribe((message: any) => {
         let newState: CameraState = message;
         this.setCameraState(newState);
       });
