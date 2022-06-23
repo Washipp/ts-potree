@@ -83,7 +83,7 @@ export class GeneralSettingsComponent implements OnInit {
   extractRandT(cameraState: CameraState): [number[], number[]] {
     return [
       [this.round(cameraState.position.x), this.round(cameraState.position.y), this.round(cameraState.position.z)],
-      [this.round(cameraState.rotation.x), this.round(cameraState.rotation.y), this.round(cameraState.rotation.z)]
+      [this.round(cameraState.rotation.x), this.round(cameraState.rotation.y), this.round(cameraState.rotation.z), this.round(cameraState.rotation.w)]
     ];
   }
 

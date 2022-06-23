@@ -1,5 +1,5 @@
 import { PointCloudSetting } from "../components/element-settings/element-setting";
-import { BufferGeometry, Points, PointsMaterial } from "three";
+import { BufferGeometry, Color, Points, PointsMaterial } from "three";
 
 export class DefaultPointCloud extends Points implements PointCloudSetting {
 
@@ -14,6 +14,10 @@ export class DefaultPointCloud extends Points implements PointCloudSetting {
   setColor(color: string): void {
     this.colorMaterial.color.set(color);
     this.material = this.colorMaterial;
+  }
+
+  getColor(): Color {
+    return this.colorMaterial.color;
   }
 
   setVisibility(visible: boolean): void {

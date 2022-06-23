@@ -5,7 +5,7 @@ import { CustomLine, ElementAttributes, SceneElement, ViewerData } from "./pc-vi
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { LineSet } from "../../elements/line-set";
 import { CameraTrajectory, CameraTrajectoryData } from "../../elements/camera-trajectory";
-import { Euler, Vector3 } from "three";
+import { Quaternion, Vector3 } from "three";
 import { WebSocketService } from "../../services/web-socket.service";
 
 @Component({
@@ -51,7 +51,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
       // convert from array to the corresponding objects.
       let pos = new Vector3()
       pos.fromArray(this.data.camera.position)
-      let rot = new Euler()
+      let rot = new Quaternion()
       rot.fromArray(this.data.camera.rotation)
       let state: CameraState =  {
         position: pos,

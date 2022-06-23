@@ -1,6 +1,6 @@
 import {
   Color, Euler,
-  PerspectiveCamera, PointsMaterial, Ray,
+  PerspectiveCamera, PointsMaterial, Quaternion, Ray,
   Scene, Vector3,
   WebGLRenderer
 } from "three";
@@ -15,7 +15,7 @@ import { WebSocketService } from "../services/web-socket.service";
 
 export interface CameraState {
   position: Vector3,
-  rotation: Euler,
+  rotation: Quaternion,
   fov: number,
   near: number,
   far: number,
@@ -252,15 +252,19 @@ export class Viewer {
 
   setCameraSync(value: boolean): void {
     if (value) {
-      this.socket.connect()
+      this.socket.connect();
       // Send update to server.
-      this.cameraControls.addEventListener('change', () => {
+      let listener = () => {
         // TODO: may create extra class for the camera state
-
         this.currentCameraState = this.getCurrentCameraState(this.camera);
         this.socket.sendCameraState(0, this.currentCameraState);
+      };
 
-      } );
+      this.cameraControls.addEventListener('change', listener);
+
+      // execute it once to set a state in the backend
+      listener();
+
       // subscribe to the updates.
       this.socket.getMessage(WebSocketService.cameraSyncEvent).subscribe((message: any) => {
         let newState: CameraState = message;
@@ -273,9 +277,11 @@ export class Viewer {
   }
 
   getCurrentCameraState(camera: PerspectiveCamera): CameraState {
+    let quat = new Quaternion()
+    quat.setFromEuler(camera.rotation)
     return {
       position: camera.position as Vector3,
-      rotation: camera.rotation as Euler,
+      rotation: quat,
       fov: camera.fov,
       near: camera.near,
       far: camera.far,
@@ -286,7 +292,9 @@ export class Viewer {
   setCameraState(cameraState: CameraState): void {
     this.currentCameraState = cameraState;
     this.camera.position.set(cameraState.position.x, cameraState.position.y, cameraState.position.z);
-    this.camera.rotation.set(cameraState.rotation.x, cameraState.rotation.y, cameraState.rotation.z);
+    let euler = new Euler()
+    euler.setFromQuaternion(cameraState.rotation);
+    this.camera.rotation.set(euler.x, euler.y, euler.z, 'XZY');
     this.camera.fov = cameraState.fov;
     this.camera.near = cameraState.near;
     this.camera.far = cameraState.far;

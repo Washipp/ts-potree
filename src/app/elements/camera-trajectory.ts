@@ -1,5 +1,6 @@
 import { LineSet } from "./line-set";
 import {
+  Color,
   DoubleSide, Matrix4,
   Mesh,
   MeshBasicMaterial,
@@ -69,6 +70,10 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
 
   setColor(color: string): void {
     this.lineSet.setColor(color);
+  }
+
+  getColor(): Color {
+    return this.lineSet.material.color;
   }
 
   setVisibility(visible: boolean): void {
