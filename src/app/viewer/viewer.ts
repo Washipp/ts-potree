@@ -219,17 +219,6 @@ export class Viewer {
   }
 
   /**
-   * Set the BoundingBox for all point clouds
-   *
-   * @param value showBoundingBox = value
-   */
-  setBoundingBox(value: boolean): void {
-    this.pointClouds.forEach(pco => {
-      pco.showBoundingBox = value;
-    });
-  }
-
-  /**
    * Set camera fov to the given value.
    * @param fov new FOV value
    */
