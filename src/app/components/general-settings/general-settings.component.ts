@@ -72,7 +72,7 @@ export class GeneralSettingsComponent implements OnInit {
     if (!this.cameraSync) {
       this.onCameraSync();
     }
-    this.ws.sendMessage('start_animation', this.data.sceneId.toString());
+    this.ws.startAnimation(this.data.sceneId, "animation_1");
   }
 
   pickerTest(): void {
