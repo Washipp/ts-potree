@@ -1,12 +1,13 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
-import { CameraState, Viewer } from "../../viewer/viewer";
+import { Viewer } from "../../viewer/viewer";
 import { SceneElementsService } from "../../services/scene-elements.service";
 import { CustomLine, ElementAttributes, SceneElement, ViewerData } from "./pc-viewer.interfaces";
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { LineSet } from "../../elements/line-set";
 import { CameraTrajectory, CameraTrajectoryData } from "../../elements/camera-trajectory";
-import { Quaternion, Vector3 } from "three";
+import { Vector3 } from "three";
 import { WebSocketService } from "../../services/web-socket.service";
+import { HelperFunctions } from "../utility/helper-functions";
 
 @Component({
   selector: 'app-pc-viewer',
@@ -49,19 +50,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
     // set the camera position.
     if (this.data.camera) {
       // convert from array to the corresponding objects.
-      let pos = new Vector3()
-      pos.fromArray(this.data.camera.position)
-      let rot = new Quaternion()
-      rot.fromArray(this.data.camera.rotation)
-      let state: CameraState =  {
-        position: pos,
-        rotation: rot,
-        fov: this.data.camera.fov,
-        near: this.data.camera.near,
-        far: this.data.camera.far,
-        lastUpdate: 0,
-      }
-      this.viewer.setCameraState(state);
+      this.viewer.setCameraState(HelperFunctions.minifiedToFullCameraState(this.data.camera));
     }
 
     let elements = this.data.elements;
@@ -95,9 +84,6 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
         pc.applyMatrix4(attributes.transformation);
       }
       pc.name = attributes.name;
-      pc.scale.set(10,10,10);
-      pc.rotateX(-Math.PI);
-      pc.translateX(10);
 
       this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, pc);
     });
@@ -148,16 +134,12 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
                               elementId: number): void {
     this.viewer.loadPotreePCO("cloud.js", url).then(pco => {
       pco.name = attributes.name;
-      pco.material.size = attributes.material.size;
-      if (attributes.position) {
-        pco.position.set(attributes.position.x, attributes.position.y, attributes.position.z);
+      if (attributes.material?.size) {
+        pco.material.size = attributes.material.size;
       }
       if (attributes.transformation) {
         pco.applyMatrix4(attributes.transformation);
       }
-      pco.translateX(-1);
-      pco.rotateX(-Math.PI / 2);
-      pco.scale.set(1,1,1);
 
       this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, pco);
     });

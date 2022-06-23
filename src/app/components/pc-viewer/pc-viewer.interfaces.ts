@@ -1,4 +1,4 @@
-import { Matrix4, Object3D, Vector3 } from "three";
+import { Matrix4, Object3D } from "three";
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { MinifiedCameraState, Viewer } from "../../viewer/viewer";
 import { CameraTrajectoryData } from "../../elements/camera-trajectory";
@@ -11,7 +11,6 @@ export interface ElementAttributes {
   name: string,
   material?: any,
   imageUrl?: string,
-  position?: Vector3, // TODO: remove position and scale.
   transformation?: Matrix4,
 }
 
