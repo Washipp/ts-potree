@@ -12,6 +12,7 @@ import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader";
 import { CameraTrajectory } from "../elements/camera-trajectory";
 import { DefaultPointCloud } from "../elements/default-point-cloud";
 import { WebSocketService } from "../services/web-socket.service";
+import { HelperFunctions } from "../components/utility/helper-functions";
 
 export interface CameraState {
   position: Vector3,
@@ -28,6 +29,7 @@ export interface MinifiedCameraState {
   fov: number,
   near: number,
   far: number,
+  lastUpdate: number,
 }
 
 export class Viewer {
@@ -257,7 +259,7 @@ export class Viewer {
       let listener = () => {
         // TODO: may create extra class for the camera state
         this.currentCameraState = this.getCurrentCameraState(this.camera);
-        this.socket.sendCameraState(0, this.currentCameraState);
+        this.socket.sendCameraState(0, HelperFunctions.fullToMinifiedCameraState(this.currentCameraState));
       };
 
       this.cameraControls.addEventListener('change', listener);
@@ -266,9 +268,8 @@ export class Viewer {
       listener();
 
       // subscribe to the updates.
-      this.socket.getMessage(WebSocketService.cameraSyncEvent).subscribe((message: any) => {
-        let newState: CameraState = message;
-        this.setCameraState(newState);
+      this.socket.getMessage(WebSocketService.cameraSyncEvent).subscribe((message: MinifiedCameraState) => {
+        this.setCameraState(HelperFunctions.minifiedToFullCameraState(message));
       });
     } else {
       this.socket.disconnect()

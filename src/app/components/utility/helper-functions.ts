@@ -1,8 +1,36 @@
+import { CameraState, MinifiedCameraState } from "../../viewer/viewer";
+import { Quaternion, Vector3 } from "three";
 
 export class HelperFunctions {
   static enumFromStringValue<T> (enm: { [s: string]: T}, value: string): T | undefined {
     return (Object.values(enm) as unknown as string[]).includes(value)
       ? value as unknown as T
       : undefined;
+  }
+
+  static minifiedToFullCameraState(minifiedState: MinifiedCameraState): CameraState {
+    let pos = new Vector3()
+    pos.fromArray(minifiedState.position)
+    let rot = new Quaternion()
+    rot.fromArray(minifiedState.rotation)
+    return {
+      position: pos,
+      rotation: rot,
+      fov: minifiedState.fov,
+      near: minifiedState.near,
+      far: minifiedState.far,
+      lastUpdate: minifiedState.lastUpdate,
+    }
+  }
+
+  static fullToMinifiedCameraState(fullState: CameraState): MinifiedCameraState {
+    return {
+      position: [fullState.position.x, fullState.position.y, fullState.position.z],
+      rotation: [fullState.rotation.x, fullState.rotation.y, fullState.rotation.z, fullState.rotation.w],
+      fov: fullState.fov,
+      near: fullState.near,
+      far: fullState.far,
+      lastUpdate: fullState.lastUpdate,
+    }
   }
 }
