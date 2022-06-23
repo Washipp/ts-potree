@@ -6,8 +6,8 @@
   </label>
 
   <!-- Groups -->
-  <div *ngFor="let b of data.groups" class="element-group">
-    <app-group [sceneId]="sceneId" [data]="b" (selectedElementEvent)="setSelectedElement($event)"></app-group>
+  <div *ngFor="let group of data.groups" class="element-group">
+    <app-group [sceneId]="sceneId" [data]="group" (selectedElementEvent)="setSelectedElement($event)"></app-group>
   </div>
 
   <!-- Components -->

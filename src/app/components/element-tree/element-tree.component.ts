@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { SceneElement } from "../pc-viewer/pc-viewer.interfaces";
 import { HelperFunctions } from "../utility/helper-functions";
+import { ComponentTreeData } from "../../services/scene-elements.service";
 
 export interface ElementTreeGroup {
   groupId: number,
@@ -12,7 +13,7 @@ export interface ElementTreeGroup {
   sceneElements?: SceneElement[],
 }
 
-export interface ElementTreeData {
+export interface ElementTreeData extends ComponentTreeData {
   sceneId: number,
   groups: ElementTreeGroup[]
 }

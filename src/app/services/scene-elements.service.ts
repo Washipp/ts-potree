@@ -6,10 +6,13 @@ import { Object3D } from "three";
 import { BaseServiceService } from "./base-service.service";
 import { TreeComponentsEnum } from "../components/base/base.component";
 
+export interface ComponentTreeData {
+}
+
 export interface ComponentTree {
   component: TreeComponentsEnum,
   componentId: number,
-  data: any | ViewerData,
+  data: ComponentTreeData,
   children: ComponentTree[]
 }
 

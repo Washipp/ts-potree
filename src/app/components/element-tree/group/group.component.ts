@@ -119,8 +119,9 @@ export class GroupComponent implements OnInit {
   private loadComponents(ids: number[]): void {
     this.sceneElementsService.getViewerData().subscribe(d => {
       this._data.sceneElements = [];
-      if (d.has(this.sceneId)) {
-        d.get(this.sceneId)?.elements.map((elem) => {
+      let viewerData = d.get(this.sceneId);
+      if (viewerData) {
+        viewerData.elements.map((elem) => {
           if (ids.includes(elem.elementId)) {
             this._data.sceneElements?.push(elem);
           }

@@ -2,6 +2,7 @@ import { Matrix4, Object3D, Vector3 } from "three";
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { MinifiedCameraState, Viewer } from "../../viewer/viewer";
 import { CameraTrajectoryData } from "../../elements/camera-trajectory";
+import { ComponentTreeData } from "../../services/scene-elements.service";
 
 // Tuple with start/end point accordingly with the points in an array.
 export type CustomLine = [number[], number[]];
@@ -23,7 +24,7 @@ export interface SceneElement {
   element?: Object3D,
 }
 
-export interface ViewerData {
+export interface ViewerData extends ComponentTreeData {
   sceneId: number,
   elements: SceneElement[],
   camera?: MinifiedCameraState,

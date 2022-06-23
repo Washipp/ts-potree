@@ -21,6 +21,11 @@ import { ElementSetting } from "../components/element-settings/element-setting";
  *  y4 _______________ y3
  */
 export interface CameraTrajectoryData {
+  r: number[],
+  t: number[],
+}
+
+export interface CameraTrajectoryPoints {
   x: Vector3;
   y1: Vector3;
   y2: Vector3;
@@ -41,7 +46,7 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
       y4: new Vector3(-1,-2/3,1),
     };
 
-  points: CameraTrajectoryData;
+  points: CameraTrajectoryPoints;
   private size: number = 1;
   mesh: Mesh;
   private imageUrl: string;

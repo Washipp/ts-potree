@@ -4,7 +4,7 @@ import { SceneElementsService } from "../../services/scene-elements.service";
 import { CustomLine, ElementAttributes, SceneElement, ViewerData } from "./pc-viewer.interfaces";
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { LineSet } from "../../elements/line-set";
-import { CameraTrajectory } from "../../elements/camera-trajectory";
+import { CameraTrajectory, CameraTrajectoryData } from "../../elements/camera-trajectory";
 import { Euler, Vector3 } from "three";
 import { WebSocketService } from "../../services/web-socket.service";
 
@@ -49,8 +49,10 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
     // set the camera position.
     if (this.data.camera) {
       // convert from array to the corresponding objects.
-      let pos = new Vector3(this.data.camera.position[0], this.data.camera.position[1], this.data.camera.position[2])
-      let rot = new Euler(this.data.camera.rotation[0], this.data.camera.rotation[1], this.data.camera.rotation[2])
+      let pos = new Vector3()
+      pos.fromArray(this.data.camera.position)
+      let rot = new Euler()
+      rot.fromArray(this.data.camera.rotation)
       let state: CameraState =  {
         position: pos,
         rotation: rot,
@@ -73,7 +75,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
           this.addLineSet(p.source as CustomLine[], p.attributes, p.elementId);
           break;
         case SceneElementsEnum.CAMERA_TRAJECTORY:
-          this.addCameraTrajectory(p.source, p.attributes, p.elementId);
+          this.addCameraTrajectory(p.source as CameraTrajectoryData, p.attributes, p.elementId);
           break;
         case SceneElementsEnum.DEFAULT_POINT_CLOUD:
           this.addDefaultPointCloud(p.source as string, p.attributes, p.elementId);
@@ -102,7 +104,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
 
   }
 
-  private addCameraTrajectory(source: any,
+  private addCameraTrajectory(source: CameraTrajectoryData,
                               attributes: ElementAttributes,
                               elementId: number): void {
     let cameraTrajectory = new CameraTrajectory(source.t, source.r, attributes.imageUrl);

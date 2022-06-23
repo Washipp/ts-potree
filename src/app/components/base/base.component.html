@@ -1,16 +1,13 @@
 <div *ngFor="let child of children;">
   <div [ngSwitch]="parseToEnum(child.component)">
-    <app-col *ngSwitchCase="comp.COL" [children]="child.children" [data]="child.data"></app-col>
-    <app-row *ngSwitchCase="comp.ROW" [children]="child.children" [data]="child.data"></app-row>
+    <app-col *ngSwitchCase="comp.COL" [children]="child.children" [data]="toColData(child.data)"></app-col>
+    <app-row *ngSwitchCase="comp.ROW" [children]="child.children" [data]="toRowData(child.data)"></app-row>
 
-    <app-pc-viewer *ngSwitchCase="comp.VIEWER" [data]="child.data"></app-pc-viewer>
+    <app-pc-viewer *ngSwitchCase="comp.VIEWER" [data]="toViewerData(child.data)"></app-pc-viewer>
 
-    <app-general-settings *ngSwitchCase="comp.GENERAL_SETTINGS" [data]="child.data"></app-general-settings>
+    <app-general-settings *ngSwitchCase="comp.GENERAL_SETTINGS" [data]="toGeneralSettingsData(child.data)"></app-general-settings>
 
-    <app-element-tree *ngSwitchCase="comp.ELEMENT_TREE" [data]="child.data"></app-element-tree>
+    <app-element-tree *ngSwitchCase="comp.ELEMENT_TREE" [data]="toElementTreeData(child.data)"></app-element-tree>
 
-    <div *ngSwitchCase="comp.BUTTON">
-      <button style="{{ child.data.color }}">{{ child.data.id }}</button>
-    </div>
   </div>
 </div>

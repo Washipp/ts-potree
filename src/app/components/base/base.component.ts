@@ -1,6 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ComponentTree } from "../../services/scene-elements.service";
+import { ComponentTree, ComponentTreeData } from "../../services/scene-elements.service";
 import { HelperFunctions } from "../utility/helper-functions";
+import { GeneralSettingsData } from "../general-settings/general-settings.component";
+import { ViewerData } from "../pc-viewer/pc-viewer.interfaces";
+import { ColData } from "../structure/col/col.component";
+import { RowData } from "../structure/row/row.component";
+import { ElementTreeData } from "../element-tree/element-tree.component";
 
 export enum TreeComponentsEnum {
   ROW = "row",
@@ -20,7 +25,6 @@ export class BaseComponent implements OnInit {
 
   comp = TreeComponentsEnum; // used in template as ENUM
   @Input() children: ComponentTree[];
-  @Input() data: any;
 
   constructor() {
     this.children = [];
@@ -28,6 +32,27 @@ export class BaseComponent implements OnInit {
 
   ngOnInit(): void {
   }
+
+  toColData(data: ComponentTreeData): ColData {
+    return data as ColData;
+  }
+
+  toRowData(data: ComponentTreeData): RowData {
+    return data as RowData;
+  }
+
+  toGeneralSettingsData(data: ComponentTreeData): GeneralSettingsData {
+    return data as GeneralSettingsData;
+  }
+
+  toViewerData(data: ComponentTreeData): ViewerData {
+    return data as ViewerData;
+  }
+
+  toElementTreeData(data: ComponentTreeData): ElementTreeData {
+    return data as ElementTreeData;
+  }
+
 
   parseToEnum(type: string): TreeComponentsEnum | undefined {
     return HelperFunctions.enumFromStringValue(TreeComponentsEnum, type);

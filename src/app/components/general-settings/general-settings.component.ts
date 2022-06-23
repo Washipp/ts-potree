@@ -1,9 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { SceneElementsService } from "../../services/scene-elements.service";
-import { Viewer } from "../../viewer/viewer";
+import { ComponentTreeData, SceneElementsService } from "../../services/scene-elements.service";
+import { CameraState, Viewer } from "../../viewer/viewer";
 import { SynchronizeService } from "../../services/synchronize.service";
 import { Socket } from "ngx-socket-io";
 import { WebSocketService } from "../../services/web-socket.service";
+
+export interface GeneralSettingsData extends ComponentTreeData {
+  sceneId: number
+}
 
 @Component({
   selector: 'app-general-settings',
@@ -29,14 +33,14 @@ export class GeneralSettingsComponent implements OnInit {
   backgroundColor: string = '#000000';
   cameraSync: boolean = false;
 
-  sceneId: number = -1;
-  @Input() set data(value: any) {
-    this.sceneId = value.sceneId;
+  private _data: GeneralSettingsData = {sceneId: -1};
+  @Input() set data(value: GeneralSettingsData) {
+    this._data = value
     this.loadViewer();
   }
 
-  get data() {
-    return this.sceneId
+  get data(): GeneralSettingsData {
+    return this._data;
   }
 
   constructor(private socket: Socket,
@@ -68,7 +72,7 @@ export class GeneralSettingsComponent implements OnInit {
     if (!this.cameraSync) {
       this.onCameraSync();
     }
-    this.ws.sendMessage('start_animation', '0');
+    this.ws.sendMessage('start_animation', this.data.sceneId.toString());
   }
 
   pickerTest(): void {
@@ -76,11 +80,24 @@ export class GeneralSettingsComponent implements OnInit {
     this.viewer?.pickPointTest();
   }
 
+  extractRandT(cameraState: CameraState): [number[], number[]] {
+    return [
+      [this.round(cameraState.position.x), this.round(cameraState.position.y), this.round(cameraState.position.z)],
+      [this.round(cameraState.rotation.x), this.round(cameraState.rotation.y), this.round(cameraState.rotation.z)]
+    ];
+  }
+
+  private round(num: number): number {
+    let digits = 6
+    let rounding = Math.pow(10, digits)
+    return ((Math.round(num * rounding) / rounding).toFixed(digits) as unknown) as number;
+  }
+
   private loadViewer() {
     this.sceneElementsService.getViewerData().subscribe(data => {
-      if (data.has(this.sceneId)) {
+      if (data.has(this.data.sceneId)) {
         setTimeout(() => {
-          this.viewer = data.get(this.sceneId)?.viewer;
+          this.viewer = data.get(this.data.sceneId)?.viewer;
         });
       }
     });
