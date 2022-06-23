@@ -37,7 +37,9 @@ export class CameraTrajectorySettingsComponent implements OnInit {
 
     this.cameraTrajectories = [];
     this._data?.forEach((sceneElement) => {
-      this.cameraTrajectories?.push(sceneElement.element as CameraTrajectory);
+      let ct = sceneElement.element as CameraTrajectory;
+      this.settings.color = '#' + ct.getColor().getHexString()
+      this.cameraTrajectories?.push(ct);
       this.type = sceneElement.sceneType;
     });
 

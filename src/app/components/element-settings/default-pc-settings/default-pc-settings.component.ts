@@ -31,8 +31,10 @@ export class DefaultPcSettingsComponent implements OnInit {
     this._data = sceneElements;
 
     this.pcos = [];
-    this._data?.forEach((sceneElement) => {
-      this.pcos?.push(sceneElement.element as DefaultPointCloud);
+    sceneElements.forEach((sceneElement) => {
+      let pc = sceneElement.element as DefaultPointCloud;
+      this.settings.color = '#' + pc.getColor().getHexString();
+      this.pcos?.push(pc);
       this.type = sceneElement.sceneType;
     });
   }

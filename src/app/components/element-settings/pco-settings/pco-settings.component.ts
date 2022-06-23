@@ -37,8 +37,10 @@ export class PcoSettingsComponent implements OnInit {
     this._data = sceneElements;
     this.pcos = [];
     sceneElements.forEach((sceneElement) => {
-      this.pcos?.push(sceneElement.element as PointCloudOctree);
+      let pco = sceneElement.element as PointCloudOctree;
+      this.pcos?.push(pco);
       this.type = sceneElement.sceneType;
+      this.settings.color = '#' + pco.material.uniforms.uColor.value.getHexString()
     });
 
     // TODO: create a  PotreePointCloud Wrapper object --> doesnt really work because of references?

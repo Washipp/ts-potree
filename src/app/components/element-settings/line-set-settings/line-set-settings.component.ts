@@ -19,10 +19,11 @@ export class LineSetSettingsComponent implements OnInit {
   private _data: SceneElement[] | undefined;
   @Input() set data(sceneElements: SceneElement[]) {
     this._data = sceneElements;
-
     this.lineSets = [];
-    this._data?.forEach((sceneElement) => {
-      this.lineSets?.push(sceneElement.element as LineSet);
+    sceneElements.forEach((sceneElement) => {
+      let ls = sceneElement.element as LineSet;
+      this.color = '#' + ls.material.color.getHexString()
+      this.lineSets?.push(ls);
       this.type = sceneElement.sceneType;
     });
   }
