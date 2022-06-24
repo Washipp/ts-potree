@@ -48,6 +48,7 @@
 html {
   background-color: var(--color-primary-4);
   color: white !important; /* override materializecss attributes */
+  overflow: clip;
 }
 
 .btn-small, .btn-flat {
