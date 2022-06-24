@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ComponentTreeData, SceneElementsService } from "../../services/scene-elements.service";
 import { CameraState, Viewer } from "../../viewer/viewer";
-import { SynchronizeService } from "../../services/synchronize.service";
 import { Socket } from "ngx-socket-io";
 import { WebSocketService } from "../../services/web-socket.service";
 
@@ -45,7 +44,7 @@ export class GeneralSettingsComponent implements OnInit {
 
   constructor(private socket: Socket,
               private ws: WebSocketService,
-              private sceneElementsService: SceneElementsService, private service: SynchronizeService) {
+              private sceneElementsService: SceneElementsService) {
   }
 
   ngOnInit(): void {
@@ -76,7 +75,6 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   pickerTest(): void {
-    this.service.applyUpdate();
     this.viewer?.pickPointTest();
   }
 
