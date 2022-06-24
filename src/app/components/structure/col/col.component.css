@@ -1,6 +1,6 @@
 .col-app-base-wrapper {
   overflow-x: clip;
-  overflow-y: scroll;
+  overflow-y: auto;
   max-height: 99vh;
   padding-right: 1rem;
 }
