@@ -13,8 +13,9 @@ export class AppComponent {
 
   constructor(private sceneElementsService: SceneElementsService) {
     this.data = [];
-    sceneElementsService.getComponentTree(0).subscribe((data) => {
-      this.data = data;
+    this.sceneElementsService.getComponentTree(0).subscribe((data) => {
+      // TODO: hacky way to use the same reference. Should probably be changed...
+      this.data = this.sceneElementsService.componentTree;
     });
   }
 
