@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
@@ -21,20 +21,14 @@ import { DefaultPcSettingsComponent } from './components/element-settings/defaul
 import { SocketIoConfig, SocketIoModule } from "ngx-socket-io";
 import { LineSetSettingsComponent } from './components/element-settings/line-set-settings/line-set-settings.component';
 import { GroupComponent } from './components/element-tree/group/group.component';
-import { ConfigService } from "./services/config.service";
+import { environment } from "../environments/environment";
 
 const config: SocketIoConfig = {
-  url: 'http://127.0.0.1:5000',
+  url: `${environment.baseUrl}:${environment.port}`,
   options: {
     transports: ["websocket", "polling", ]
   }
 };
-
-// // We need to wait for the config factory to be loaded.
-// export const configFactory = (configService: ConfigService) => {
-//   return () => configService.loadConfig();
-// };
-
 
 
 @NgModule({
@@ -62,14 +56,7 @@ const config: SocketIoConfig = {
     HttpClientModule,
     SocketIoModule.forRoot(config)
   ],
-  providers: [HttpClient,
-    // {
-    //   provide: APP_INITIALIZER,
-    //   useFactory: configFactory,
-    //   deps: [ConfigService],
-    //   multi: true
-    // }
-    ],
+  providers: [HttpClient],
   bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -5,8 +5,9 @@
 export const environment = {
   production: false,
   debug: true,
-  baseUrl: 'http://127.0.0.1:5000',
-  socketNamespace: 'camera_state/',
+  baseUrl: 'http://127.0.0.1',
+  //@ts-ignore
+  port: window['port'] || 5000,
 };
 
 /*
