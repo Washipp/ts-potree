@@ -5,7 +5,6 @@ import {
   WebGLRenderer
 } from "three";
 import { PointCloudOctree, Potree } from '@pnext/three-loader';
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { SceneElementsService } from "../services/scene-elements.service";
 import { LineSet } from "../elements/line-set";
 import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader";
@@ -13,6 +12,7 @@ import { CameraTrajectory } from "../elements/camera-trajectory";
 import { DefaultPointCloud } from "../elements/default-point-cloud";
 import { WebSocketService } from "../services/web-socket.service";
 import { HelperFunctions } from "../components/utility/helper-functions";
+import { ArcballControls } from "three/examples/jsm/controls/ArcballControls";
 
 export interface CameraState {
   position: Vector3,
@@ -42,7 +42,7 @@ export class Viewer {
 
   public camera = new PerspectiveCamera(45, 1, 0.1, 1000);
 
-  private cameraControls = new OrbitControls(this.camera, this.renderer.domElement);
+  private cameraControls = new ArcballControls(this.camera, this.renderer.domElement);
 
   private potree = new Potree();
 
@@ -79,7 +79,6 @@ export class Viewer {
 
     this.cameraControls.enableZoom = true;
     this.cameraControls.enableRotate = true;
-    this.cameraControls.enableDamping = true;
     this.cameraControls.dampingFactor = 0.25;
 
 
