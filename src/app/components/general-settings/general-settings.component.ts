@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ComponentTreeData, SceneElementsService } from "../../services/scene-elements.service";
-import { CameraState, Viewer } from "../../viewer/viewer";
-import { Socket } from "ngx-socket-io";
+import { Viewer } from "../../viewer/viewer";
 import { WebSocketService } from "../../services/web-socket.service";
 
 export interface GeneralSettingsData extends ComponentTreeData {
@@ -29,7 +28,7 @@ export class GeneralSettingsComponent implements OnInit {
   pointBudget: number = 1000_000;
   fov: number = 60;
   viewer: Viewer | undefined;
-  backgroundColor: string = '#000000';
+  backgroundColor: string = '#FFFFFF';
   cameraSync: boolean = false;
 
   private _data: GeneralSettingsData = {sceneId: -1};
@@ -42,9 +41,7 @@ export class GeneralSettingsComponent implements OnInit {
     return this._data;
   }
 
-  constructor(private socket: Socket,
-              private ws: WebSocketService,
-              private sceneElementsService: SceneElementsService) {
+  constructor(private ws: WebSocketService, private sceneElementsService: SceneElementsService) {
   }
 
   ngOnInit(): void {
@@ -78,24 +75,12 @@ export class GeneralSettingsComponent implements OnInit {
     this.viewer?.pickPointTest();
   }
 
-  extractRandT(cameraState: CameraState): [number[], number[]] {
-    return [
-      [this.round(cameraState.position.x), this.round(cameraState.position.y), this.round(cameraState.position.z)],
-      [this.round(cameraState.rotation.x), this.round(cameraState.rotation.y), this.round(cameraState.rotation.z), this.round(cameraState.rotation.w)]
-    ];
-  }
-
-  private round(num: number): number {
-    let digits = 6
-    let rounding = Math.pow(10, digits)
-    return ((Math.round(num * rounding) / rounding).toFixed(digits) as unknown) as number;
-  }
-
   private loadViewer() {
     this.sceneElementsService.getViewerData().subscribe(data => {
       if (data.has(this.data.sceneId)) {
         setTimeout(() => {
           this.viewer = data.get(this.data.sceneId)?.viewer;
+          this.changeBackground();
         });
       }
     });

@@ -48,25 +48,6 @@
     </div>
   </div>
 
-
-  <div class="row">
-    <div class="col s4 description"><label>Camera Position:</label></div>
-    <div class="col s8">
-      <span *ngIf="viewer">
-        {{ extractRandT(viewer.getCurrentCameraState(viewer.camera))[0] }}
-      </span>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col s4 description"><label>Camera Rotation:</label></div>
-    <div class="col s8">
-      <span *ngIf="viewer">
-        {{ extractRandT(viewer.getCurrentCameraState(viewer.camera))[1] }}
-      </span>
-    </div>
-  </div>
-
   <div class="row">
     <div class="col s4 description"><label>(Picker Test:)</label></div>
     <div class="col s8">
