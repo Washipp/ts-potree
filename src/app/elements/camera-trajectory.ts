@@ -128,7 +128,7 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
     let len = this.points.y1.distanceTo(this.points.y2);
     let width = this.points.y1.distanceTo(this.points.y4);
     let geometry = new PlaneGeometry(len, width);
-    geometry.setFromPoints([this.points.y2, this.points.y1, this.points.y3, this.points.y4,])
+    geometry.setFromPoints([this.points.y3, this.points.y4, this.points.y2, this.points.y1, ])
     let material = new MeshBasicMaterial();
     let mesh = new Mesh(geometry, material);
     mesh.visible = false;
