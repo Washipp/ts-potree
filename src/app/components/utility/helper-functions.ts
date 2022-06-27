@@ -2,7 +2,7 @@ import { CameraState, MinifiedCameraState } from "../../viewer/viewer";
 import { Quaternion, Vector3 } from "three";
 
 export class HelperFunctions {
-  static enumFromStringValue<T> (enm: { [s: string]: T}, value: string): T | undefined {
+  static enumFromStringValue<T>(enm: { [s: string]: T }, value: string): T | undefined {
     return (Object.values(enm) as unknown as string[]).includes(value)
       ? value as unknown as T
       : undefined;
@@ -32,5 +32,24 @@ export class HelperFunctions {
       far: fullState.far,
       lastUpdate: fullState.lastUpdate,
     }
+  }
+
+  /**
+   * Computes a log value from a linear value range slider
+   *
+   * @param outputMin Lower bound of the interval of output values
+   * @param outputMax Upper bound of the interval of output values
+   * @param sliderMin integer low value
+   * @param sliderMax integer highest value
+   * @param value value that is in [sliderMin, sliderMax]
+   */
+  static logRange(outputMin: number, outputMax: number, sliderMin: number, sliderMax: number, value: number): number {
+    let min = Math.log(outputMin);
+    let max = Math.log(outputMax);
+
+    let scale = (max - min) / (sliderMax - sliderMin);
+
+    return Math.exp(min + scale*(value-sliderMin));
+
   }
 }

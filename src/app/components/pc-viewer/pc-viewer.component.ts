@@ -126,11 +126,15 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
                               elementId: number): void {
     let cameraTrajectory = new CameraTrajectory(source.t, source.r, attributes.imageUrl);
     cameraTrajectory.name = attributes.name;
+
     if (attributes.material?.color) {
       cameraTrajectory.setColor(attributes.material.color);
     } else {
       cameraTrajectory.setColor('#FF0000') // set default color to red.
     }
+
+    cameraTrajectory.setSize(0.5); // default value
+
     if (attributes.transformation) {
       cameraTrajectory.applyMatrix4(attributes.transformation);
     }

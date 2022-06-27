@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CameraTrajectory } from "../../../elements/camera-trajectory";
 import { SceneElement } from "../../pc-viewer/pc-viewer.interfaces";
 import { SceneElementsEnum } from "../../../viewer/scene-elements.enum";
+import { HelperFunctions } from "../../utility/helper-functions";
 
 export interface CTSettings {
   size: number;
@@ -44,8 +45,6 @@ export class CameraTrajectorySettingsComponent implements OnInit {
       this.cameraTrajectories?.push(ct);
       this.type = sceneElement.sceneType;
     });
-
-    //TODO override the default color
   }
 
   get data() {
@@ -65,7 +64,7 @@ export class CameraTrajectorySettingsComponent implements OnInit {
 
   setFrustumSize() {
     this.cameraTrajectories?.forEach((trajectory) => {
-      let s = Math.log(this.settings.size - this.options.min + 0.01)
+      let s = HelperFunctions.logRange(0.1, 1.5, this.options.min, this.options.max, this.settings.size);
       trajectory.setSize(s);
     });
   }

@@ -3,6 +3,7 @@ import { PointCloudOctree, PointColorType } from "@pnext/three-loader";
 import { Color } from "three";
 import { SceneElementsEnum } from "../../../viewer/scene-elements.enum";
 import { SceneElement } from "../../pc-viewer/pc-viewer.interfaces";
+import { HelperFunctions } from "../../utility/helper-functions";
 
 export interface PcSettings {
   color: string;
@@ -60,7 +61,7 @@ export class PcoSettingsComponent implements OnInit {
 
   setPointSize(): void {
     this.pcos?.forEach((pco) => {
-      pco.material.size = this.settings.pointSize;
+      pco.material.size = HelperFunctions.logRange(0.1, 10, this.options.min, this.options.max, this.settings.pointSize);
     });
   }
 

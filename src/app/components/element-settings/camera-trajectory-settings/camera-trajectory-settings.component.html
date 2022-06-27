@@ -27,7 +27,7 @@
     <div class="col s4 description"><label>Line Width:</label></div>
     <div class="col s8">
       <p class="range-field">
-        <input type="range" min="{{options.min}}" max="{{options.max}}" [value]="settings.lineWidth"
+        <input type="range" min="{{options.min}}" max="{{options.max / 2}}" [value]="settings.lineWidth"
                [(ngModel)]="settings.lineWidth" (ngModelChange)="setLineWidth()"/>
       </p>
     </div>
