@@ -8,6 +8,9 @@ import { CameraTrajectory, CameraTrajectoryData } from "../../elements/camera-tr
 import { Vector3 } from "three";
 import { WebSocketService } from "../../services/web-socket.service";
 import { HelperFunctions } from "../utility/helper-functions";
+import { ShortcutInput } from "ng-keyboard-shortcuts";
+import { Clipboard } from '@angular/cdk/clipboard';
+import { Platform } from '@angular/cdk/platform';
 
 @Component({
   selector: 'app-pc-viewer',
@@ -19,11 +22,14 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
   @ViewChild('target') target: any;
   @Input() data: ViewerData;
 
+  shortcuts: ShortcutInput[] = [];
+
   viewer: Viewer;
 
-  constructor(private sceneElementsService: SceneElementsService, private socket: WebSocketService) {
+  constructor(private sceneElementsService: SceneElementsService, private socket: WebSocketService,
+              private clipboard: Clipboard, private platform: Platform) {
     this.viewer = new Viewer(sceneElementsService, socket);
-    this.data = { sceneId: -1, elements: [] };
+    this.data = {sceneId: -1, elements: []};
   }
 
   ngOnInit(): void {
@@ -32,6 +38,31 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.start();
+    this.shortcuts.push(
+      {
+        key: "ctrl + c",
+        preventDefault: true,
+        command: () => {
+          let state = JSON.stringify(this.viewer.getCurrentCameraState(this.viewer.camera));
+          this.clipboard.copy(state);
+          console.log(state);
+        }
+      },
+      {
+        key: "ctrl + v",
+        preventDefault: true,
+        command: () => {
+          if (this.platform.FIREFOX) {
+            console.info("Pasting only supported on Chromium Browsers.")
+            return;
+          }
+          navigator.clipboard.readText().then((data) => {
+            this.viewer.setCameraState(JSON.parse(data));
+            console.log("Pasted camera position");
+          });
+        }
+      }
+    );
   }
 
   start() {
@@ -97,6 +128,8 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
     cameraTrajectory.name = attributes.name;
     if (attributes.material?.color) {
       cameraTrajectory.setColor(attributes.material.color);
+    } else {
+      cameraTrajectory.setColor('#FF0000') // set default color to red.
     }
     if (attributes.transformation) {
       cameraTrajectory.applyMatrix4(attributes.transformation);
@@ -121,6 +154,8 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
     lineSet.name = attributes.name;
     if (attributes.material?.color) {
       lineSet.setColor(attributes.material.color);
+    } else {
+      lineSet.setColor('#FF0000') // set default color to red.
     }
     if (attributes.transformation) {
       lineSet.applyMatrix4(attributes.transformation);
