@@ -1,10 +1,13 @@
-import { BufferGeometry, Line, LineBasicMaterial, Matrix4, Object3D, Vector3 } from "three";
+import { Matrix4, Object3D, Vector3 } from "three";
 import { ElementSetting } from "../components/element-settings/element-setting";
+import { Line2 } from "three/examples/jsm/lines/Line2";
+import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
+import { LineGeometry } from "three/examples/jsm/lines/LineGeometry";
 
 export class LineSet extends Object3D implements ElementSetting {
 
-  lines: Line[];
-  material = new LineBasicMaterial();
+  lines: Line2[];
+  material = new LineMaterial({linewidth: 0.002,});
 
   constructor(points?: [Vector3, Vector3][]) {
     super();
@@ -17,8 +20,11 @@ export class LineSet extends Object3D implements ElementSetting {
   }
 
   addLine(points: [Vector3, Vector3]): void {
-    let geometry = new BufferGeometry().setFromPoints(points);
-    let line = new Line(geometry, this.material);
+    let geometry = new LineGeometry();
+    const positions: number[] = [];
+    points.forEach(p => positions.push(p.x, p.y, p.z));
+    geometry.setPositions(positions);
+    let line = new Line2(geometry, this.material);
     this.lines.push(line);
   }
 
@@ -37,5 +43,9 @@ export class LineSet extends Object3D implements ElementSetting {
 
   setColor(color: string): void {
     this.material.color.set(color);
+  }
+
+  setLineWidth(width: number): void {
+    this.material.linewidth = width;
   }
 }

@@ -3,6 +3,11 @@ import { LineSet } from "../../../elements/line-set";
 import { SceneElementsEnum } from "../../../viewer/scene-elements.enum";
 import { SceneElement } from "../../pc-viewer/pc-viewer.interfaces";
 
+export interface LineSetSettings {
+  color: string,
+  lineWidth: number,
+}
+
 @Component({
   selector: 'app-line-set-settings',
   templateUrl: './line-set-settings.component.html',
@@ -10,7 +15,16 @@ import { SceneElement } from "../../pc-viewer/pc-viewer.interfaces";
 })
 export class LineSetSettingsComponent implements OnInit {
 
-  color: string = '#000000';
+
+  settings: LineSetSettings = {
+    color: '#000000',
+    lineWidth: 0.002,
+  }
+
+  options: any = {
+    min: 1,
+    max: 20
+  };
 
   type: SceneElementsEnum = SceneElementsEnum.UNKNOWN;
 
@@ -22,7 +36,7 @@ export class LineSetSettingsComponent implements OnInit {
     this.lineSets = [];
     sceneElements.forEach((sceneElement) => {
       let ls = sceneElement.element as LineSet;
-      this.color = '#' + ls.material.color.getHexString()
+      this.settings.color = '#' + ls.material.color.getHexString()
       this.lineSets?.push(ls);
       this.type = sceneElement.sceneType;
     });
@@ -40,7 +54,13 @@ export class LineSetSettingsComponent implements OnInit {
 
   setColor() {
     this.lineSets?.forEach((lineSet) => {
-      lineSet.setColor(this.color);
+      lineSet.setColor(this.settings.color);
+    });
+  }
+
+  setLineWidth() {
+    this.lineSets?.forEach((lineSet) => {
+      lineSet.setLineWidth(this.settings.lineWidth)
     });
   }
 

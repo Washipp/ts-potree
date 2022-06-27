@@ -7,6 +7,7 @@ export interface CTSettings {
   size: number;
   color: string;
   meshVisible: boolean,
+  lineWidth: number,
 }
 
 @Component({
@@ -25,6 +26,7 @@ export class CameraTrajectorySettingsComponent implements OnInit {
     size: 1,
     color: '#000000',
     meshVisible: false,
+    lineWidth: 0.002,
   }
 
   type: SceneElementsEnum = SceneElementsEnum.UNKNOWN;
@@ -63,13 +65,20 @@ export class CameraTrajectorySettingsComponent implements OnInit {
 
   setFrustumSize() {
     this.cameraTrajectories?.forEach((trajectory) => {
-      trajectory.setSize(this.settings.size);
+      let s = Math.log(this.settings.size - this.options.min + 0.01)
+      trajectory.setSize(s);
     });
   }
 
   setMeshVisibility(): void {
     this.cameraTrajectories?.forEach((trajectory) => {
       trajectory.mesh.visible = this.settings.meshVisible;
+    });
+  }
+
+  setLineWidth(): void {
+    this.cameraTrajectories?.forEach((trajectory) => {
+      trajectory.setLineWidth(this.settings.lineWidth / 1000);
     });
   }
 

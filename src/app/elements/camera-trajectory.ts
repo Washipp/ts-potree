@@ -92,6 +92,10 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
     this.mesh.visible = visible && this.mesh.visible;
   }
 
+  setLineWidth(width: number): void {
+    this.lineSet.setLineWidth(width);
+  }
+
   setSize(size: number): void {
     let newSize = size / this.size;
     let oldPosition = this.lineSet.position.clone();
