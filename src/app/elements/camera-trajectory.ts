@@ -1,11 +1,13 @@
 import { LineSet } from "./line-set";
 import {
   Color,
-  DoubleSide, Matrix4,
+  DoubleSide,
+  Matrix4,
   Mesh,
   MeshBasicMaterial,
   Object3D,
-  PlaneGeometry, Quaternion,
+  PlaneGeometry,
+  Quaternion,
   TextureLoader,
   Vector3
 } from "three";
@@ -41,16 +43,15 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
   readonly originTrajectory =
     {
       x: new Vector3(0,0,0),
-      y1: new Vector3(-1,2/3,1),
-      y2: new Vector3(1,2/3,1),
-      y3: new Vector3(1,-2/3,1),
-      y4: new Vector3(-1,-2/3,1),
+      y1: new Vector3(-0.5,1/3,1),
+      y2: new Vector3(0.5,1/3,1),
+      y3: new Vector3(0.5,-(1/3),1),
+      y4: new Vector3(-0.5,-(1/3),1),
     };
 
   points: CameraTrajectoryPoints;
   private size: number = 1;
   mesh: Mesh;
-  private imageUrl: string;
 
   constructor(translation: number[], rotation: number[], imageUrl?: string) {
     super();
@@ -59,13 +60,22 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
     let m = new Matrix4();
     m.makeRotationFromQuaternion(new Quaternion(rotation[1], rotation[2], rotation[3], rotation[0]));
     m.setPosition(translation[0], translation[1], translation[2]);
+    m.invert();
 
     this.lineSet = this.pointsToLineSet();
 
-    this.imageUrl = imageUrl ? imageUrl : '';
     this.mesh = this.createMesh();
 
-    this.applyMatrix4(m)
+    if (imageUrl) {
+      // load the images async
+      new Promise<string>((resolve) => {
+        let loader = new TextureLoader();
+        this.mesh.material = new MeshBasicMaterial({map: loader.load(imageUrl), side: DoubleSide});
+        resolve(imageUrl);
+      }).then();
+    }
+
+    this.applyTransform(m);
   }
 
   setColor(color: string): void {
@@ -105,13 +115,21 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
     this.mesh.applyMatrix4(matrix);
   }
 
+  private applyTransform(matrix: Matrix4) {
+    this.mesh.quaternion.setFromRotationMatrix(matrix);
+    this.mesh.position.setFromMatrixPosition(matrix);
+    this.lineSet.lines.forEach(line => {
+      line.quaternion.setFromRotationMatrix(matrix);
+      line.position.setFromMatrixPosition(matrix);
+    })
+  }
+
   private createMesh(): Mesh {
     let len = this.points.y1.distanceTo(this.points.y2);
     let width = this.points.y1.distanceTo(this.points.y4);
     let geometry = new PlaneGeometry(len, width);
     geometry.setFromPoints([this.points.y2, this.points.y1, this.points.y3, this.points.y4,])
-    let loader = new TextureLoader();
-    let material = new MeshBasicMaterial({map: loader.load(this.imageUrl), side: DoubleSide});
+    let material = new MeshBasicMaterial();
     let mesh = new Mesh(geometry, material);
     mesh.visible = false;
     return mesh;
