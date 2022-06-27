@@ -60,7 +60,7 @@ export class LineSetSettingsComponent implements OnInit {
 
   setLineWidth() {
     this.lineSets?.forEach((lineSet) => {
-      lineSet.setLineWidth(this.settings.lineWidth)
+      lineSet.setLineWidth(this.settings.lineWidth / 1000)
     });
   }
 
