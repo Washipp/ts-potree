@@ -7,7 +7,7 @@ import { ComponentTree, SceneElementsService } from "./services/scene-elements.s
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'ts-potree';
+  title = 'Potree Viewer';
 
   data: ComponentTree[];
 
