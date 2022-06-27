@@ -22,6 +22,9 @@ import { SocketIoConfig, SocketIoModule } from "ngx-socket-io";
 import { LineSetSettingsComponent } from './components/element-settings/line-set-settings/line-set-settings.component';
 import { GroupComponent } from './components/element-tree/group/group.component';
 import { environment } from "../environments/environment";
+import { KeyboardShortcutsModule } from "ng-keyboard-shortcuts";
+import { ClipboardModule } from "@angular/cdk/clipboard";
+import { PlatformModule } from "@angular/cdk/platform";
 
 const config: SocketIoConfig = {
   url: `${environment.baseUrl}:${environment.port}`,
@@ -54,7 +57,10 @@ const config: SocketIoConfig = {
     ColorPickerModule,
     FormsModule,
     HttpClientModule,
-    SocketIoModule.forRoot(config)
+    SocketIoModule.forRoot(config),
+    KeyboardShortcutsModule.forRoot(),
+    ClipboardModule,
+    PlatformModule
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent]
