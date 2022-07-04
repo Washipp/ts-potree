@@ -115,6 +115,11 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
         pc.applyMatrix4(attributes.transformation);
       }
       pc.name = attributes.name;
+      if (attributes.material?.size) {
+        pc.setPointSize(attributes.material.size);
+      } else {
+        pc.setPointSize(1);
+      }
 
       this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, pc);
     });
@@ -175,6 +180,8 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
       pco.name = attributes.name;
       if (attributes.material?.size) {
         pco.material.size = attributes.material.size;
+      } else {
+        pco.material.size = 1;
       }
       if (attributes.transformation) {
         pco.applyMatrix4(attributes.transformation);
