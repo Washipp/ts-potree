@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { ViewerData } from "../components/pc-viewer/pc-viewer.interfaces";
 import { HttpClient } from "@angular/common/http";
 import { catchError, Observable, retry, Subject } from "rxjs";
-import { Object3D } from "three";
 import { BaseServiceService } from "./base-service.service";
 import { TreeComponentsEnum } from "../components/base/base.component";
+import { ElementSetting } from "../components/element-setting/element-setting";
 
 export interface ComponentTreeData {
 }
@@ -51,7 +51,7 @@ export class SceneElementsService extends BaseServiceService {
    * @param elementId Id of the element.
    * @param element Object3D reference.
    */
-  addSceneElement(sceneId: number, elementId: number, element: Object3D): void {
+  addSceneElement(sceneId: number, elementId: number, element: ElementSetting): void {
     let elems = this.viewerData.get(sceneId)?.elements;
     if (!elems) return;
     if (elementId < elems.length && elems[elementId] !== undefined) {

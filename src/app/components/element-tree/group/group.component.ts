@@ -20,7 +20,7 @@ export class GroupComponent implements OnInit {
 
   groupedTypes: Map<SceneElementsEnum, SceneElement[]> = new Map<SceneElementsEnum, SceneElement[]>();
 
-  @Output() selectedElementEvent = new EventEmitter<[SceneElementsEnum, SceneElement[]]>();
+  @Output() selectedElementEvent = new EventEmitter<SceneElement[]>();
   @Input() sceneId: number;
 
   @Input() set data(value: ElementTreeGroup) {
@@ -88,7 +88,7 @@ export class GroupComponent implements OnInit {
     }
   }
 
-  setSelectedElement(event: [SceneElementsEnum, SceneElement[]]): void {
+  setSelectedElement(event: SceneElement[]): void {
     // pass the event up to the parents until we reach the element-tree component.
     this.selectedElementEvent.emit(event);
   }

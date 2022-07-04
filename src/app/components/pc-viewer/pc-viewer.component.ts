@@ -118,8 +118,6 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
       pc.name = attributes.name;
       if (attributes.material?.size) {
         pc.setPointSize(attributes.material.size);
-      } else {
-        pc.setPointSize(1);
       }
 
       this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, pc);
@@ -139,7 +137,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
       cameraTrajectory.setColor('#FF0000') // set default color to red.
     }
 
-    cameraTrajectory.setSize(0.5); // default value
+    cameraTrajectory.setFrustumSize(0.5); // default value
 
     if (attributes.transformation) {
       cameraTrajectory.applyMatrix4(attributes.transformation);
@@ -182,8 +180,6 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
       ppc.setName(attributes.name);
       if (attributes.material?.size) {
         ppc.setPointSize(attributes.material.size);
-      } else {
-        ppc.setPointSize(1);
       }
       if (attributes.transformation) {
         ppc.applyMatrix4(attributes.transformation);

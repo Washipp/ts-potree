@@ -8,17 +8,4 @@
   <app-loading [active]="!groups"></app-loading>
 </div>
 
-<div [ngSwitch]="parseToEnum(selectedElement[0])">
-  <app-pco-settings *ngSwitchCase="elem.POTREE_POINT_CLOUD" [data]="selectedElement[1]"></app-pco-settings>
-
-  <app-camera-trajectory-settings *ngSwitchCase="elem.CAMERA_TRAJECTORY"
-                                  [data]="selectedElement[1]"></app-camera-trajectory-settings>
-
-  <app-default-pc-settings *ngSwitchCase="elem.DEFAULT_POINT_CLOUD" [data]="selectedElement[1]"></app-default-pc-settings>
-
-  <app-line-set-settings *ngSwitchCase="elem.LINE_SET" [data]="selectedElement[1]"></app-line-set-settings>
-
-  <div *ngSwitchCase="elem.UNKNOWN"></div>
-
-  <div *ngSwitchDefault style="color:red;">No settings found for '{{ parseToEnum(selectedElement[0]) }}'</div>
-</div>
+<app-element-setting [data]="selectedElement"></app-element-setting>

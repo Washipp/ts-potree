@@ -210,7 +210,6 @@ export class Viewer {
   resize = () => {
     if (!this.targetEl) return;
     const {width, height} = this.targetEl.getBoundingClientRect();
-    //TODO: do not use width/height for the aspect.
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
@@ -283,8 +282,7 @@ export class Viewer {
         this.setCameraState(HelperFunctions.minifiedToFullCameraState(message));
       });
     } else {
-      this.socket.disconnect()
-      this.cameraControls.removeEventListener('change',  (() => {}) ); // TODO: does not actually remove it?
+      this.socket.disconnect();
     }
   }
 

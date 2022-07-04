@@ -15,7 +15,7 @@ import { DefaultPointCloud } from "../../../elements/default-point-cloud";
 export class EntryComponent implements OnInit {
 
   @Input() elementType: SceneElementsEnum;
-  @Output() selectedElementEvent = new EventEmitter<[SceneElementsEnum, SceneElement[]]>();
+  @Output() selectedElementEvent = new EventEmitter<SceneElement[]>();
 
   @Input() elements: SceneElement[];
   @Input() visible: boolean = true;
@@ -29,7 +29,7 @@ export class EntryComponent implements OnInit {
   }
 
   loadElementSettings() {
-    this.selectedElementEvent.emit([this.elementType, this.elements]);
+    this.selectedElementEvent.emit(this.elements);
   }
 
   setAllSceneElementsVisibility(visible: boolean): void {
@@ -65,7 +65,7 @@ export class EntryComponent implements OnInit {
 
   getVisibility(): boolean {
     this.elements.forEach(elem => {
-      let vis = elem.element?.visible;
+      let vis = elem.element?.getVisibility();
       if (vis === undefined) {
         return false;
       } else {

@@ -1,8 +1,8 @@
 import { PointCloudOctree, PointColorType, PointSizeType } from "@pnext/three-loader";
-import { PointCloudSetting } from "../components/element-settings/element-setting";
+import { ElementSetting } from "../components/element-setting/element-setting";
 import { Color, Matrix4, Object3D } from "three";
 
-export class PotreePointCloud extends Object3D implements PointCloudSetting {
+export class PotreePointCloud extends Object3D implements ElementSetting {
 
   pointCloud: PointCloudOctree;
 
@@ -10,6 +10,7 @@ export class PotreePointCloud extends Object3D implements PointCloudSetting {
     super();
     this.pointCloud = pc;
     this.pointCloud.material.pointSizeType = PointSizeType.FIXED;
+    this.pointCloud.material.transparent = true;
   }
 
   resetColor(): void {
@@ -29,16 +30,24 @@ export class PotreePointCloud extends Object3D implements PointCloudSetting {
     this.pointCloud.visible = visible;
   }
 
+  getVisibility(): boolean {
+    return this.pointCloud.visible;
+  }
+
   setBoundingBox(value: boolean): void {
     this.pointCloud.showBoundingBox = value;
   }
 
   getColor(): Color {
-    return this.pointCloud.material.uniforms.uColor.value
+    return this.pointCloud.material.uniforms.uColor.value;
   }
 
   setName(name: string): void {
     this.pointCloud.name = name;
+  }
+
+  setOpacity(opacity: number): void {
+    this.pointCloud.material.opacity = opacity;
   }
 
   override applyMatrix4(matrix: Matrix4) {

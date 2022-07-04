@@ -1,5 +1,5 @@
-import { Matrix4, Object3D, Vector3 } from "three";
-import { ElementSetting } from "../components/element-settings/element-setting";
+import { Color, Matrix4, Object3D, Vector3 } from "three";
+import { ElementSetting } from "../components/element-setting/element-setting";
 import { Line2 } from "three/examples/jsm/lines/Line2";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry";
@@ -17,6 +17,7 @@ export class LineSet extends Object3D implements ElementSetting {
         this.addLine(p);
       });
     }
+    this.material.transparent = true;
   }
 
   addLine(points: [Vector3, Vector3]): void {
@@ -41,11 +42,23 @@ export class LineSet extends Object3D implements ElementSetting {
     });
   }
 
+  getVisibility(): boolean {
+    return this.visible;
+  }
+
   setColor(color: string): void {
     this.material.color.set(color);
   }
 
+  getColor(): Color {
+    return this.material.color;
+  }
+
   setLineWidth(width: number): void {
     this.material.linewidth = width;
+  }
+
+  setOpacity(opacity: number): void {
+    this.material.opacity = opacity;
   }
 }

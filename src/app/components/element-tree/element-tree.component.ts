@@ -42,11 +42,11 @@ export class ElementTreeComponent implements OnInit {
     return this._data;
   }
 
-  selectedElement: [SceneElementsEnum, SceneElement[]];
+  selectedElement: SceneElement[];
 
-  setSelectedElement(value: [SceneElementsEnum, SceneElement[]]) {
+  setSelectedElement(value: SceneElement[]) {
     // Check if the correct settings are already loaded
-    if (this.selectedElement[0] === value[0] && this.selectedElement[1] === value[1]) return;
+    if (this.selectedElement === value) return;
 
     // if not load the new ones.
     this.selectedElement = value;
@@ -54,7 +54,7 @@ export class ElementTreeComponent implements OnInit {
 
   constructor() {
     this.sceneId = -1;
-    this.selectedElement = [SceneElementsEnum.UNKNOWN, []];
+    this.selectedElement =  [];
     this.groups = [];
     this._data = {
       sceneId: -1,

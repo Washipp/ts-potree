@@ -11,7 +11,7 @@ import {
   TextureLoader,
   Vector3
 } from "three";
-import { ElementSetting } from "../components/element-settings/element-setting";
+import { ElementSetting } from "../components/element-setting/element-setting";
 
 
 /**
@@ -89,14 +89,22 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
   setVisibility(visible: boolean): void {
     this.visible = visible;
     this.lineSet.setVisibility(visible);
-    this.mesh.visible = visible && this.mesh.visible;
+    this.setMeshVisibility(visible && this.mesh.visible);
+  }
+
+  getVisibility(): boolean {
+    return this.visible;
+  }
+
+  setMeshVisibility(visible:boolean): void {
+    this.mesh.visible = visible;
   }
 
   setLineWidth(width: number): void {
     this.lineSet.setLineWidth(width);
   }
 
-  setSize(size: number): void {
+  setFrustumSize(size: number): void {
     let newSize = size / this.size;
     let oldPosition = this.lineSet.position.clone();
     let x = oldPosition.x;
@@ -112,6 +120,10 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
     this.mesh.geometry.translate(-x, -y, -z);
     this.mesh.geometry.scale(newSize, newSize, newSize);
     this.mesh.geometry.translate(x, y, z);
+  }
+
+  setOpacity(opacity: number) {
+
   }
 
   override applyMatrix4(matrix: Matrix4) {
