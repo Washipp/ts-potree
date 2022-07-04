@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { SceneElement } from "../../pc-viewer/pc-viewer.interfaces";
-import { PointCloudOctree } from "@pnext/three-loader";
 import { LineSet } from "../../../elements/line-set";
 import { SceneElementsEnum } from "../../../viewer/scene-elements.enum";
 import { HelperFunctions } from "../../utility/helper-functions";
 import { CameraTrajectory } from "../../../elements/camera-trajectory";
-import { Points } from "three";
+import { PotreePointCloud } from "../../../elements/potree-point-cloud";
+import { DefaultPointCloud } from "../../../elements/default-point-cloud";
 
 @Component({
   selector: 'app-entry',
@@ -43,12 +43,12 @@ export class EntryComponent implements OnInit {
     if (elem == undefined) return;
     switch (HelperFunctions.enumFromStringValue(SceneElementsEnum, elem.sceneType)) {
       case SceneElementsEnum.POTREE_POINT_CLOUD:
-        let pco = elem.element as PointCloudOctree
-        pco.visible = visible;
+        let pco = elem.element as PotreePointCloud
+        pco.setVisibility(visible);
         break;
       case SceneElementsEnum.DEFAULT_POINT_CLOUD:
-        let pc = elem.element as Points;
-        pc.visible = visible;
+        let pc = elem.element as DefaultPointCloud;
+        pc.setVisibility(visible);
         break;
       case SceneElementsEnum.LINE_SET:
         let lineSet = elem.element as LineSet

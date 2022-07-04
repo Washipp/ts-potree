@@ -11,6 +11,7 @@ import { HelperFunctions } from "../utility/helper-functions";
 import { ShortcutInput } from "ng-keyboard-shortcuts";
 import { Clipboard } from '@angular/cdk/clipboard';
 import { Platform } from '@angular/cdk/platform';
+import { PotreePointCloud } from "../../elements/potree-point-cloud";
 
 @Component({
   selector: 'app-pc-viewer',
@@ -177,17 +178,18 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
                               attributes: ElementAttributes,
                               elementId: number): void {
     this.viewer.loadPotreePCO("cloud.js", url).then(pco => {
-      pco.name = attributes.name;
+      let ppc = new PotreePointCloud(pco);
+      ppc.setName(attributes.name);
       if (attributes.material?.size) {
-        pco.material.size = attributes.material.size;
+        ppc.setPointSize(attributes.material.size);
       } else {
-        pco.material.size = 1;
+        ppc.setPointSize(1);
       }
       if (attributes.transformation) {
-        pco.applyMatrix4(attributes.transformation);
+        ppc.applyMatrix4(attributes.transformation);
       }
 
-      this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, pco);
+      this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, ppc);
     });
   }
 }

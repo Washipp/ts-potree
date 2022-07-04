@@ -4,10 +4,10 @@ import { SceneElementsService } from "../../../services/scene-elements.service";
 import { SceneElement } from "../../pc-viewer/pc-viewer.interfaces";
 import { SceneElementsEnum } from "../../../viewer/scene-elements.enum";
 import { HelperFunctions } from "../../utility/helper-functions";
-import { PointCloudOctree } from "@pnext/three-loader";
-import { Points } from "three";
 import { LineSet } from "../../../elements/line-set";
 import { CameraTrajectory } from "../../../elements/camera-trajectory";
+import { PotreePointCloud } from "../../../elements/potree-point-cloud";
+import { DefaultPointCloud } from "../../../elements/default-point-cloud";
 
 @Component({
   selector: 'app-group',
@@ -68,12 +68,12 @@ export class GroupComponent implements OnInit {
   setSceneElementVisibility(element: SceneElement, visible: boolean) {
     switch (HelperFunctions.enumFromStringValue(SceneElementsEnum, element.sceneType)) {
       case SceneElementsEnum.POTREE_POINT_CLOUD:
-        let pco = element.element as PointCloudOctree
-        pco.visible = visible;
+        let pco = element.element as PotreePointCloud
+        pco.setVisibility(visible);
         break;
       case SceneElementsEnum.DEFAULT_POINT_CLOUD:
-        let pc = element.element as Points;
-        pc.visible = visible;
+        let pc = element.element as DefaultPointCloud;
+        pc.setVisibility(visible);
         break;
       case SceneElementsEnum.LINE_SET:
         let lineSet = element.element as LineSet
