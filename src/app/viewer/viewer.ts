@@ -52,6 +52,10 @@ export class Viewer {
 
   private currentCameraState: CameraState;
 
+  private renderRequested = true;
+
+  private lastRenderUpdate = 0;
+
   constructor(private sceneElementsService: SceneElementsService, private socket: WebSocketService) {
     this.currentCameraState = this.getCurrentCameraState(this.camera.clone());
   }
@@ -72,7 +76,7 @@ export class Viewer {
 
     if (this.camera.position.equals(new Vector3(0,0,0))) {
       // camera position is at (0,0,0) same as orbit controls, so we need to change it slightly.
-      // Else the camera cannot be controlled by mouse input.
+      // else the camera cannot be controlled by mouse input.
       this.camera.position.z = 60
       this.camera.position.y = 10
     }
@@ -80,10 +84,13 @@ export class Viewer {
     this.cameraControls.enableZoom = true;
     this.cameraControls.enableRotate = true;
     this.cameraControls.dampingFactor = 0.25;
+    this.cameraControls.enableAnimations = false;
 
 
     this.resize();
     window.addEventListener("resize", this.resize);
+
+    this.cameraControls.addEventListener('change', () => this.renderRequested = true);
 
     requestAnimationFrame(this.loop);
   }
@@ -179,6 +186,7 @@ export class Viewer {
    * Renders the scene into the canvas.
    */
   render(): void {
+    this.renderRequested = false;
     this.renderer.clear();
     this.renderer.render(this.scene, this.camera);
   }
@@ -187,9 +195,13 @@ export class Viewer {
    * The main loop of the viewer, called at 60FPS, if possible.
    */
   loop = (time: number): void => {
-    this.reqAnimationFrameHandle = requestAnimationFrame(this.loop);
+    // either update if the camera controls have changed or if 250ms have passed.
+    if (this.renderRequested || (this.lastRenderUpdate + 250 < time)) {
+      this.render();
+      this.lastRenderUpdate = time;
+    }
     this.update();
-    this.render();
+    this.reqAnimationFrameHandle = requestAnimationFrame(this.loop);
   };
 
   /**
