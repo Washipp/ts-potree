@@ -8,11 +8,11 @@ export interface GeneralSettingsData extends ComponentTreeData {
 }
 
 @Component({
-  selector: 'app-general-settings',
-  templateUrl: './general-settings.component.html',
-  styleUrls: ['./general-settings.component.css', '../element-settings/element-settings.css']
+  selector: 'app-scene-settings',
+  templateUrl: './scene-settings.component.html',
+  styleUrls: ['./scene-settings.component.css', '../element-setting/element-setting.component.css']
 })
-export class GeneralSettingsComponent implements OnInit {
+export class SceneSettingsComponent implements OnInit {
 
   pointBudgetOptions: any = {
     min: 100_000,

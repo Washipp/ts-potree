@@ -5,7 +5,7 @@
 
     <app-pc-viewer *ngSwitchCase="comp.VIEWER" [data]="toViewerData(child.data)"></app-pc-viewer>
 
-    <app-general-settings *ngSwitchCase="comp.GENERAL_SETTINGS" [data]="toGeneralSettingsData(child.data)"></app-general-settings>
+    <app-scene-settings *ngSwitchCase="comp.GENERAL_SETTINGS" [data]="toGeneralSettingsData(child.data)"></app-scene-settings>
 
     <app-element-tree *ngSwitchCase="comp.ELEMENT_TREE" [data]="toElementTreeData(child.data)"></app-element-tree>
 
