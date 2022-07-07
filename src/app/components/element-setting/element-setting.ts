@@ -1,4 +1,5 @@
 import { Color } from "three";
+import { PointShape } from "@pnext/three-loader";
 
 export interface ElementSetting {
 
@@ -21,4 +22,10 @@ export interface ElementSetting {
   setLineWidth?(width: number): void;
 
   setFrustumSize?(size: number): void;
+
+  setBoundingBox?(value: boolean): void;
+
+  setEDL?(value: boolean): void;
+
+  setPointShape?(shape: PointShape): void;
 }

@@ -3,6 +3,7 @@ import { ElementSetting } from "./element-setting";
 import { SceneElement } from "../pc-viewer/pc-viewer.interfaces";
 import { HelperFunctions } from "../utility/helper-functions";
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
+import { PointShape } from "@pnext/three-loader";
 
 @Component({
   selector: 'app-element-setting',
@@ -16,6 +17,8 @@ export class ElementSettingComponent implements OnInit {
     max: 20
   };
 
+  ps = PointShape;
+
   settings = {
     frustumSize: 3,
     color: '#000000',
@@ -23,6 +26,9 @@ export class ElementSettingComponent implements OnInit {
     lineWidth: 2,
     pointSize: 1,
     opacity: 1,
+    boundingBox: false,
+    EDL: false,
+    pointShape: PointShape.SQUARE,
   }
 
   type = SceneElementsEnum.UNKNOWN;
@@ -94,5 +100,23 @@ export class ElementSettingComponent implements OnInit {
     });
   }
 
+  setBoundingBox(): void {
+    this.sceneElement?.forEach((elem) => {
+      if (elem['setBoundingBox']) elem.setBoundingBox(this.settings.boundingBox);
+    });
+  }
+
+  setEDL(): void {
+    this.sceneElement?.forEach((elem) => {
+      if (elem['setEDL']) elem.setEDL(this.settings.EDL);
+    });
+  }
+
+  setPointShape(shape: PointShape): void {
+    this.settings.pointShape = shape;
+    this.sceneElement?.forEach((elem) => {
+      if (elem['setPointShape']) elem.setPointShape(this.settings.pointShape);
+    });
+  }
 
 }

@@ -1,4 +1,4 @@
-import { PointCloudOctree, PointColorType, PointSizeType } from "@pnext/three-loader";
+import { PointCloudOctree, PointColorType, PointShape, PointSizeType } from "@pnext/three-loader";
 import { ElementSetting } from "../components/element-setting/element-setting";
 import { Color, Matrix4, Object3D } from "three";
 
@@ -32,6 +32,18 @@ export class PotreePointCloud extends Object3D implements ElementSetting {
 
   getVisibility(): boolean {
     return this.pointCloud.visible;
+  }
+
+  setEDL(value: boolean): void  {
+    if (value) {
+      this.pointCloud.material.pointColorType = PointColorType.ELEVATION;
+    } else {
+      this.resetColor();
+    }
+  }
+
+  setPointShape(shape: PointShape): void {
+    this.pointCloud.material.shape = shape;
   }
 
   setBoundingBox(value: boolean): void {

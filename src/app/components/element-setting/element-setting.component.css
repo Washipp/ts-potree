@@ -2,9 +2,13 @@
   font-size: 1rem;
 }
 
-.pc-color-picker input {
+.color-picker input {
   height: 1.5rem;
   border-bottom: none;
+}
+
+.btn-small {
+  margin-right: 5px;
 }
 
 /* Range slider styling */

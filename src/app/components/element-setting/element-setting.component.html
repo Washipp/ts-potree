@@ -7,7 +7,7 @@
     </div>
   </div>
   <!-- https://www.npmjs.com/package/ngx-color-picker -->
-  <div class="row pc-color-picker">
+  <div class="row color-picker">
     <div class="col s4 description"><label for="pc-color-picker">Select Color:</label></div>
     <div class="col s8"><input id="pc-color-picker" [(colorPicker)]="settings.color"
                                [style.background]="settings.color"
@@ -72,6 +72,39 @@
       </label>
     </div>
   </div>
+
+  <div class="row" *ngIf="sceneElement[0]['setBoundingBox']">
+    <div class="col s4 description"><label>Show Bounding Box:</label></div>
+    <div class="col s8">
+      <label>
+        <input type="checkbox" (change)="setBoundingBox()"
+               [(ngModel)]="settings.boundingBox"
+               class="checkbox-blue filled-in"/>
+        <span>Show/Hide</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="sceneElement[0]['setBoundingBox']">
+    <div class="col s4 description"><label>Activate EDL:</label></div>
+    <div class="col s8">
+      <label>
+        <input type="checkbox" (change)="setEDL()"
+               [(ngModel)]="settings.EDL"
+               class="checkbox-blue filled-in"/>
+        <span>Activate</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="sceneElement[0]['setPointShape']">
+    <div class="col s4 description"><label>Point Shape:</label></div>
+    <div class="col s8">
+      <button (click)="setPointShape(ps.SQUARE)" class="waves-effect btn-small">Square</button>
+      <button (click)="setPointShape(ps.CIRCLE)" class="waves-effect btn-small">Circle</button>
+    </div>
+  </div>
+
 </div>
 <div>
   <app-loading [active]="!sceneElement"></app-loading>
