@@ -119,6 +119,9 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
       if (attributes.material?.size) {
         pc.setPointSize(attributes.material.size);
       }
+      if (attributes.material?.color) {
+        pc.setColor(attributes.material.color);
+      }
 
       this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, pc);
     });
@@ -128,7 +131,7 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
   private addCameraTrajectory(source: CameraTrajectoryData,
                               attributes: ElementAttributes,
                               elementId: number): void {
-    let cameraTrajectory = new CameraTrajectory(source.t, source.r, attributes.imageUrl);
+    let cameraTrajectory = new CameraTrajectory(source);
     cameraTrajectory.name = attributes.name;
 
     if (attributes.material?.color) {
@@ -181,6 +184,10 @@ export class PcViewerComponent implements OnInit, AfterViewInit {
       if (attributes.material?.size) {
         ppc.setPointSize(attributes.material.size);
       }
+      if (attributes.material?.color) {
+        ppc.setColor(attributes.material.color);
+      }
+
       if (attributes.transformation) {
         ppc.applyMatrix4(attributes.transformation);
       }

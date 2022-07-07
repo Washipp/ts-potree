@@ -6,18 +6,24 @@ import { LineGeometry } from "three/examples/jsm/lines/LineGeometry";
 
 export class LineSet extends Object3D implements ElementSetting {
 
-  lines: Line2[];
-  material = new LineMaterial({linewidth: 0.002,});
+  lines: Line2[];  // We do not use THREE.Group for a more fine-grained access.
+  material: LineMaterial;
 
-  constructor(points?: [Vector3, Vector3][]) {
+  constructor(points?: [Vector3, Vector3][], material?: LineMaterial) {
     super();
     this.lines = [];
+    if (material) {
+      this.material = material;
+    } else {
+      this.material = new LineMaterial({linewidth: 0.002,})
+    }
+    this.material.transparent = true;
+
     if (points) {
       points.forEach(p => {
         this.addLine(p);
       });
     }
-    this.material.transparent = true;
   }
 
   addLine(points: [Vector3, Vector3]): void {
@@ -60,5 +66,12 @@ export class LineSet extends Object3D implements ElementSetting {
 
   setOpacity(opacity: number): void {
     this.material.opacity = opacity;
+  }
+
+  override copy(source: this, recursive?: boolean): this {
+    super.copy(source, recursive);
+    this.lines = source.lines;
+    this.material = source.material;
+    return this;
   }
 }

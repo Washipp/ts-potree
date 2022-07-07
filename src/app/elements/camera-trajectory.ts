@@ -1,17 +1,12 @@
-import { LineSet } from "./line-set";
 import {
   Color,
-  DoubleSide,
   Matrix4,
-  Mesh,
-  MeshBasicMaterial,
   Object3D,
-  PlaneGeometry,
-  Quaternion,
-  TextureLoader,
   Vector3
 } from "three";
 import { ElementSetting } from "../components/element-setting/element-setting";
+import { CameraFrustum, CameraFrustumPoints } from "./camera-frustum";
+import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
 
 
 /**
@@ -24,143 +19,90 @@ import { ElementSetting } from "../components/element-setting/element-setting";
  *  y4 _______________ y3
  */
 export interface CameraTrajectoryData {
-  r: number[],
-  t: number[],
-}
-
-export interface CameraTrajectoryPoints {
-  x: Vector3;
-  y1: Vector3;
-  y2: Vector3;
-  y3: Vector3;
-  y4: Vector3;
+  corners: number[][],
+  cameras: [number[], number[], string] [],
+  linkImages: boolean
 }
 
 export class CameraTrajectory extends Object3D implements ElementSetting {
 
-  lineSet: LineSet;
+  originFrustumPoints: CameraFrustumPoints;
 
-  readonly originTrajectory =
-    {
-      x: new Vector3(0,0,0),
-      y1: new Vector3(-0.5,1/3,1),
-      y2: new Vector3(0.5,1/3,1),
-      y3: new Vector3(0.5,-(1/3),1),
-      y4: new Vector3(-0.5,-(1/3),1),
+  cameraFrustums: CameraFrustum[];
+  material: LineMaterial;
+
+  constructor(data: CameraTrajectoryData) {
+    super();
+    // create origin frustum
+    let y1 = data.corners[0];
+    let y2 = data.corners[1];
+    let y3 = data.corners[2];
+    let y4 = data.corners[3];
+
+    this.originFrustumPoints  = {
+      x: new Vector3(0, 0, 0),
+      y1: new Vector3(y1[0], y1[1], y1[2]),
+      y2: new Vector3(y2[0], y2[1], y2[2]),
+      y3: new Vector3(y3[0], y3[1], y3[2]),
+      y4: new Vector3(y4[0], y4[1], y4[2]),
     };
 
-  points: CameraTrajectoryPoints;
-  private size: number = 1;
-  mesh: Mesh;
+    this.material = new LineMaterial({linewidth: 0.002,});
 
-  constructor(translation: number[], rotation: number[], imageUrl?: string) {
-    super();
-    this.points = this.originTrajectory;
+    // create frustums
+    this.cameraFrustums = [];
+    data.cameras.map((camera) => {
+      let t = camera[0];
+      let r = camera[1];
+      let imageUrl = camera[2];
 
-    let m = new Matrix4();
-    m.makeRotationFromQuaternion(new Quaternion(rotation[1], rotation[2], rotation[3], rotation[0]));
-    m.setPosition(translation[0], translation[1], translation[2]);
-    m.invert();
+      let frustum = new CameraFrustum(this.originFrustumPoints, this.material, t, r, imageUrl);
 
-    this.lineSet = this.pointsToLineSet();
-
-    this.mesh = this.createMesh();
-
-    if (imageUrl) {
-      // load the images async
-      new Promise<string>((resolve) => {
-        let loader = new TextureLoader();
-        this.mesh.material = new MeshBasicMaterial({map: loader.load(imageUrl), side: DoubleSide});
-        resolve(imageUrl);
-      }).then();
-    }
-
-    this.applyTransform(m);
+      this.cameraFrustums.push(frustum);
+    });
   }
 
   setColor(color: string): void {
-    this.lineSet.setColor(color);
+    this.material.color.set(color);
   }
 
   getColor(): Color {
-    return this.lineSet.material.color;
+    return this.material.color;
   }
 
   setVisibility(visible: boolean): void {
-    this.visible = visible;
-    this.lineSet.setVisibility(visible);
-    this.setMeshVisibility(visible && this.mesh.visible);
+    this.cameraFrustums.forEach(frustum => {
+      frustum.setVisibility(visible);
+    });
   }
 
   getVisibility(): boolean {
     return this.visible;
   }
 
-  setMeshVisibility(visible:boolean): void {
-    this.mesh.visible = visible;
+  setMeshVisibility(visible: boolean): void {
+    this.cameraFrustums.forEach(frustum => {
+      frustum.setMeshVisibility(visible);
+    });
   }
 
   setLineWidth(width: number): void {
-    this.lineSet.setLineWidth(width);
+    this.material.linewidth = width;
   }
 
   setFrustumSize(size: number): void {
-    let newSize = size / this.size;
-    let oldPosition = this.lineSet.position.clone();
-    let x = oldPosition.x;
-    let y = oldPosition.y;
-    let z = oldPosition.z;
-    this.lineSet.lines.forEach(line => {
-      //TODO combine these three operations into one?
-      line.geometry.translate(-x, -y, -z);
-      line.geometry.scale(newSize, newSize, newSize);
-      line.geometry.translate(x, y, z);
+    this.cameraFrustums.forEach(frustum => {
+      frustum.setFrustumSize(size);
     });
-    this.size = size;
-    this.mesh.geometry.translate(-x, -y, -z);
-    this.mesh.geometry.scale(newSize, newSize, newSize);
-    this.mesh.geometry.translate(x, y, z);
   }
 
   setOpacity(opacity: number) {
-
+    this.material.opacity = opacity;
   }
 
   override applyMatrix4(matrix: Matrix4) {
-    this.lineSet.applyMatrix4(matrix);
-    this.mesh.applyMatrix4(matrix);
-  }
-
-  private applyTransform(matrix: Matrix4) {
-    this.mesh.quaternion.setFromRotationMatrix(matrix);
-    this.mesh.position.setFromMatrixPosition(matrix);
-    this.lineSet.lines.forEach(line => {
-      line.quaternion.setFromRotationMatrix(matrix);
-      line.position.setFromMatrixPosition(matrix);
+    this.cameraFrustums.forEach(frustum => {
+      frustum.applyMatrix4(matrix);
     })
-  }
-
-  private createMesh(): Mesh {
-    let len = this.points.y1.distanceTo(this.points.y2);
-    let width = this.points.y1.distanceTo(this.points.y4);
-    let geometry = new PlaneGeometry(len, width);
-    geometry.setFromPoints([this.points.y3, this.points.y4, this.points.y2, this.points.y1, ])
-    let material = new MeshBasicMaterial();
-    let mesh = new Mesh(geometry, material);
-    mesh.visible = false;
-    return mesh;
-  }
-
-  private pointsToLineSet(): LineSet {
-    let set: [Vector3, Vector3][] = [];
-    set.push([this.points.x, this.points.y1]);
-    set.push([this.points.x, this.points.y2]);
-    set.push([this.points.x, this.points.y3]);
-    set.push([this.points.x, this.points.y4]);
-    set.push([this.points.y1, this.points.y2]);
-    set.push([this.points.y2, this.points.y3]);
-    set.push([this.points.y3, this.points.y4]);
-    set.push([this.points.y4, this.points.y1]);
-    return new LineSet(set);
   }
 }

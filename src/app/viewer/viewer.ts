@@ -145,8 +145,10 @@ export class Viewer {
    * @param ct trajectory to add.
    */
   loadCameraTrajectory(ct: CameraTrajectory): void {
-    this.loadLineSet(ct.lineSet);
-    this.scene.add(ct.mesh);
+    ct.cameraFrustums.forEach(frustum => {
+      this.loadLineSet(frustum.lineSet);
+      this.scene.add(frustum.mesh);
+    });
   }
 
   /**
