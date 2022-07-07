@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 
-import { PcViewerComponent } from './components/pc-viewer/pc-viewer.component';
+import { SceneComponent } from './components/scene/scene.component';
 import { ColorPickerModule } from "ngx-color-picker";
 import { FormsModule } from "@angular/forms";
 import { BaseComponent } from './components/base/base.component';
@@ -34,7 +34,7 @@ const config: SocketIoConfig = {
 @NgModule({
   declarations: [
     AppComponent,
-    PcViewerComponent,
+    SceneComponent,
     BaseComponent,
     ColComponent,
     RowComponent,

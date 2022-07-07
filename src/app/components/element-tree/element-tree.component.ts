@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
-import { SceneElement } from "../pc-viewer/pc-viewer.interfaces";
+import { SceneElement } from "../scene/scene.interfaces";
 import { ComponentTreeData } from "../../services/scene-elements.service";
 
 export interface ElementTreeGroup {

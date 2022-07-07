@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ViewerData } from "../components/pc-viewer/pc-viewer.interfaces";
+import { ViewerData } from "../components/scene/scene.interfaces";
 import { HttpClient } from "@angular/common/http";
 import { catchError, Observable, retry, Subject } from "rxjs";
 import { BaseServiceService } from "./base-service.service";

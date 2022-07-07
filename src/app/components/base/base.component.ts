@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ComponentTree, ComponentTreeData } from "../../services/scene-elements.service";
 import { HelperFunctions } from "../utility/helper-functions";
 import { GeneralSettingsData } from "../scene-settings/scene-settings.component";
-import { ViewerData } from "../pc-viewer/pc-viewer.interfaces";
+import { ViewerData } from "../scene/scene.interfaces";
 import { ColData } from "../structure/col/col.component";
 import { RowData } from "../structure/row/row.component";
 import { ElementTreeData } from "../element-tree/element-tree.component";

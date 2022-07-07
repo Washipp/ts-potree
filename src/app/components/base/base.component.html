@@ -3,7 +3,7 @@
     <app-col *ngSwitchCase="comp.COL" [children]="child.children" [data]="toColData(child.data)"></app-col>
     <app-row *ngSwitchCase="comp.ROW" [children]="child.children" [data]="toRowData(child.data)"></app-row>
 
-    <app-pc-viewer *ngSwitchCase="comp.VIEWER" [data]="toViewerData(child.data)"></app-pc-viewer>
+    <app-scene *ngSwitchCase="comp.VIEWER" [data]="toViewerData(child.data)"></app-scene>
 
     <app-scene-settings *ngSwitchCase="comp.GENERAL_SETTINGS" [data]="toGeneralSettingsData(child.data)"></app-scene-settings>
 

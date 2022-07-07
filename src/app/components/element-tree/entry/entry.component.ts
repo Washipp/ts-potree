@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { SceneElement } from "../../pc-viewer/pc-viewer.interfaces";
+import { SceneElement } from "../../scene/scene.interfaces";
 import { LineSet } from "../../../elements/line-set";
 import { SceneElementsEnum } from "../../../viewer/scene-elements.enum";
 import { HelperFunctions } from "../../utility/helper-functions";

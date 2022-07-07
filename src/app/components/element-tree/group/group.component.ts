@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ElementTreeGroup } from "../element-tree.component";
 import { SceneElementsService } from "../../../services/scene-elements.service";
-import { SceneElement } from "../../pc-viewer/pc-viewer.interfaces";
+import { SceneElement } from "../../scene/scene.interfaces";
 import { SceneElementsEnum } from "../../../viewer/scene-elements.enum";
 import { HelperFunctions } from "../../utility/helper-functions";
 import { LineSet } from "../../../elements/line-set";

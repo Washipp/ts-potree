@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ElementSetting } from "./element-setting";
-import { SceneElement } from "../pc-viewer/pc-viewer.interfaces";
+import { SceneElement } from "../scene/scene.interfaces";
 import { HelperFunctions } from "../utility/helper-functions";
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { PointShape } from "@pnext/three-loader";

@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Viewer } from "../../viewer/viewer";
 import { SceneElementsService } from "../../services/scene-elements.service";
-import { CustomLine, ElementAttributes, SceneElement, ViewerData } from "./pc-viewer.interfaces";
+import { CustomLine, ElementAttributes, SceneElement, ViewerData } from "./scene.interfaces";
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { LineSet } from "../../elements/line-set";
 import { CameraTrajectory, CameraTrajectoryData } from "../../elements/camera-trajectory";
@@ -14,11 +14,11 @@ import { Platform } from '@angular/cdk/platform';
 import { PotreePointCloud } from "../../elements/potree-point-cloud";
 
 @Component({
-  selector: 'app-pc-viewer',
-  templateUrl: './pc-viewer.component.html',
-  styleUrls: ['./pc-viewer.component.css']
+  selector: 'app-scene',
+  templateUrl: './scene.component.html',
+  styleUrls: ['./scene.component.css']
 })
-export class PcViewerComponent implements OnInit, AfterViewInit {
+export class SceneComponent implements OnInit, AfterViewInit {
 
   @ViewChild('target') target: any;
   @Input() data: ViewerData;
