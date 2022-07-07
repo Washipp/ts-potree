@@ -307,7 +307,7 @@ export class Viewer {
     this.camera.position.set(cameraState.position.x, cameraState.position.y, cameraState.position.z);
     let euler = new Euler()
     euler.setFromQuaternion(cameraState.rotation);
-    this.camera.rotation.set(euler.x, euler.y, euler.z, 'XZY');
+    this.camera.rotation.set(euler.x, euler.y, euler.z, 'XYZ');
     this.camera.fov = cameraState.fov;
     this.camera.near = cameraState.near;
     this.camera.far = cameraState.far;
