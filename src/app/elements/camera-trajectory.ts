@@ -42,7 +42,7 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
     let y3 = data.corners[2];
     let y4 = data.corners[3];
 
-    this.originFrustumPoints  = {
+    this.originFrustumPoints = {
       x: new Vector3(0, 0, 0),
       y1: new Vector3(y1[0], y1[1], y1[2]),
       y2: new Vector3(y2[0], y2[1], y2[2]),
@@ -70,14 +70,11 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
       this.cameraFrustums.map((frustum) => {
         if (lastPoint) {
           linkingPoints.push([lastPoint, frustum.points.x])
-        } else {
-          lastPoint = frustum.points.x;
         }
+        lastPoint = frustum.points.x;
       });
     }
     this.linkingLines = new LineSet(linkingPoints, this.material);
-
-
   }
 
   setColor(color: string): void {

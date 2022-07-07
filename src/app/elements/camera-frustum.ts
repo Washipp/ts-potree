@@ -32,7 +32,7 @@ export class CameraFrustum extends Object3D {
               rotation: number[],
               imageUrl?: string) {
     super();
-    this.points = frustumPoints;
+    this.points = this.clonePoints(frustumPoints);
     this.lineSet = this.pointsToLineSet(this.points, material);
     this.mesh = this.createMesh(this.points);
 
@@ -43,6 +43,7 @@ export class CameraFrustum extends Object3D {
     m.invert();
     this.lineSet.applyMatrix4(m);
     this.mesh.applyMatrix4(m);
+    this.points.x.applyMatrix4(m);
 
 
     if (imageUrl) {
@@ -114,6 +115,16 @@ export class CameraFrustum extends Object3D {
     set.push([points.y3, points.y4]);
     set.push([points.y4, points.y1]);
     return new LineSet(set, material);
+  }
+
+  private clonePoints(points: CameraFrustumPoints): CameraFrustumPoints {
+    return {
+      "x" : points.x.clone(),
+      "y1": points.y1.clone(),
+      "y2": points.y2.clone(),
+      "y3": points.y3.clone(),
+      "y4": points.y4.clone(),
+    }
   }
 
 }
