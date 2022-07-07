@@ -7,6 +7,7 @@ import {
 import { ElementSetting } from "../components/element-setting/element-setting";
 import { CameraFrustum, CameraFrustumPoints } from "./camera-frustum";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial";
+import { LineSet } from "./line-set";
 
 
 /**
@@ -30,6 +31,8 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
 
   cameraFrustums: CameraFrustum[];
   material: LineMaterial;
+
+  linkingLines: LineSet;
 
   constructor(data: CameraTrajectoryData) {
     super();
@@ -60,6 +63,21 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
 
       this.cameraFrustums.push(frustum);
     });
+
+    let linkingPoints: [Vector3, Vector3][] = [];
+    if (data.linkImages) {
+      let lastPoint: Vector3;
+      this.cameraFrustums.map((frustum) => {
+        if (lastPoint) {
+          linkingPoints.push([lastPoint, frustum.points.x])
+        } else {
+          lastPoint = frustum.points.x;
+        }
+      });
+    }
+    this.linkingLines = new LineSet(linkingPoints, this.material);
+
+
   }
 
   setColor(color: string): void {
@@ -71,9 +89,11 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
   }
 
   setVisibility(visible: boolean): void {
+    this.visible = visible;
     this.cameraFrustums.forEach(frustum => {
       frustum.setVisibility(visible);
     });
+    this.linkingLines.setVisibility(visible);
   }
 
   getVisibility(): boolean {
@@ -103,6 +123,7 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
   override applyMatrix4(matrix: Matrix4) {
     this.cameraFrustums.forEach(frustum => {
       frustum.applyMatrix4(matrix);
-    })
+    });
+    this.linkingLines.applyMatrix4(matrix);
   }
 }

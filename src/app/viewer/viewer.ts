@@ -149,6 +149,7 @@ export class Viewer {
       this.loadLineSet(frustum.lineSet);
       this.scene.add(frustum.mesh);
     });
+    this.loadLineSet(ct.linkingLines);
   }
 
   /**
