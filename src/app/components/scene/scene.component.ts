@@ -41,16 +41,15 @@ export class SceneComponent implements OnInit, AfterViewInit {
     this.start();
     this.shortcuts.push(
       {
-        key: "ctrl + c",
+        key: ["ctrl + c", "cmd + c"],
         preventDefault: true,
         command: () => {
           let state = JSON.stringify(this.viewer.getCurrentCameraState(this.viewer.camera));
           this.clipboard.copy(state);
-          console.log(state);
         }
       },
       {
-        key: "ctrl + v",
+        key: ["ctrl + v", "cmd + v"],
         preventDefault: true,
         command: () => {
           if (this.platform.FIREFOX) {
