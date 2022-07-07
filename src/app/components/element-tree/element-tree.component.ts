@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { SceneElement } from "../pc-viewer/pc-viewer.interfaces";
-import { HelperFunctions } from "../utility/helper-functions";
 import { ComponentTreeData } from "../../services/scene-elements.service";
 
 export interface ElementTreeGroup {
@@ -46,10 +45,12 @@ export class ElementTreeComponent implements OnInit {
 
   setSelectedElement(value: SceneElement[]) {
     // Check if the correct settings are already loaded
-    if (this.selectedElement === value) return;
-
-    // if not load the new ones.
-    this.selectedElement = value;
+    if (this.selectedElement === value) {
+      this.selectedElement = [];
+    } else {
+      // if not load the new ones.
+      this.selectedElement = value;
+    }
   }
 
   constructor() {
@@ -63,11 +64,6 @@ export class ElementTreeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-  }
-
-
-  parseToEnum(type: string): SceneElementsEnum | undefined {
-    return HelperFunctions.enumFromStringValue(SceneElementsEnum, type);
   }
 
 }

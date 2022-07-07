@@ -2,7 +2,7 @@
   font-size: 1rem;
 }
 
-.color-picker input {
+.ngx-color-picker input {
   height: 1.5rem;
   border-bottom: none;
 }
