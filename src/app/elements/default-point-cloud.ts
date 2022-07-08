@@ -30,6 +30,10 @@ export class DefaultPointCloud extends Points implements ElementSetting {
     return this.pointsMaterials[DPCMaterial.COLOR].color;
   }
 
+  getName(): string {
+    return this.name;
+  }
+
   setVisibility(visible: boolean): void {
     this.visible = visible;
   }

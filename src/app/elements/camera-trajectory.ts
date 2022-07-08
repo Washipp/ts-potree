@@ -85,6 +85,10 @@ export class CameraTrajectory extends Object3D implements ElementSetting {
     return this.material.color;
   }
 
+  getName(): string {
+    return this.name;
+  }
+
   setVisibility(visible: boolean): void {
     this.visible = visible;
     this.cameraFrustums.forEach(frustum => {

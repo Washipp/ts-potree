@@ -7,6 +7,8 @@ export interface ElementSetting {
 
   getColor(): Color;
 
+  getName(): string;
+
   resetColor?(): void;
 
   setVisibility(visible: boolean): void;

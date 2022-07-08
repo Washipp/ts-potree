@@ -60,6 +60,10 @@ export class LineSet extends Object3D implements ElementSetting {
     return this.material.color;
   }
 
+  getName(): string {
+    return this.name;
+  }
+
   setLineWidth(width: number): void {
     this.material.linewidth = width;
   }

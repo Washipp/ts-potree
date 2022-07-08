@@ -54,6 +54,10 @@ export class PotreePointCloud extends Object3D implements ElementSetting {
     return this.pointCloud.material.uniforms.uColor.value;
   }
 
+  getName(): string {
+    return this.pointCloud.name;
+  }
+
   setName(name: string): void {
     this.pointCloud.name = name;
   }
