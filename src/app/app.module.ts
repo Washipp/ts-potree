@@ -58,7 +58,9 @@ const config: SocketIoConfig = {
     SocketIoModule.forRoot(config),
     KeyboardShortcutsModule.forRoot(),
     ClipboardModule,
-    PlatformModule
+    PlatformModule,
+    RouterModule.forRoot([]),
+    BrowserAnimationsModule,
   ],
   providers: [HttpClient],
   bootstrap: [AppComponent]

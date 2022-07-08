@@ -2,6 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ComponentTreeData, SceneElementsService } from "../../services/scene-elements.service";
 import { Viewer } from "../../viewer/viewer";
 import { WebSocketService } from "../../services/web-socket.service";
+import { Clipboard } from "@angular/cdk/clipboard";
+import { HelperFunctions } from "../utility/helper-functions";
 
 export interface GeneralSettingsData extends ComponentTreeData {
   sceneId: number
@@ -41,7 +43,7 @@ export class SceneSettingsComponent implements OnInit {
     return this._data;
   }
 
-  constructor(private ws: WebSocketService, private sceneElementsService: SceneElementsService) {
+  constructor(private ws: WebSocketService, private sceneElementsService: SceneElementsService, private clipboard: Clipboard) {
   }
 
   ngOnInit(): void {
@@ -69,6 +71,13 @@ export class SceneSettingsComponent implements OnInit {
       this.onCameraSync();
     }
     this.ws.startAnimation(this.data.sceneId, "animation_1");
+  }
+
+  onShareCameraState(): void {
+    if (this.viewer) {
+      let params = HelperFunctions.cameraStateToUrlParams(this.viewer.getCurrentCameraState(this.viewer.camera));
+      this.clipboard.copy(this.sceneElementsService.baseUrl+params);
+    }
   }
 
   pickerTest(): void {

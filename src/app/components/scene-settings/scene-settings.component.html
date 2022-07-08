@@ -1,7 +1,7 @@
 <div class="title-divider"><span>Scene Settings</span></div>
 <div *ngIf="viewer">
   <div class="row">
-    <div class="col s4 description"><label for="background-color">Scene Id:</label></div>
+    <div class="col s4 description"><label>Scene Id:</label></div>
     <div class="col s8">
       {{ data.sceneId }}
     </div>
@@ -45,6 +45,13 @@
     <div class="col s4 description"><label>Start Animation:</label></div>
     <div class="col s8">
       <button (click)="onStartAnimation()" class="waves-effect btn-small">Start Animation</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col s4 description"><label>Share Camera State:</label></div>
+    <div class="col s8">
+      <button (click)="onShareCameraState()" class="waves-effect btn-small">Copy to Clipboard</button>
     </div>
   </div>
 

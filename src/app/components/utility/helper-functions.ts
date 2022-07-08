@@ -34,6 +34,31 @@ export class HelperFunctions {
     }
   }
 
+  static urlToFullCameraState(data: any): CameraState {
+    data = data.params;
+    return {
+      position: new Vector3(Number(data.p_x), Number(data.p_y), Number(data.p_z)),
+      rotation: new Quaternion(Number(data.r_x), Number(data.r_y), Number(data.r_z), Number(data.r_w)),
+      fov: Number(data.fov),
+      near: Number(data.near),
+      far: Number(data.far),
+      lastUpdate: 0
+    }
+  }
+
+  static cameraStateToUrlParams(fullState: CameraState): string {
+    return `?p_x=${fullState.position.x}&
+p_y=${fullState.position.y}&
+p_z=${fullState.position.z}&
+r_x=${fullState.rotation.x}&
+r_y=${fullState.rotation.y}&
+r_z=${fullState.rotation.z}&
+r_w=${fullState.rotation.w}&
+fov=${fullState.fov}&
+near=${fullState.near}&
+far=${fullState.far}`
+  }
+
   /**
    * Computes a log value from a linear value range slider
    *

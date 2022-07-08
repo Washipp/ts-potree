@@ -12,6 +12,7 @@ import { ShortcutInput } from "ng-keyboard-shortcuts";
 import { Clipboard } from '@angular/cdk/clipboard';
 import { Platform } from '@angular/cdk/platform';
 import { PotreePointCloud } from "../../elements/potree-point-cloud";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: 'app-scene',
@@ -28,7 +29,7 @@ export class SceneComponent implements OnInit, AfterViewInit {
   viewer: Viewer;
 
   constructor(private sceneElementsService: SceneElementsService, private socket: WebSocketService,
-              private clipboard: Clipboard, private platform: Platform) {
+              private clipboard: Clipboard, private platform: Platform, private activateRoute: ActivatedRoute) {
     this.viewer = new Viewer(sceneElementsService, socket);
     this.data = {sceneId: -1, elements: []};
   }
@@ -63,6 +64,13 @@ export class SceneComponent implements OnInit, AfterViewInit {
         }
       }
     );
+
+    // Load camera state from url if it exists.
+    this.activateRoute.queryParamMap
+      .subscribe((params) => {
+        let paramsObject = { ...params };
+        this.viewer.setCameraState(HelperFunctions.urlToFullCameraState(paramsObject));
+      });
   }
 
   start() {
