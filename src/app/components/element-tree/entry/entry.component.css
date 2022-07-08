@@ -8,6 +8,8 @@
 
 .single-element {
   padding: 3px;
+  display: flex;
+  flex-direction: row;
 }
 
 .single-element:hover {

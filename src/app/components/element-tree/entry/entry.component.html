@@ -3,6 +3,7 @@
     <input type="checkbox" [(ngModel)]="visible" (change)="setAllSceneElementsVisibility(visible)"
            [checked]="getVisibility()"
            class="filled-in checkbox-blue"/>
-    <span>{{ elementType | enumToReadableString }}</span>
+    <span></span>
   </label>
+  <span>{{ elementType | enumToReadableString }}</span>
 </div>
