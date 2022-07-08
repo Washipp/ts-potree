@@ -44,7 +44,7 @@ export class ElementTreeComponent implements OnInit {
   selectedElement: SceneElement[];
 
   setSelectedElement(value: SceneElement[]) {
-    // Check if the correct settings are already loaded
+    // Check if the correct settings are already loaded, reset if this is the case.
     if (this.selectedElement === value) {
       this.selectedElement = [];
     } else {
