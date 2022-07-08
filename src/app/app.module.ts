@@ -22,6 +22,9 @@ import { KeyboardShortcutsModule } from "ng-keyboard-shortcuts";
 import { ClipboardModule } from "@angular/cdk/clipboard";
 import { PlatformModule } from "@angular/cdk/platform";
 import { ElementSettingComponent } from './components/element-setting/element-setting.component';
+import { RouterModule } from "@angular/router";
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { StringToUrlStringPipe } from "./components/utility/pipes/array-to-url-string";
 
 const config: SocketIoConfig = {
   url: `${environment.baseUrl}:${environment.port}`,
@@ -43,6 +46,7 @@ const config: SocketIoConfig = {
     ElementTreeComponent,
     EntryComponent,
     EnumToReadableString,
+    StringToUrlStringPipe,
     GroupComponent,
     ElementSettingComponent
   ],
