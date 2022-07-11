@@ -8,6 +8,7 @@ import { LineSet } from "../../../elements/line-set";
 import { CameraTrajectory } from "../../../elements/camera-trajectory";
 import { PotreePointCloud } from "../../../elements/potree-point-cloud";
 import { DefaultPointCloud } from "../../../elements/default-point-cloud";
+import { Viewer } from "../../../viewer/viewer";
 
 @Component({
   selector: 'app-group',
@@ -19,12 +20,14 @@ export class GroupComponent implements OnInit {
   private _data: ElementTreeGroup;
 
   groupedTypes: Map<SceneElementsEnum, SceneElement[]> = new Map<SceneElementsEnum, SceneElement[]>();
+  viewer: Viewer | undefined;
 
   @Output() selectedElementEvent = new EventEmitter<SceneElement[]>();
   @Input() sceneId: number;
 
   @Input() set data(value: ElementTreeGroup) {
     this._data = value;
+    this.loadViewer();
   }
 
   get data() {
@@ -49,21 +52,22 @@ export class GroupComponent implements OnInit {
     }
   }
 
-  setAllSceneElementsVisibility(visible: boolean): void {
-    this.setGroupVisibility([this.data], visible)
-  }
-
   setGroupVisibility(groups: ElementTreeGroup[], visible: boolean) {
     groups.map(group => {
       group.visible = visible
-      group.sceneElements?.map(elem => {
-        this.setSceneElementVisibility(elem, visible);
-      });
-
+      if (group.sceneElements) {
+        this.setSceneElementsVisibility(group.sceneElements, visible);
+      }
       this.setGroupVisibility(group.groups, visible);
     });
   }
 
+  setSceneElementsVisibility(elements: SceneElement[], visible: boolean) {
+    elements.forEach(elem => {
+      this.setSceneElementVisibility(elem, visible);
+    });
+    this.viewer?.requestRender();
+  }
 
   setSceneElementVisibility(element: SceneElement, visible: boolean) {
     switch (HelperFunctions.enumFromStringValue(SceneElementsEnum, element.sceneType)) {
@@ -134,6 +138,16 @@ export class GroupComponent implements OnInit {
           if (this._data.sceneElements) {
             this.parseToElementTree(this._data.sceneElements);
           }
+        });
+      }
+    });
+  }
+
+  private loadViewer() {
+    this.sceneElementsService.getViewerData().subscribe(data => {
+      if (data.has(this.sceneId)) {
+        setTimeout(() => {
+          this.viewer = data.get(this.sceneId)?.viewer;
         });
       }
     });

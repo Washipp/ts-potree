@@ -4,6 +4,8 @@ import { SceneElement } from "../scene/scene.interfaces";
 import { HelperFunctions } from "../utility/helper-functions";
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { PointShape } from "@pnext/three-loader";
+import { SceneElementsService } from "../../services/scene-elements.service";
+import { Viewer } from "../../viewer/viewer";
 
 @Component({
   selector: 'app-element-setting',
@@ -32,6 +34,7 @@ export class ElementSettingComponent implements OnInit {
   }
 
   type = SceneElementsEnum.UNKNOWN;
+  viewer: Viewer | undefined;
 
   sceneElement: ElementSetting[] | undefined;
 
@@ -46,13 +49,15 @@ export class ElementSettingComponent implements OnInit {
       this.settings.color = '#' + elem.getColor().getHexString()
       this.sceneElement?.push(elem);
     });
+
+    this.loadViewer();
   }
 
   get data() {
     return this._data ? this._data : [];
   }
 
-  constructor() { }
+  constructor(private sceneElementsService: SceneElementsService) { }
 
   ngOnInit(): void {
   }
@@ -61,6 +66,7 @@ export class ElementSettingComponent implements OnInit {
     this.sceneElement?.forEach((elem) => {
       elem.setColor(this.settings.color);
     });
+    this.viewer?.requestRender();
   }
 
   setFrustumSize() {
@@ -68,54 +74,74 @@ export class ElementSettingComponent implements OnInit {
     this.sceneElement?.forEach((elem) => {
       if (elem['setFrustumSize']) elem.setFrustumSize(s);
     });
+    this.viewer?.requestRender();
   }
 
   setMeshVisibility(): void {
     this.sceneElement?.forEach((elem) => {
       if (elem['setMeshVisibility']) elem.setMeshVisibility(this.settings.meshVisible);
     });
+    this.viewer?.requestRender();
   }
 
   setLineWidth(): void {
     this.sceneElement?.forEach((elem) => {
       if (elem['setLineWidth']) elem.setLineWidth(this.settings.lineWidth / 1000);
     });
+    this.viewer?.requestRender();
   }
 
   setOpacity(): void {
     this.sceneElement?.forEach((elem) => {
       elem.setOpacity(this.settings.opacity);
     });
+    this.viewer?.requestRender();
   }
 
   resetColor(): void {
     this.sceneElement?.forEach((elem) => {
       if (elem['resetColor']) elem.resetColor();
     });
+    this.viewer?.requestRender();
   }
 
   setPointSize(): void {
     this.sceneElement?.forEach((elem) => {
       if (elem['setPointSize']) elem.setPointSize(this.settings.pointSize);
     });
+    this.viewer?.requestRender();
   }
 
   setBoundingBox(): void {
     this.sceneElement?.forEach((elem) => {
       if (elem['setBoundingBox']) elem.setBoundingBox(this.settings.boundingBox);
     });
+    this.viewer?.requestRender();
   }
 
   setEDL(): void {
     this.sceneElement?.forEach((elem) => {
       if (elem['setEDL']) elem.setEDL(this.settings.EDL);
     });
+    this.viewer?.requestRender();
   }
 
   setPointShape(shape: PointShape): void {
     this.settings.pointShape = shape;
     this.sceneElement?.forEach((elem) => {
       if (elem['setPointShape']) elem.setPointShape(this.settings.pointShape);
+    });
+    this.viewer?.requestRender();
+  }
+
+  private loadViewer() {
+    this.sceneElementsService.getViewerData().subscribe(data => {
+      // TODO: change key to be dynamic by passing the sceneId.
+      if (data.has(0)) {
+        setTimeout(() => {
+          this.viewer = data.get(0)?.viewer;
+        });
+      }
     });
   }
 

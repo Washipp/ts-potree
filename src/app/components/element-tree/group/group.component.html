@@ -1,6 +1,7 @@
 <div *ngIf="data">
   <label>
-    <input type="checkbox" [(ngModel)]="data.visible" (change)="setAllSceneElementsVisibility(data.visible)"
+    <input type="checkbox" [(ngModel)]="data.visible"
+           (change)="setGroupVisibility([data], data.visible)"
            class="filled-in checkbox-blue"/>
     <span>{{ data.name }}</span>
   </label>
@@ -14,7 +15,8 @@
   <div *ngIf="groupedTypes.size > 0">
     <div class="element-group" *ngFor="let item of groupedTypes | keyvalue">
       <app-entry [elementType]="item.key" [elements]="item.value" [visible]="data.visible"
-                 (selectedElementEvent)="setSelectedElement($event)"></app-entry>
+                 (selectedElementEvent)="setSelectedElement($event)"
+                 (setVisibility)="setSceneElementsVisibility(item.value, $event)"></app-entry>
     </div>
   </div>
 

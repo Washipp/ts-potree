@@ -51,14 +51,17 @@ export class SceneSettingsComponent implements OnInit {
 
   onPointBudgetChange(): void {
     this.viewer?.setPointBudget(this.pointBudget);
+    this.viewer?.requestRender();
   }
 
   changeBackground(): void {
     this.viewer?.changeBackground(this.backgroundColor);
+    this.viewer?.requestRender();
   }
 
   onFovChange(): void {
     this.viewer?.setCameraFOV(this.fov);
+    this.viewer?.requestRender();
   }
 
   onCameraSync(): void {
