@@ -27,17 +27,17 @@ export class Viewer {
 
   private targetEl: HTMLElement | undefined;
 
-   renderer = new WebGLRenderer();
+  private renderer = new WebGLRenderer();
 
-   scene = new Scene();
+  private scene = new Scene();
 
   public camera = new PerspectiveCamera(45, 1, 0.1, 1000);
 
-  public cameraControls = new ArcballControls(this.camera, this.renderer.domElement);
+  private cameraControls = new ArcballControls(this.camera, this.renderer.domElement);
 
   private potree = new Potree();
 
-  public pointClouds: PointCloudOctree[] = [];
+  private pointClouds: PointCloudOctree[] = [];
 
   private reqAnimationFrameHandle: number | undefined;
 
