@@ -1,6 +1,6 @@
 import { Matrix4 } from "three";
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
-import { MinifiedCameraState, Viewer } from "../../viewer/viewer";
+import { CameraState, Viewer } from "../../viewer/viewer";
 import { CameraTrajectoryData } from "../../elements/camera-trajectory";
 import { ComponentTreeData } from "../../services/scene-elements.service";
 import { ElementSetting } from "../element-setting/element-setting";
@@ -27,6 +27,6 @@ export interface SceneElement {
 export interface ViewerData extends ComponentTreeData {
   sceneId: number,
   elements: SceneElement[],
-  camera?: MinifiedCameraState,
+  camera?: CameraState,
   viewer?: Viewer; // is never provided in the state json but is used for reference
 }

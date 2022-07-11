@@ -46,6 +46,7 @@ export class SceneComponent implements OnInit, AfterViewInit {
         preventDefault: true,
         command: () => {
           let state = JSON.stringify(this.viewer.getCurrentCameraState(this.viewer.camera));
+          console.log("[Info]: Copying state to clipboard.")
           this.clipboard.copy(state);
         }
       },
@@ -58,18 +59,20 @@ export class SceneComponent implements OnInit, AfterViewInit {
             return;
           }
           navigator.clipboard.readText().then((data) => {
+            console.log("[Info]: Pasting camera position.");
             this.viewer.setCameraState(JSON.parse(data));
-            console.log("Pasted camera position");
           });
         }
       }
     );
 
     // Load camera state from url if it exists.
-    this.activateRoute.queryParamMap
+    this.activateRoute.queryParams
       .subscribe((params) => {
-        let paramsObject = { ...params };
-        this.viewer.setCameraState(HelperFunctions.urlToFullCameraState(paramsObject));
+        if (Object.keys(params).length == 0) {
+          return;
+        }
+        this.viewer.setCameraState(HelperFunctions.urlToFullCameraState(params));
       });
   }
 
@@ -89,7 +92,7 @@ export class SceneComponent implements OnInit, AfterViewInit {
     // set the camera position.
     if (this.data.camera) {
       // convert from array to the corresponding objects.
-      this.viewer.setCameraState(HelperFunctions.minifiedToFullCameraState(this.data.camera));
+      // this.viewer.setCameraState(this.data.camera);
     }
 
     let elements = this.data.elements;

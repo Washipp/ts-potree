@@ -1,6 +1,6 @@
 import {
-  Color, Euler,
-  PerspectiveCamera, PointsMaterial, Quaternion, Ray,
+  Color,
+  PerspectiveCamera, PointsMaterial, Ray,
   Scene, Vector3,
   WebGLRenderer
 } from "three";
@@ -11,24 +11,15 @@ import { PLYLoader } from "three/examples/jsm/loaders/PLYLoader";
 import { CameraTrajectory } from "../elements/camera-trajectory";
 import { DefaultPointCloud } from "../elements/default-point-cloud";
 import { WebSocketService } from "../services/web-socket.service";
-import { HelperFunctions } from "../components/utility/helper-functions";
 import { ArcballControls } from "three/examples/jsm/controls/ArcballControls";
 
 export interface CameraState {
-  position: Vector3,
-  rotation: Quaternion,
+  matrix: number[]
   fov: number,
   near: number,
   far: number,
-  lastUpdate: number,
-}
-
-export interface MinifiedCameraState {
-  position: number[],
-  rotation: number[],
-  fov: number,
-  near: number,
-  far: number,
+  up: number[],
+  zoom: number,
   lastUpdate: number,
 }
 
@@ -36,13 +27,13 @@ export class Viewer {
 
   private targetEl: HTMLElement | undefined;
 
-  private renderer = new WebGLRenderer();
+   renderer = new WebGLRenderer();
 
-  private scene = new Scene();
+   scene = new Scene();
 
   public camera = new PerspectiveCamera(45, 1, 0.1, 1000);
 
-  private cameraControls = new ArcballControls(this.camera, this.renderer.domElement);
+  public cameraControls = new ArcballControls(this.camera, this.renderer.domElement);
 
   private potree = new Potree();
 
@@ -52,9 +43,9 @@ export class Viewer {
 
   private currentCameraState: CameraState;
 
-  private renderRequested = true;
+  private renderRequested = false;
 
-  private lastRenderUpdate = 0;
+  private currentVisiblePotreePoints = 0;
 
   constructor(private sceneElementsService: SceneElementsService, private socket: WebSocketService) {
     this.currentCameraState = this.getCurrentCameraState(this.camera.clone());
@@ -75,7 +66,7 @@ export class Viewer {
     this.targetEl.appendChild(this.renderer.domElement);
 
     if (this.camera.position.equals(new Vector3(0,0,0))) {
-      // camera position is at (0,0,0) same as orbit controls, so we need to change it slightly.
+      // camera position is at (0,0,0) same as camera controls, so we need to change it slightly.
       // else the camera cannot be controlled by mouse input.
       this.camera.position.z = 60
       this.camera.position.y = 10
@@ -90,9 +81,11 @@ export class Viewer {
     this.resize();
     window.addEventListener("resize", this.resize);
 
-    this.cameraControls.addEventListener('change', () => this.renderRequested = true);
+    this.cameraControls.addEventListener('change', () => {
+      this.requestRender();
+    });
 
-    requestAnimationFrame(this.loop);
+    this.render();
   }
 
   /**
@@ -131,10 +124,9 @@ export class Viewer {
         // Add the point cloud to the scene and to our list of
         // point clouds. We will pass this list of point clouds to
         // potree to tell it to update them.
-
         this.scene.add(pco);
         this.pointClouds.push(pco);
-
+        this.requestRender();
         return pco;
       });
   }
@@ -160,6 +152,7 @@ export class Viewer {
     lineSet.lines.forEach(line => {
       this.scene.add(line);
     });
+    this.requestRender();
   }
 
   /**
@@ -172,17 +165,9 @@ export class Viewer {
     return loader.loadAsync(url).then(pc => {
       let pointCloud = new DefaultPointCloud(pc, new PointsMaterial({ vertexColors: true }));
       this.scene.add(pointCloud);
+      this.requestRender();
       return pointCloud;
     });
-
-  }
-
-  /**
-   * Updates the point clouds, cameras or any other objects which are in the scene.
-   */
-  update(): void {
-    this.cameraControls.update();
-    this.potree.updatePointClouds(this.pointClouds, this.camera, this.renderer);
   }
 
   /**
@@ -190,22 +175,27 @@ export class Viewer {
    */
   render(): void {
     this.renderRequested = false;
-    this.renderer.clear();
+    this.cameraControls.update();
+    this.potree.updatePointClouds(this.pointClouds, this.camera, this.renderer);
     this.renderer.render(this.scene, this.camera);
+
+    let totalVisiblePoints = 0;
+    this.pointClouds.forEach(pc => totalVisiblePoints += pc.numVisiblePoints);
+    if (this.currentVisiblePotreePoints === totalVisiblePoints) {
+      this.requestRender();
+    }
+    this.currentVisiblePotreePoints = totalVisiblePoints;
   }
 
   /**
-   * The main loop of the viewer, called at 60FPS, if possible.
+   * Calling this function triggers a render update.
    */
-  loop = (time: number): void => {
-    // either update if the camera controls have changed or if 250ms have passed.
-    if (this.renderRequested || (this.lastRenderUpdate + 250 < time)) {
-      this.render();
-      this.lastRenderUpdate = time;
+  requestRender() {
+    if (!this.renderRequested) {
+      this.renderRequested = true;
+      requestAnimationFrame(this.render.bind(this));
     }
-    this.update();
-    this.reqAnimationFrameHandle = requestAnimationFrame(this.loop);
-  };
+  }
 
   /**
    * Triggered anytime the window gets resized.
@@ -216,6 +206,7 @@ export class Viewer {
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
+    this.requestRender();
   };
 
   /**
@@ -223,6 +214,7 @@ export class Viewer {
    */
   changeBackground(color: string): void {
     this.scene.background = new Color(color);
+    this.requestRender();
   }
 
   /**
@@ -231,6 +223,7 @@ export class Viewer {
    */
   setPointBudget(value: number): void {
     this.potree.pointBudget = value;
+    this.requestRender();
   }
 
   /**
@@ -239,8 +232,10 @@ export class Viewer {
    */
   setCameraFOV(fov: number): void {
     this.camera.fov = fov;
+    this.requestRender();
   }
 
+  /* Testing ground. this function does not work? */
   pickPointTest(): void {
     let pc: PointCloudOctree;
     if  (this.pointClouds.length > 0) {
@@ -270,9 +265,8 @@ export class Viewer {
       this.socket.connect();
       // Send update to server.
       let listener = () => {
-        // TODO: may create extra class for the camera state
         this.currentCameraState = this.getCurrentCameraState(this.camera);
-        this.socket.sendCameraState(0, HelperFunctions.fullToMinifiedCameraState(this.currentCameraState));
+        this.socket.sendCameraState(0, this.getCurrentCameraState(this.camera));
       };
 
       this.cameraControls.addEventListener('change', listener);
@@ -281,8 +275,9 @@ export class Viewer {
       listener();
 
       // subscribe to the updates.
-      this.socket.getMessage(WebSocketService.cameraSyncEvent).subscribe((message: MinifiedCameraState) => {
-        this.setCameraState(HelperFunctions.minifiedToFullCameraState(message));
+      this.socket.getMessage(WebSocketService.cameraSyncEvent).subscribe((message: CameraState) => {
+        this.setCameraState(message);
+        this.requestRender();
       });
     } else {
       this.socket.disconnect();
@@ -290,26 +285,32 @@ export class Viewer {
   }
 
   getCurrentCameraState(camera: PerspectiveCamera): CameraState {
-    let quat = new Quaternion()
-    quat.setFromEuler(camera.rotation)
     return {
-      position: camera.position as Vector3,
-      rotation: quat,
+      matrix: camera.matrix.toArray(),
       fov: camera.fov,
       near: camera.near,
       far: camera.far,
+      up: camera.up.toArray(),
+      zoom: camera.zoom,
       lastUpdate: Date.now(),
     };
   }
 
   setCameraState(cameraState: CameraState): void {
-    this.currentCameraState = cameraState;
-    this.camera.position.set(cameraState.position.x, cameraState.position.y, cameraState.position.z);
-    let euler = new Euler()
-    euler.setFromQuaternion(cameraState.rotation);
-    this.camera.rotation.set(euler.x, euler.y, euler.z, 'XYZ');
-    this.camera.fov = cameraState.fov;
-    this.camera.near = cameraState.near;
-    this.camera.far = cameraState.far;
+    this.cameraControls.camera?.matrix.fromArray(cameraState.matrix);
+    this.cameraControls.camera?.matrix.decompose( this.camera.position, this.camera.quaternion, this.camera.scale );
+
+    let v = new Vector3().fromArray(cameraState.up)
+    this.camera.up.copy(v);
+    this.camera.near = cameraState.near
+    this.camera.far = cameraState.far
+
+    this.camera.zoom = cameraState.zoom
+
+    if (this.camera.isPerspectiveCamera) {
+      this.camera.fov = cameraState.fov
+    }
+
+    this.requestRender();
   }
 }

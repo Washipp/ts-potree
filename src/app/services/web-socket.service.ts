@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Socket } from "ngx-socket-io";
 import { map } from "rxjs/operators";
-import { MinifiedCameraState } from "../viewer/viewer";
+import { CameraState } from "../viewer/viewer";
 import { Observable } from "rxjs";
 
 @Injectable({
@@ -20,7 +20,7 @@ export class WebSocketService {
    * @param sceneId id of the scene the camera belongs to.
    * @param cameraState New state.
    */
-  sendCameraState(sceneId: number, cameraState: MinifiedCameraState): void {
+  sendCameraState(sceneId: number, cameraState: CameraState): void {
     let data: any = {
       "sceneId": sceneId,
       "state": cameraState
@@ -46,7 +46,7 @@ export class WebSocketService {
     this.socket.emit(eventName, data);
   }
 
-  getMessage(eventName: string): Observable<MinifiedCameraState> {
+  getMessage(eventName: string): Observable<CameraState> {
     return this.socket.fromEvent(eventName).pipe(map((data: any) => data));
   }
 
