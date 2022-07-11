@@ -19,6 +19,8 @@ export class ElementSettingComponent implements OnInit {
     max: 20
   };
 
+  hidden = false;
+
   ps = PointShape;
 
   settings = {
@@ -119,9 +121,9 @@ export class ElementSettingComponent implements OnInit {
     this.viewer?.requestRender();
   }
 
-  setEDL(): void {
+  setElevationType(): void {
     this.sceneElement?.forEach((elem) => {
-      if (elem['setEDL']) elem.setEDL(this.settings.EDL);
+      if (elem['setElevationType']) elem.setElevationType(this.settings.EDL);
     });
     this.viewer?.requestRender();
   }

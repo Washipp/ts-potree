@@ -64,6 +64,7 @@ html {
   letter-spacing: 1px;
   margin: 10px 0;
   padding: 1px !important;
+  cursor: pointer;
 }
 
 .title-divider > span {

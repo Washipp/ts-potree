@@ -34,7 +34,7 @@ export class PotreePointCloud extends Object3D implements ElementSetting {
     return this.pointCloud.visible;
   }
 
-  setEDL(value: boolean): void  {
+  setElevationType(value: boolean): void  {
     if (value) {
       this.pointCloud.material.pointColorType = PointColorType.ELEVATION;
     } else {

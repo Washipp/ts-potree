@@ -27,6 +27,8 @@ export class ElementTreeComponent implements OnInit {
 
   elem = SceneElementsEnum; // used in template to access ENUM
 
+  hidden = false;
+
   private _data: ElementTreeData;
 
   sceneId: number;

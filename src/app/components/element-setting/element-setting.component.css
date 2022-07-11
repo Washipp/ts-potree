@@ -5,6 +5,7 @@
 .ngx-color-picker input {
   height: 1.5rem;
   border-bottom: none;
+  cursor: pointer;
 }
 
 .btn-small {
@@ -37,4 +38,8 @@ input[type=range]::-ms-thumb {
 .checkbox-blue-grey[type="checkbox"].filled-in:checked + span:not(.lever):after {
   border: 2px solid var(--color-secondary-1-1);
   background-color: var(--color-secondary-1-1);
+}
+
+.pc-color-picker {
+  cursor: pointer;
 }

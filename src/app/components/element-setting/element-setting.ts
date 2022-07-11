@@ -27,7 +27,7 @@ export interface ElementSetting {
 
   setBoundingBox?(value: boolean): void;
 
-  setEDL?(value: boolean): void;
+  setElevationType?(value: boolean): void;
 
   setPointShape?(shape: PointShape): void;
 }

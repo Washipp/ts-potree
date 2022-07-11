@@ -1,110 +1,111 @@
 <div *ngIf="sceneElement && sceneElement.length > 0">
-  <div class="title-divider"><span>Element Settings</span></div>
-  <div class="row">
-    <div class="col s4 description"><label>Name:</label></div>
-    <div class="col s8">
-      {{ sceneElement[0].getName() | StringToUrlString }}{{ type | enumToReadableString }}
+  <div class="title-divider" (click)="hidden = !hidden"><span>Element Settings</span></div>
+  <div [hidden]="hidden" >
+    <div class="row">
+      <div class="col s4 description"><label>Name:</label></div>
+      <div class="col s8">
+        {{ sceneElement[0].getName()}}/{{ type | enumToReadableString }}
+      </div>
+    </div>
+    <!-- https://www.npmjs.com/package/ngx-color-picker -->
+    <div class="row ngx-color-picker">
+      <div class="col s4 description"><label for="pc-color-picker">Select Color:</label></div>
+      <div class="col s8"><input class="pc-color-picker" id="pc-color-picker" [(colorPicker)]="settings.color"
+                                 [style.background]="settings.color"
+                                 (colorPickerChange)="setColor()"/></div>
+    </div>
+
+    <div class="row">
+      <div class="col s4 description"><label>Opacity:</label></div>
+      <div class="col s8">
+        <p class="range-field">
+          <input type="range" min="0}" max="1" step="0.1" [value]="settings.opacity"
+                 [(ngModel)]="settings.opacity" (ngModelChange)="setOpacity()"/>
+        </p>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="sceneElement[0]['resetColor']">
+      <div class="col s4 description"><label>Reset Color:</label></div>
+      <div class="col s8">
+        <button (click)="resetColor()" class="waves-effect btn-small">Reset</button>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="sceneElement[0]['setPointSize']">
+      <div class="col s4 description"><label>Point Size:</label></div>
+      <div class="col s8">
+        <p class="range-field">
+          <input type="range" min="{{options.min}}" max="{{options.max}}" [value]="settings.pointSize"
+                 [(ngModel)]="settings.pointSize" (ngModelChange)="setPointSize()"/>
+        </p>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="sceneElement[0]['setFrustumSize']">
+      <div class="col s4 description"><label>Frustum Size:</label></div>
+      <div class="col s8">
+        <p class="range-field">
+          <input type="range" min="{{options.min}}" max="{{options.max}}" [value]="settings.frustumSize"
+                 [(ngModel)]="settings.frustumSize" (ngModelChange)="setFrustumSize()"/>
+        </p>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="sceneElement[0]['setLineWidth']">
+      <div class="col s4 description"><label>Line Width:</label></div>
+      <div class="col s8">
+        <p class="range-field">
+          <input type="range" min="{{options.min}}" max="{{options.max / 2}}" [value]="settings.lineWidth"
+                 [(ngModel)]="settings.lineWidth" (ngModelChange)="setLineWidth()"/>
+        </p>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="sceneElement[0]['setMeshVisibility']">
+      <div class="col s4 description"><label>Show Image:</label></div>
+      <div class="col s8">
+        <label>
+          <input type="checkbox" (change)="setMeshVisibility()"
+                 [(ngModel)]="settings.meshVisible"
+                 class="checkbox-blue filled-in"/>
+          <span>Show/Hide</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="sceneElement[0]['setBoundingBox']">
+      <div class="col s4 description"><label>Show Bounding Box:</label></div>
+      <div class="col s8">
+        <label>
+          <input type="checkbox" (change)="setBoundingBox()"
+                 [(ngModel)]="settings.boundingBox"
+                 class="checkbox-blue filled-in"/>
+          <span>Show/Hide</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="sceneElement[0]['setElevationType']">
+      <div class="col s4 description"><label>Activate Elevation:</label></div>
+      <div class="col s8">
+        <label>
+          <input type="checkbox" (change)="setElevationType()"
+                 [(ngModel)]="settings.EDL"
+                 class="checkbox-blue filled-in"/>
+          <span>Activate</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="sceneElement[0]['setPointShape']">
+      <div class="col s4 description"><label>Point Shape:</label></div>
+      <div class="col s8">
+        <button (click)="setPointShape(ps.SQUARE)" class="waves-effect btn-small">Square</button>
+        <button (click)="setPointShape(ps.CIRCLE)" class="waves-effect btn-small">Circle</button>
+      </div>
     </div>
   </div>
-  <!-- https://www.npmjs.com/package/ngx-color-picker -->
-  <div class="row ngx-color-picker">
-    <div class="col s4 description"><label for="pc-color-picker">Select Color:</label></div>
-    <div class="col s8"><input id="pc-color-picker" [(colorPicker)]="settings.color"
-                               [style.background]="settings.color"
-                               (colorPickerChange)="setColor()"/></div>
-  </div>
-
-  <div class="row">
-    <div class="col s4 description"><label>Opacity:</label></div>
-    <div class="col s8">
-      <p class="range-field">
-        <input type="range" min="0}" max="1" step="0.1" [value]="settings.opacity"
-               [(ngModel)]="settings.opacity" (ngModelChange)="setOpacity()"/>
-      </p>
-    </div>
-  </div>
-
-  <div class="row" *ngIf="sceneElement[0]['resetColor']">
-    <div class="col s4 description"><label>Reset Color:</label></div>
-    <div class="col s8">
-      <button (click)="resetColor()" class="waves-effect btn-small">Reset</button>
-    </div>
-  </div>
-
-  <div class="row" *ngIf="sceneElement[0]['setPointSize']">
-    <div class="col s4 description"><label>Point Size:</label></div>
-    <div class="col s8">
-      <p class="range-field">
-        <input type="range" min="{{options.min}}" max="{{options.max}}" [value]="settings.pointSize"
-               [(ngModel)]="settings.pointSize" (ngModelChange)="setPointSize()"/>
-      </p>
-    </div>
-  </div>
-
-  <div class="row" *ngIf="sceneElement[0]['setFrustumSize']">
-    <div class="col s4 description"><label>Frustum Size:</label></div>
-    <div class="col s8">
-      <p class="range-field">
-        <input type="range" min="{{options.min}}" max="{{options.max}}" [value]="settings.frustumSize"
-               [(ngModel)]="settings.frustumSize" (ngModelChange)="setFrustumSize()"/>
-      </p>
-    </div>
-  </div>
-
-  <div class="row" *ngIf="sceneElement[0]['setLineWidth']">
-    <div class="col s4 description"><label>Line Width:</label></div>
-    <div class="col s8">
-      <p class="range-field">
-        <input type="range" min="{{options.min}}" max="{{options.max / 2}}" [value]="settings.lineWidth"
-               [(ngModel)]="settings.lineWidth" (ngModelChange)="setLineWidth()"/>
-      </p>
-    </div>
-  </div>
-
-  <div class="row" *ngIf="sceneElement[0]['setMeshVisibility']">
-    <div class="col s4 description"><label>Show Image:</label></div>
-    <div class="col s8">
-      <label>
-        <input type="checkbox" (change)="setMeshVisibility()"
-               [(ngModel)]="settings.meshVisible"
-               class="checkbox-blue filled-in"/>
-        <span>Show/Hide</span>
-      </label>
-    </div>
-  </div>
-
-  <div class="row" *ngIf="sceneElement[0]['setBoundingBox']">
-    <div class="col s4 description"><label>Show Bounding Box:</label></div>
-    <div class="col s8">
-      <label>
-        <input type="checkbox" (change)="setBoundingBox()"
-               [(ngModel)]="settings.boundingBox"
-               class="checkbox-blue filled-in"/>
-        <span>Show/Hide</span>
-      </label>
-    </div>
-  </div>
-
-  <div class="row" *ngIf="sceneElement[0]['setBoundingBox']">
-    <div class="col s4 description"><label>Activate EDL:</label></div>
-    <div class="col s8">
-      <label>
-        <input type="checkbox" (change)="setEDL()"
-               [(ngModel)]="settings.EDL"
-               class="checkbox-blue filled-in"/>
-        <span>Activate</span>
-      </label>
-    </div>
-  </div>
-
-  <div class="row" *ngIf="sceneElement[0]['setPointShape']">
-    <div class="col s4 description"><label>Point Shape:</label></div>
-    <div class="col s8">
-      <button (click)="setPointShape(ps.SQUARE)" class="waves-effect btn-small">Square</button>
-      <button (click)="setPointShape(ps.CIRCLE)" class="waves-effect btn-small">Circle</button>
-    </div>
-  </div>
-
 </div>
 <div>
   <app-loading [active]="!sceneElement"></app-loading>

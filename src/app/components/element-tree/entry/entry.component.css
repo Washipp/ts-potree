@@ -11,6 +11,7 @@
   padding-left: 6px;
   display: flex;
   flex-direction: row;
+  cursor: pointer;
 }
 
 .single-element:hover {

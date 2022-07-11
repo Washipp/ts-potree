@@ -1,11 +1,10 @@
-<div class="title-divider"><span>Scene Elements</span></div>
-<div *ngIf="groups">
-  <div *ngFor="let b of groups">
-    <app-group [sceneId]="sceneId" [data]="b" (selectedElementEvent)="setSelectedElement($event)"></app-group>
+<div class="title-divider" (click)="hidden=!hidden"><span>Scene Elements</span></div>
+<div [hidden]="hidden">
+  <div *ngIf="groups">
+    <div *ngFor="let b of groups">
+      <app-group [sceneId]="sceneId" [data]="b" (selectedElementEvent)="setSelectedElement($event)"></app-group>
+    </div>
   </div>
-</div>
-<div>
-  <app-loading [active]="!groups"></app-loading>
-</div>
 
-<app-element-setting [data]="selectedElement"></app-element-setting>
+  <app-element-setting [data]="selectedElement"></app-element-setting>
+  </div>

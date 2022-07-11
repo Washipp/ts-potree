@@ -27,6 +27,8 @@ export class SceneSettingsComponent implements OnInit {
     step: 5
   }
 
+  hidden = false;
+
   pointBudget: number = 1000_000;
   fov: number = 60;
   viewer: Viewer | undefined;
