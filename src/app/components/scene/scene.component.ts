@@ -197,7 +197,15 @@ export class SceneComponent implements OnInit, AfterViewInit {
       if (attributes.material?.color) {
         ppc.setColor(attributes.material.color);
       }
-
+      if (attributes.material?.opacity) {
+        ppc.setOpacity(attributes.material.opacity);
+      }
+      if (attributes.material?.pointType) {
+        ppc.setPointShape(attributes.material.pointType);
+      }
+      if (attributes.material?.pointSize) {
+        ppc.setPointSize(attributes.material.pointSize);
+      }
       if (attributes.transformation) {
         ppc.applyMatrix4(new Matrix4().fromArray(attributes.transformation));
       }
