@@ -179,7 +179,7 @@ export class Viewer {
 
     let totalVisiblePoints = 0;
     this.pointClouds.forEach(pc => totalVisiblePoints += pc.numVisiblePoints);
-    if (this.currentVisiblePotreePoints === totalVisiblePoints && totalVisiblePoints > 10) {
+    if (this.currentVisiblePotreePoints === totalVisiblePoints) {
       this.requestRender();
     }
     this.currentVisiblePotreePoints = totalVisiblePoints;

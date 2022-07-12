@@ -13,6 +13,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { Platform } from '@angular/cdk/platform';
 import { PotreePointCloud } from "../../elements/potree-point-cloud";
 import { ActivatedRoute } from "@angular/router";
+import { ColWidthService } from "../../services/col-width.service";
 
 @Component({
   selector: 'app-scene',
@@ -24,18 +25,23 @@ export class SceneComponent implements OnInit, AfterViewInit {
   @ViewChild('target') target: any;
   @Input() data: ViewerData;
 
+  canvasWidth = 75;
+
   shortcuts: ShortcutInput[] = [];
 
   viewer: Viewer;
 
   constructor(private sceneElementsService: SceneElementsService, private socket: WebSocketService,
-              private clipboard: Clipboard, private platform: Platform, private activateRoute: ActivatedRoute) {
+              private clipboard: Clipboard, private platform: Platform, private activateRoute: ActivatedRoute,
+              private colWidthService: ColWidthService) {
     this.viewer = new Viewer(sceneElementsService, socket);
     this.data = {sceneId: -1, elements: []};
   }
 
   ngOnInit(): void {
-
+    this.colWidthService.getSidebarWidth().subscribe(width => {
+      this.canvasWidth = width;
+    });
   }
 
   ngAfterViewInit(): void {
@@ -62,6 +68,17 @@ export class SceneComponent implements OnInit, AfterViewInit {
             console.log("[Info]: Pasting camera position.");
             this.viewer.setCameraState(JSON.parse(data));
           });
+        }
+      },
+      {
+        key: ["h", "H"],
+        preventDefault: true,
+        command: () => {
+          if (this.canvasWidth === 75) {
+            this.colWidthService.setNewSidebarWidth(100);
+          } else {
+            this.colWidthService.setNewSidebarWidth(75);
+          }
         }
       }
     );
@@ -95,9 +112,7 @@ export class SceneComponent implements OnInit, AfterViewInit {
       // this.viewer.setCameraState(this.data.camera);
     }
 
-    let elements = this.data.elements;
-
-    elements.map((p: SceneElement) => {
+    this.data.elements.map((p: SceneElement) => {
       switch (p.sceneType) {
         case SceneElementsEnum.POTREE_POINT_CLOUD:
           this.addPotreePointCloud(p.source as string, p.attributes, p.elementId);

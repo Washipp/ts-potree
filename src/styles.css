@@ -55,6 +55,10 @@ html {
   background-color: var(--color-secondary-1-0) !important;
 }
 
+.sidebar {
+  padding-left: .5rem;
+}
+
 .title-divider {
   display: block;
   text-align: center;
