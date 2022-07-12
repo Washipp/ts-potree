@@ -5,7 +5,7 @@ import { CustomLine, ElementAttributes, SceneElement, ViewerData } from "./scene
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { LineSet } from "../../elements/line-set";
 import { CameraTrajectory, CameraTrajectoryData } from "../../elements/camera-trajectory";
-import { Vector3 } from "three";
+import { Matrix4, Vector3 } from "three";
 import { WebSocketService } from "../../services/web-socket.service";
 import { HelperFunctions } from "../utility/helper-functions";
 import { ShortcutInput } from "ng-keyboard-shortcuts";
@@ -123,7 +123,7 @@ export class SceneComponent implements OnInit, AfterViewInit {
                                elementId: number): void {
     this.viewer.loadDefaultPC(url).then(pc => {
       if (attributes.transformation) {
-        pc.applyMatrix4(attributes.transformation);
+        pc.applyMatrix4(new Matrix4().fromArray(attributes.transformation));
       }
       pc.name = attributes.name;
       if (attributes.material?.size) {
@@ -153,7 +153,7 @@ export class SceneComponent implements OnInit, AfterViewInit {
     cameraTrajectory.setFrustumSize(0.5); // default value
 
     if (attributes.transformation) {
-      cameraTrajectory.applyMatrix4(attributes.transformation);
+      cameraTrajectory.applyMatrix4(new Matrix4().fromArray(attributes.transformation));
     }
     this.viewer.loadCameraTrajectory(cameraTrajectory);
     this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, cameraTrajectory);
@@ -179,7 +179,7 @@ export class SceneComponent implements OnInit, AfterViewInit {
       lineSet.setColor('#FF0000') // set default color to red.
     }
     if (attributes.transformation) {
-      lineSet.applyMatrix4(attributes.transformation);
+      lineSet.applyMatrix4(new Matrix4().fromArray(attributes.transformation));
     }
     this.viewer.loadLineSet(lineSet);
     this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, lineSet);
@@ -199,7 +199,7 @@ export class SceneComponent implements OnInit, AfterViewInit {
       }
 
       if (attributes.transformation) {
-        ppc.applyMatrix4(attributes.transformation);
+        ppc.applyMatrix4(new Matrix4().fromArray(attributes.transformation));
       }
 
       this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, ppc);

@@ -1,4 +1,3 @@
-import { Matrix4 } from "three";
 import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { CameraState, Viewer } from "../../viewer/viewer";
 import { CameraTrajectoryData } from "../../elements/camera-trajectory";
@@ -12,7 +11,7 @@ export interface ElementAttributes {
   name: string,
   material?: any,
   imageUrl?: string,
-  transformation?: Matrix4,
+  transformation?: number[],
 }
 
 export interface SceneElement {
