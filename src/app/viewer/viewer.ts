@@ -81,9 +81,7 @@ export class Viewer {
     this.resize();
     window.addEventListener("resize", this.resize);
 
-    this.cameraControls.addEventListener('change', () => {
-      this.requestRender();
-    });
+    this.cameraControls.addEventListener('change', () => this.requestRender());
 
     this.render();
   }
@@ -181,7 +179,7 @@ export class Viewer {
 
     let totalVisiblePoints = 0;
     this.pointClouds.forEach(pc => totalVisiblePoints += pc.numVisiblePoints);
-    if (this.currentVisiblePotreePoints === totalVisiblePoints) {
+    if (this.currentVisiblePotreePoints === totalVisiblePoints && totalVisiblePoints > 10) {
       this.requestRender();
     }
     this.currentVisiblePotreePoints = totalVisiblePoints;
@@ -233,6 +231,14 @@ export class Viewer {
   setCameraFOV(fov: number): void {
     this.camera.fov = fov;
     this.requestRender();
+  }
+
+  getRenderer(): WebGLRenderer {
+    return this.renderer;
+  }
+
+  renderOnce(): void {
+    this.renderer.render(this.scene, this.camera);
   }
 
   /* Testing ground. this function does not work? */
