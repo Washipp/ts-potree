@@ -4,6 +4,7 @@ import { Viewer } from "../../viewer/viewer";
 import { WebSocketService } from "../../services/web-socket.service";
 import { Clipboard } from "@angular/cdk/clipboard";
 import { HelperFunctions } from "../utility/helper-functions";
+import { HttpClient } from "@angular/common/http";
 
 export interface GeneralSettingsData extends ComponentTreeData {
   sceneId: number
@@ -45,7 +46,10 @@ export class SceneSettingsComponent implements OnInit {
     return this._data;
   }
 
-  constructor(private ws: WebSocketService, private sceneElementsService: SceneElementsService, private clipboard: Clipboard) {
+  constructor(private ws: WebSocketService,
+              private sceneElementsService: SceneElementsService,
+              private clipboard: Clipboard,
+              private http: HttpClient) {
   }
 
   ngOnInit(): void {
@@ -85,6 +89,25 @@ export class SceneSettingsComponent implements OnInit {
     }
   }
 
+  onCreateScreenshot(): void {
+    if (this.viewer) {
+      this.viewer.renderOnce();
+      this.viewer.getRenderer().domElement.toBlob(blob => {
+        if (blob) {
+          let formData = new FormData();
+          formData.append('file', new Blob([blob], {'type':'image/png'}));
+
+          this.http.post<Blob>(this.sceneElementsService.baseUrl+'upload/dir', formData)
+            .subscribe((response) => {
+              console.log("Got response")
+              console.log(response)
+            });
+        }
+      }, 'image/png', 1.0);
+
+    }
+  }
+
   pickerTest(): void {
     this.viewer?.pickPointTest();
   }
@@ -94,6 +117,7 @@ export class SceneSettingsComponent implements OnInit {
       if (data.has(this.data.sceneId)) {
         setTimeout(() => {
           this.viewer = data.get(this.data.sceneId)?.viewer;
+          // after loading the reference to the viewer we can overwrite the default background color.
           this.changeBackground();
         });
       }
