@@ -31,7 +31,7 @@ export class ElementSettingComponent implements OnInit {
     pointSize: 1,
     opacity: 1,
     boundingBox: false,
-    EDL: false,
+    useElevation: false,
     pointShape: PointShape.SQUARE,
   }
 
@@ -123,7 +123,7 @@ export class ElementSettingComponent implements OnInit {
 
   setElevationType(): void {
     this.sceneElement?.forEach((elem) => {
-      if (elem['setElevationType']) elem.setElevationType(this.settings.EDL);
+      if (elem['setElevationType']) elem.setElevationType(this.settings.useElevation);
     });
     this.viewer?.requestRender();
   }
