@@ -4,6 +4,12 @@ import { map } from "rxjs/operators";
 import { CameraState } from "../viewer/viewer";
 import { Observable } from "rxjs";
 
+export interface AnimationData {
+  cameraState: CameraState,
+  screenshot: boolean,
+  screenshotDirectory: string
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -11,6 +17,7 @@ export class WebSocketService {
 
   static cameraSyncEvent = 'camera_sync'
   static startAnimationEvent = 'start_animation'
+  static getAnimationEvent = 'animation'
 
   constructor(private socket: Socket) { }
 
@@ -28,10 +35,11 @@ export class WebSocketService {
     this.sendMessage(WebSocketService.cameraSyncEvent, JSON.stringify(data));
   }
 
-  startAnimation(sceneId: number, animationName: string): void {
+  startAnimation(sceneId: number, animationName: string, running: boolean): void {
     let data: any = {
       "sceneId": sceneId,
-      "animationName": animationName
+      "animationName": animationName,
+      "running": running
     }
     this.sendMessage(WebSocketService.startAnimationEvent, JSON.stringify(data));
   }

@@ -43,7 +43,16 @@ export class SceneComponent implements OnInit, AfterViewInit {
     this.colWidthService.getSidebarWidth().subscribe(width => {
       this.canvasWidth = width;
     });
+    this.ws.getMessage<AnimationData>(WebSocketService.getAnimationEvent).subscribe((data) => {
+      // Note: the screenshot gets taken before the state is set, because else the rendering is messed up and returns an empty canvas.
+      // reasons for this behaviour is not yet known.
+      if (data.screenshot) {
+        this.viewer?.saveScreenshot(data.screenshotDirectory);
+      }
+      this.viewer?.setCameraState(data.cameraState);
+    });
   }
+
 
   ngAfterViewInit(): void {
     this.start();

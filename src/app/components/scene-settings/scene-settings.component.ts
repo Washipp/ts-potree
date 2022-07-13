@@ -74,10 +74,7 @@ export class SceneSettingsComponent implements OnInit {
   }
 
   onStartAnimation(): void {
-    if (!this.cameraSync) {
-      this.onCameraSync();
-    }
-    this.ws.startAnimation(this.data.sceneId, "animation_1");
+    this.ws.startAnimation(this.data.sceneId, "animation_1", true);
   }
 
   onShareCameraState(): void {
