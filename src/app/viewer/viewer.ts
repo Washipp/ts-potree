@@ -12,6 +12,7 @@ import { CameraTrajectory } from "../elements/camera-trajectory";
 import { DefaultPointCloud } from "../elements/default-point-cloud";
 import { WebSocketService } from "../services/web-socket.service";
 import { ArcballControls } from "three/examples/jsm/controls/ArcballControls";
+import { HttpClient } from "@angular/common/http";
 
 export interface CameraState {
   position: number[],
@@ -46,7 +47,7 @@ export class Viewer {
 
   private currentVisiblePotreePoints = 0;
 
-  constructor(private sceneElementsService: SceneElementsService, private socket: WebSocketService) {
+  constructor(private sceneElementsService: SceneElementsService, private socket: WebSocketService, private http: HttpClient) {
   }
 
   /**
@@ -231,14 +232,6 @@ export class Viewer {
     this.requestRender();
   }
 
-  getRenderer(): WebGLRenderer {
-    return this.renderer;
-  }
-
-  renderOnce(): void {
-    this.renderer.render(this.scene, this.camera);
-  }
-
   /* Testing ground. this function does not work? */
   pickPointTest(): void {
     let pc: PointCloudOctree;
@@ -262,6 +255,24 @@ export class Viewer {
 
   }
 
+  /** Screenshot handling **/
+
+  saveScreenshot(directory: string) {
+    this.renderer.render(this.scene, this.camera);
+    this.renderer.domElement.toBlob(blob => {
+      if (blob) {
+        let formData = new FormData();
+        formData.append('file', new Blob([blob], {'type':'image/png'}));
+
+        this.http.post<Blob>(this.sceneElementsService.baseUrl + 'upload/' + directory, formData)
+          .subscribe((response) => {
+            console.log("Got response")
+            console.log(response)
+          });
+      }
+    }, 'image/png', 1.0);
+  }
+
   /**  Camera Handling  **/
 
   setCameraSync(value: boolean): void {
@@ -278,7 +289,7 @@ export class Viewer {
       listener();
 
       // subscribe to the updates.
-      this.socket.getMessage(WebSocketService.cameraSyncEvent).subscribe((message: CameraState) => {
+      this.socket.getMessage<CameraState>(WebSocketService.cameraSyncEvent).subscribe((message: CameraState) => {
         this.setCameraState(message);
         this.requestRender();
       });

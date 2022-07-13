@@ -46,7 +46,13 @@ export class WebSocketService {
     this.socket.emit(eventName, data);
   }
 
-  getMessage(eventName: string): Observable<CameraState> {
+  /**
+   * Get an observable that updates with the newly received data.
+   * The Type defines the expected return type.
+   *
+   * @param eventName Name of the event to listen form.
+   */
+  getMessage<Type>(eventName: string): Observable<Type> {
     return this.socket.fromEvent(eventName).pipe(map((data: any) => data));
   }
 

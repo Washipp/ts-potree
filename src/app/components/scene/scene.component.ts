@@ -6,7 +6,7 @@ import { SceneElementsEnum } from "../../viewer/scene-elements.enum";
 import { LineSet } from "../../elements/line-set";
 import { CameraTrajectory, CameraTrajectoryData } from "../../elements/camera-trajectory";
 import { Matrix4, Vector3 } from "three";
-import { WebSocketService } from "../../services/web-socket.service";
+import { AnimationData, WebSocketService } from "../../services/web-socket.service";
 import { HelperFunctions } from "../utility/helper-functions";
 import { ShortcutInput } from "ng-keyboard-shortcuts";
 import { Clipboard } from '@angular/cdk/clipboard';
@@ -14,6 +14,7 @@ import { Platform } from '@angular/cdk/platform';
 import { PotreePointCloud } from "../../elements/potree-point-cloud";
 import { ActivatedRoute } from "@angular/router";
 import { ColWidthService } from "../../services/col-width.service";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: 'app-scene',
@@ -31,10 +32,10 @@ export class SceneComponent implements OnInit, AfterViewInit {
 
   viewer: Viewer;
 
-  constructor(private sceneElementsService: SceneElementsService, private socket: WebSocketService,
+  constructor(private sceneElementsService: SceneElementsService, private ws: WebSocketService,
               private clipboard: Clipboard, private platform: Platform, private activateRoute: ActivatedRoute,
-              private colWidthService: ColWidthService) {
-    this.viewer = new Viewer(sceneElementsService, socket);
+              private colWidthService: ColWidthService, private http: HttpClient) {
+    this.viewer = new Viewer(sceneElementsService, ws, http);
     this.data = {sceneId: -1, elements: []};
   }
 
