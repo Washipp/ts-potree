@@ -90,6 +90,20 @@ export class SceneComponent implements OnInit, AfterViewInit {
             this.colWidthService.setNewSidebarWidth(75);
           }
         }
+      },
+      {
+        key: ["a", "A"],
+        preventDefault: true,
+        command: () => {
+          this.ws.startAnimation(this.data.sceneId, "animation_1", true);
+        }
+      },
+      {
+        key: ["s", "S"],
+        preventDefault: true,
+        command: () => {
+          this.viewer.saveScreenshot('keyboard')
+        }
       }
     );
 
