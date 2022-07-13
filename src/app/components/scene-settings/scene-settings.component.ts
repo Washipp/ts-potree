@@ -84,7 +84,7 @@ export class SceneSettingsComponent implements OnInit {
 
   onShareCameraState(): void {
     if (this.viewer) {
-      let params = HelperFunctions.cameraStateToUrlParams(this.viewer.getCurrentCameraState(this.viewer.camera));
+      let params = HelperFunctions.cameraStateToUrlParams(this.viewer.getCurrentCameraState());
       this.clipboard.copy(this.sceneElementsService.baseUrl+params);
     }
   }

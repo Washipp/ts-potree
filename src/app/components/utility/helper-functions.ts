@@ -7,9 +7,10 @@ export class HelperFunctions {
       : undefined;
   }
 
-  static urlToFullCameraState(data: any): CameraState {
+  static urlToCameraState(data: any): CameraState {
     return {
-      matrix: data.matrix.split(','),
+      position: data.position.split(','),
+      quaternion: data.quaternion.split(','),
       up: data.up.split(','),
       zoom: Number(data.zoom),
       fov: Number(data.fov),
@@ -19,8 +20,14 @@ export class HelperFunctions {
     };
   }
 
-  static cameraStateToUrlParams(fullState: CameraState): string {
-    return `?matrix=${fullState.matrix}&fov=${fullState.fov}&zoom=${fullState.zoom}&up=${fullState.up}&near=${fullState.near}&far=${fullState.far}`
+  static cameraStateToUrlParams(state: CameraState): string {
+    return `?&position=${state.position}
+&quaternion=${state.quaternion}
+&fov=${state.fov}
+&zoom=${state.zoom}
+&up=${state.up}
+&near=${state.near}
+&far=${state.far}`
   }
 
   /**

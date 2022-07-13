@@ -51,7 +51,7 @@ export class SceneComponent implements OnInit, AfterViewInit {
         key: ["ctrl + c", "cmd + c"],
         preventDefault: true,
         command: () => {
-          let state = JSON.stringify(this.viewer.getCurrentCameraState(this.viewer.camera));
+          let state = JSON.stringify(this.viewer.getCurrentCameraState());
           console.log("[Info]: Copying state to clipboard.")
           this.clipboard.copy(state);
         }
@@ -89,7 +89,7 @@ export class SceneComponent implements OnInit, AfterViewInit {
         if (Object.keys(params).length == 0) {
           return;
         }
-        this.viewer.setCameraState(HelperFunctions.urlToFullCameraState(params));
+        this.viewer.setCameraState(HelperFunctions.urlToCameraState(params));
       });
   }
 

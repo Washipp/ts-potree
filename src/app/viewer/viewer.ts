@@ -14,7 +14,8 @@ import { WebSocketService } from "../services/web-socket.service";
 import { ArcballControls } from "three/examples/jsm/controls/ArcballControls";
 
 export interface CameraState {
-  matrix: number[]
+  position: number[],
+  quaternion: number[],
   fov: number,
   near: number,
   far: number,
@@ -31,7 +32,7 @@ export class Viewer {
 
   private scene = new Scene();
 
-  public camera = new PerspectiveCamera(45, 1, 0.1, 1000);
+  private camera = new PerspectiveCamera(45, 1, 0.1, 1000);
 
   private cameraControls = new ArcballControls(this.camera, this.renderer.domElement);
 
@@ -41,14 +42,11 @@ export class Viewer {
 
   private reqAnimationFrameHandle: number | undefined;
 
-  private currentCameraState: CameraState;
-
   private renderRequested = false;
 
   private currentVisiblePotreePoints = 0;
 
   constructor(private sceneElementsService: SceneElementsService, private socket: WebSocketService) {
-    this.currentCameraState = this.getCurrentCameraState(this.camera.clone());
   }
 
   /**
@@ -271,8 +269,7 @@ export class Viewer {
       this.socket.connect();
       // Send update to server.
       let listener = () => {
-        this.currentCameraState = this.getCurrentCameraState(this.camera);
-        this.socket.sendCameraState(0, this.getCurrentCameraState(this.camera));
+        this.socket.sendCameraState(0, this.getCurrentCameraState());
       };
 
       this.cameraControls.addEventListener('change', listener);
@@ -290,21 +287,24 @@ export class Viewer {
     }
   }
 
-  getCurrentCameraState(camera: PerspectiveCamera): CameraState {
+  /** Serialization and Deserialization of the camera state **/
+
+  getCurrentCameraState(): CameraState {
     return {
-      matrix: camera.matrix.toArray(),
-      fov: camera.fov,
-      near: camera.near,
-      far: camera.far,
-      up: camera.up.toArray(),
-      zoom: camera.zoom,
+      position: this.camera.position.toArray(),
+      quaternion: this.camera.quaternion.toArray(),
+      fov: this.camera.fov,
+      near: this.camera.near,
+      far: this.camera.far,
+      up: this.camera.up.toArray(),
+      zoom: this.camera.zoom,
       lastUpdate: Date.now(),
     };
   }
 
   setCameraState(cameraState: CameraState): void {
-    this.cameraControls.camera?.matrix.fromArray(cameraState.matrix);
-    this.cameraControls.camera?.matrix.decompose( this.camera.position, this.camera.quaternion, this.camera.scale );
+    this.camera.position.fromArray(cameraState.position);
+    this.camera.quaternion.fromArray(cameraState.quaternion);
 
     let v = new Vector3().fromArray(cameraState.up)
     this.camera.up.copy(v);
