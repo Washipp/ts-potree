@@ -45,8 +45,6 @@ export class Viewer {
 
   private renderRequested = false;
 
-  private currentVisiblePotreePoints = 0;
-
   constructor(private sceneElementsService: SceneElementsService, private socket: WebSocketService, private http: HttpClient) {
   }
 
@@ -82,7 +80,11 @@ export class Viewer {
 
     this.cameraControls.addEventListener('change', () => this.requestRender());
 
-    this.render();
+    // We render every 100ms additionally to the render on demand,
+    // because the potree chunks are loaded but then not updated.
+    setInterval(() => {
+      this.requestRender();
+    }, 100);
   }
 
   /**
@@ -175,13 +177,6 @@ export class Viewer {
     this.cameraControls.update();
     this.potree.updatePointClouds(this.pointClouds, this.camera, this.renderer);
     this.renderer.render(this.scene, this.camera);
-
-    let totalVisiblePoints = 0;
-    this.pointClouds.forEach(pc => totalVisiblePoints += pc.numVisiblePoints);
-    if (this.currentVisiblePotreePoints === totalVisiblePoints) {
-      this.requestRender();
-    }
-    this.currentVisiblePotreePoints = totalVisiblePoints;
   }
 
   /**
