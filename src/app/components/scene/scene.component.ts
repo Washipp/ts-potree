@@ -165,11 +165,14 @@ export class SceneComponent implements OnInit, AfterViewInit {
         pc.applyMatrix4(new Matrix4().fromArray(attributes.transformation));
       }
       pc.name = attributes.name;
-      if (attributes.material?.size) {
-        pc.setPointSize(attributes.material.size);
+      if (attributes.material?.pointSize) {
+        pc.setPointSize(attributes.material.pointSize);
       }
       if (attributes.material?.color) {
         pc.setColor(attributes.material.color);
+      }
+      if (attributes.material?.opacity) {
+        pc.setOpacity(attributes.material.opacity);
       }
 
       this.sceneElementsService.addSceneElement(this.data.sceneId, elementId, pc);
@@ -188,8 +191,18 @@ export class SceneComponent implements OnInit, AfterViewInit {
     } else {
       cameraTrajectory.setColor('#FF0000') // set default color to red.
     }
+    if (attributes.material?.frustumSize) {
+      cameraTrajectory.setFrustumSize(attributes.material.frustumSize);
+    } else {
+      cameraTrajectory.setFrustumSize(0.5); // default value
+    }
 
-    cameraTrajectory.setFrustumSize(0.5); // default value
+    if (attributes.material?.opacity) {
+      cameraTrajectory.setOpacity(attributes.material.opacity);
+    }
+    if (attributes.material?.lineWidth) {
+      cameraTrajectory.setLineWidth(attributes.material.lineWidth);
+    }
 
     if (attributes.transformation) {
       cameraTrajectory.applyMatrix4(new Matrix4().fromArray(attributes.transformation));
@@ -212,11 +225,21 @@ export class SceneComponent implements OnInit, AfterViewInit {
     let lineSet = new LineSet(set);
 
     lineSet.name = attributes.name;
+
     if (attributes.material?.color) {
       lineSet.setColor(attributes.material.color);
     } else {
       lineSet.setColor('#FF0000') // set default color to red.
     }
+
+    if (attributes.material?.lineWidth) {
+      lineSet.setColor(attributes.material.lineWidth);
+    }
+
+    if (attributes.material?.opacity) {
+      lineSet.setOpacity(attributes.material.opacity);
+    }
+
     if (attributes.transformation) {
       lineSet.applyMatrix4(new Matrix4().fromArray(attributes.transformation));
     }
@@ -230,9 +253,6 @@ export class SceneComponent implements OnInit, AfterViewInit {
     this.viewer.loadPotreePCO("cloud.js", url).then(pco => {
       let ppc = new PotreePointCloud(pco);
       ppc.setName(attributes.name);
-      if (attributes.material?.size) {
-        ppc.setPointSize(attributes.material.size);
-      }
       if (attributes.material?.color) {
         ppc.setColor(attributes.material.color);
       }
