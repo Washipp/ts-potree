@@ -13,7 +13,6 @@ import { SceneSettingsComponent } from './components/scene-settings/scene-settin
 import { HttpClient, HttpClientModule } from "@angular/common/http";
 import { LoadingComponent } from './components/utility/loading/loading.component';
 import { ElementTreeComponent } from './components/element-tree/element-tree.component';
-import { EntryComponent } from './components/element-tree/entry/entry.component';
 import { EnumToReadableString } from "./components/utility/pipes/enum-to-readable-string";
 import { SocketIoConfig, SocketIoModule } from "ngx-socket-io";
 import { GroupComponent } from './components/element-tree/group/group.component';
@@ -44,7 +43,6 @@ const config: SocketIoConfig = {
     SceneSettingsComponent,
     LoadingComponent,
     ElementTreeComponent,
-    EntryComponent,
     EnumToReadableString,
     StringToUrlStringPipe,
     GroupComponent,

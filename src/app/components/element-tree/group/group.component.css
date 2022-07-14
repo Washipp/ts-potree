@@ -1,8 +1,31 @@
 .element-group {
   margin-left: 30px;
-  padding-top: 5px;
 }
 
 .element-group > .element-group {
   margin-left: 30px;
+}
+
+.element-list {
+  margin-left: 30px;
+}
+
+.element-list > ul {
+  margin: 0;
+}
+
+.single-element {
+  padding-top: 6px;
+  padding-left: 6px;
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+}
+
+.single-element:hover {
+  background-color: var(--color-black);
+}
+
+.highlight {
+  background-color: var(--color-black);
 }

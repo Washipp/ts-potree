@@ -29,19 +29,7 @@ export class ElementTreeComponent implements OnInit {
 
   hidden = false;
 
-  private _data: ElementTreeData;
-
-  sceneId: number;
-  groups: ElementTreeGroup[];
-  @Input() set data(value: ElementTreeData) {
-    this.sceneId = value.sceneId;
-    this.groups = value.groups;
-    this._data = value;
-  }
-
-  get data() {
-    return this._data;
-  }
+  @Input() data: ElementTreeData;
 
   selectedElement: SceneElement[];
 
@@ -56,10 +44,8 @@ export class ElementTreeComponent implements OnInit {
   }
 
   constructor() {
-    this.sceneId = -1;
     this.selectedElement =  [];
-    this.groups = [];
-    this._data = {
+    this.data = {
       sceneId: -1,
       groups: [],
     }

@@ -1,10 +1,8 @@
 <div class="sidebar">
   <div class="title-divider" (click)="hidden=!hidden"><span>Scene Elements</span></div>
   <div [hidden]="hidden">
-    <div *ngIf="groups">
-      <div *ngFor="let b of groups">
-        <app-group [sceneId]="sceneId" [data]="b" (selectedElementEvent)="setSelectedElement($event)"></app-group>
-      </div>
+    <div *ngFor="let b of data.groups">
+      <app-group [sceneId]="data.sceneId" [data]="b" (selectedElementEvent)="setSelectedElement($event)"></app-group>
     </div>
 
     <app-element-setting [data]="selectedElement"></app-element-setting>

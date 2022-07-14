@@ -1,9 +1,0 @@
-<div class="element-group single-element" (click)="loadElementSettings()">
-  <label>
-    <input type="checkbox" [(ngModel)]="visible" (change)="setAllSceneElementsVisibility(visible)"
-           [checked]="getVisibility()"
-           class="filled-in checkbox-blue"/>
-    <span></span>
-  </label>
-  <span>{{ elementType | enumToReadableString }}</span>
-</div>
